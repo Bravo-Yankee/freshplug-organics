@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Farm blog from Freshplug Organics - farming tips, updates, recipes, and insights into organic poultry farming.">
+    <title>Farm Blog - Freshplug Organics Poultry Farm</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
+            color: white;
+            padding: 8rem 0 4rem;
+            text-align: center;
+            margin-top: 80px;
+        }
+        .blog-section {
+            padding: 4rem 0;
+        }
+        .blog-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 4rem;
+        }
+        .blog-filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+        .blog-filter {
+            padding: 0.6rem 1.2rem;
+            border: 2px solid var(--primary-green);
+            background: transparent;
+            color: var(--primary-green);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        .blog-filter.active,
+        .blog-filter:hover {
+            background: var(--primary-green);
+            color: white;
+        }
+        .blog-posts {
+            display: grid;
+            gap: 3rem;
+        }
+        .blog-post {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px var(--shadow);
+            transition: all 0.3s ease;
+        }
+        .blog-post:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+        }
+        .blog-post-image {
+            position: relative;
+            overflow: hidden;
+            height: 250px;
+        }
+        .blog-post-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        .blog-post:hover .blog-post-image img {
+            transform: scale(1.05);
+        }
+        .blog-category {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: var(--warm-orange);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .blog-date {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--text-dark);
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .blog-content {
+            padding: 2rem;
+        }
+        .blog-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+        .blog-title:hover {
+            color: var(--primary-green);
+        }
+        .blog-excerpt {
+            color: var(--text-light);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        .blog-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+        .blog-author {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-light);
+        }
+        .blog-stats {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-light);
+        }
+        .blog-stat {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .read-more {
+            color: var(--primary-green);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .read-more:hover {
+            gap: 0.8rem;
+        }
+        .blog-sidebar {
+            display: grid;
+            gap: 2rem;
+            height: fit-content;
+        }
+        .sidebar-widget {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px var(--shadow);
+        }
+        .widget-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--primary-green);
+            padding-bottom: 0.5rem;
+        }
+        .search-widget input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        .search-widget input:focus {
+            border-color: var(--primary-green);
+        }
+        .categories-list {
+            list-style: none;
+        }
+        .categories-list li {
+            margin-bottom: 0.8rem;
+        }
+        .categories-list a {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-light);
+            text-decoration: none;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f0f0f0;
+            transition: color 0.3s ease;
+        }
+        .categories-list a:hover {
+            color: var(--primary-green);
+        }
+        .category-count {
+            background: var(--primary-green);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 10px;
+            font-size: 0.8rem;
+        }
+        .recent-posts {
+            display: grid;
+            gap: 1rem;
+        }
+        .recent-post {
+            display: flex;
+            gap: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .recent-post:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        .recent-post-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .recent-post-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .recent-post-content h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.3rem;
+            line-height: 1.3;
+        }
+        .recent-post-content a {
+            text-decoration: none;
+            color: inherit;
+        }
+        .recent-post-content a:hover h4 {
+            color: var(--primary-green);
+        }
+        .recent-post-date {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+        .tags-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .tag {
+            background: var(--warm-beige);
+            color: var(--text-dark);
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+        .tag:hover {
+            background: var(--primary-green);
+            color: white;
+        }
+        .newsletter-widget {
+            background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+            color: white;
+            text-align: center;
+        }
+        .newsletter-widget .widget-title {
+            color: white;
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        .newsletter-form {
+            display: grid;
+            gap: 1rem;
+        }
+        .newsletter-form input {
+            padding: 0.8rem;
+            border: none;
+            border-radius: 20px;
+            outline: none;
+        }
+        .newsletter-form button {
+            background: var(--warm-orange);
+            color: white;
+            border: none;
+            padding: 0.8rem;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .newsletter-form button:hover {
+            background: #FF7043;
+            transform: translateY(-2px);
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+        .pagination button {
+            padding: 0.8rem 1.2rem;
+            border: 2px solid var(--primary-green);
+            background: transparent;
+            color: var(--primary-green);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        .pagination button:hover,
+        .pagination button.active {
+            background: var(--primary-green);
+            color: white;
+        }
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        @media (max-width: 768px) {
+            .blog-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            .blog-filters {
+                justify-content: center;
+            }
+            .blog-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="assets/images/freshplug-logo.svg" alt="Freshplug Organics Poultry Farm" class="logo">
+                <h2>Freshplug Organics</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="about.html" class="nav-link">About Us</a></li>
+                <li class="nav-item"><a href="products.html" class="nav-link">Products</a></li>
+                <li class="nav-item"><a href="process.html" class="nav-link">Our Process</a></li>
+                <li class="nav-item"><a href="gallery.html" class="nav-link">Gallery</a></li>
+                <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+                <li class="nav-item"><a href="shop.html" class="nav-link shop-btn">Shop Now</a></li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Farm Blog</h1>
+            <p>Stories, tips, and insights from our organic poultry farm</p>
+            <div class="breadcrumb">
+                <a href="index.html">Home</a>
+                <span>/</span>
+                <span>Blog</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section class="blog-section">
+        <div class="container">
+            <!-- Blog Filters -->
+            <div class="blog-filters">
+                <button class="blog-filter active" data-category="all">All Posts</button>
+                <button class="blog-filter" data-category="farming-tips">Farming Tips</button>
+                <button class="blog-filter" data-category="recipes">Recipes</button>
+                <button class="blog-filter" data-category="farm-life">Farm Life</button>
+                <button class="blog-filter" data-category="sustainability">Sustainability</button>
+                <button class="blog-filter" data-category="health">Health & Nutrition</button>
+                <button class="blog-filter" data-category="news">Farm News</button>
+            </div>
+
+            <div class="blog-container">
+                <!-- Blog Posts -->
+                <div class="blog-main">
+                    <div class="blog-posts" id="blog-posts">
+                        <!-- Blog posts will be populated by JavaScript -->
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <div class="pagination" id="pagination">
+                        <button id="prev-btn" onclick="changePage(-1)">
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </button>
+                        <div id="page-numbers"></div>
+                        <button id="next-btn" onclick="changePage(1)">
+                            Next <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="blog-sidebar">
+                    <!-- Search Widget -->
+                    <div class="sidebar-widget search-widget">
+                        <h3 class="widget-title">Search Blog</h3>
+                        <input type="text" id="blog-search" placeholder="Search articles...">
+                    </div>
+
+                    <!-- Categories Widget -->
+                    <div class="sidebar-widget">
+                        <h3 class="widget-title">Categories</h3>
+                        <ul class="categories-list">
+                            <li><a href="#" data-category="farming-tips">Farming Tips <span class="category-count">12</span></a></li>
+                            <li><a href="#" data-category="recipes">Recipes <span class="category-count">8</span></a></li>
+                            <li><a href="#" data-category="farm-life">Farm Life <span class="category-count">15</span></a></li>
+                            <li><a href="#" data-category="sustainability">Sustainability <span class="category-count">7</span></a></li>
+                            <li><a href="#" data-category="health">Health & Nutrition <span class="category-count">9</span></a></li>
+                            <li><a href="#" data-category="news">Farm News <span class="category-count">6</span></a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Recent Posts Widget -->
+                    <div class="sidebar-widget">
+                        <h3 class="widget-title">Recent Posts</h3>
+                        <div class="recent-posts" id="recent-posts">
+                            <!-- Recent posts will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Tags Widget -->
+                    <div class="sidebar-widget">
+                        <h3 class="widget-title">Popular Tags</h3>
+                        <div class="tags-cloud">
+                            <a href="#" class="tag">organic farming</a>
+                            <a href="#" class="tag">free range</a>
+                            <a href="#" class="tag">chicken care</a>
+                            <a href="#" class="tag">fresh eggs</a>
+                            <a href="#" class="tag">sustainable</a>
+                            <a href="#" class="tag">poultry health</a>
+                            <a href="#" class="tag">farm to table</a>
+                            <a href="#" class="tag">nutrition</a>
+                            <a href="#" class="tag">recipes</a>
+                            <a href="#" class="tag">farming tips</a>
+                        </div>
+                    </div>
+
+                    <!-- Newsletter Widget -->
+                    <div class="sidebar-widget newsletter-widget">
+                        <h3 class="widget-title">Stay Updated</h3>
+                        <p style="margin-bottom: 1rem; opacity: 0.9;">Get the latest farm updates and tips delivered to your inbox.</p>
+                        <form class="newsletter-form" id="sidebar-newsletter">
+                            <input type="email" placeholder="Your email address" required>
+                            <button type="submit">Subscribe Now</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <img src="assets/images/freshplug-logo-small.svg" alt="Freshplug Organics Poultry Farm">
+                        <h3>Freshplug Organics</h3>
+                    </div>
+                    <p>Premium organic poultry products from our farm to your table.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="products.html">Products</a></li>
+                        <li><a href="shop.html">Shop Online</a></li>
+                        <li><a href="gallery.html">Gallery</a></li>
+                        <li><a href="blog.html">Farm Blog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Products</h4>
+                    <ul>
+                        <li><a href="shop.html#eggs">Fresh Eggs</a></li>
+                        <li><a href="shop.html#chicken">Organic Chicken</a></li>
+                        <li><a href="shop.html#turkey">Turkey</a></li>
+                        <li><a href="shop.html#live">Live Chickens</a></li>
+                        <li><a href="shop.html#chicks">Day-old Chicks</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <div class="contact-info">
+                        <p><i class="fas fa-map-marker-alt"></i> 123 Farm Road, Countryside, ST 12345</p>
+                        <p><i class="fas fa-phone"></i> +254 714 221885</p>
+                        <p><i class="fas fa-envelope"></i> info@freshplugorganics.com</p>
+                        <p><i class="fas fa-clock"></i> Mon-Sat: 8AM-6PM</p>
+                    </div>
+                    <a href="https://wa.me/254714221885" class="whatsapp-btn">
+                        <i class="fab fa-whatsapp"></i> WhatsApp Us
+                    </a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; <span id="currentYear">2024</span> Freshplug Organics Poultry Farm. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                    <a href="faq.html">FAQ</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Float Button -->
+    <div class="whatsapp-float">
+        <a href="https://wa.me/254714221885" target="_blank">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+    </div>
+
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/blog.js"></script>
+</body>
+</html>

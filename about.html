@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Learn about Freshplug Organics Poultry Farm - our story, mission, organic farming practices, and commitment to sustainable agriculture.">
+    <title>About Us - Freshplug Organics Poultry Farm</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
+            color: white;
+            padding: 8rem 0 4rem;
+            text-align: center;
+            margin-top: 80px;
+        }
+        .page-header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .breadcrumb {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .breadcrumb a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+        }
+        .breadcrumb a:hover {
+            color: white;
+        }
+        .about-section {
+            padding: 4rem 0;
+        }
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+        .about-text h2 {
+            font-size: 2.5rem;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+        }
+        .about-text p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        .stat-card {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px var(--shadow);
+        }
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary-green);
+        }
+        .stat-label {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+        .team-section {
+            background: var(--warm-beige);
+        }
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        .team-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px var(--shadow);
+            text-align: center;
+        }
+        .team-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+        .team-info {
+            padding: 1.5rem;
+        }
+        .team-info h3 {
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+        .team-info .role {
+            color: var(--primary-green);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .value-card {
+            text-align: center;
+            padding: 2rem;
+        }
+        .value-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--primary-green);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1.5rem;
+        }
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .timeline-item {
+            display: flex;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+        .timeline-year {
+            background: var(--primary-green);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            font-weight: 600;
+            min-width: 100px;
+            text-align: center;
+        }
+        .timeline-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-left: 2rem;
+            box-shadow: 0 10px 30px var(--shadow);
+            flex: 1;
+        }
+        .certifications {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin: 3rem 0;
+            flex-wrap: wrap;
+        }
+        .cert-badge {
+            text-align: center;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px var(--shadow);
+        }
+        .cert-badge img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 1rem;
+        }
+        @media (max-width: 768px) {
+            .about-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            .page-header h1 {
+                font-size: 2.5rem;
+            }
+            .timeline-item {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .timeline-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="assets/images/freshplug-logo.svg" alt="Freshplug Organics Poultry Farm" class="logo">
+                <h2>Freshplug Organics</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="about.html" class="nav-link active">About Us</a></li>
+                <li class="nav-item"><a href="products.html" class="nav-link">Products</a></li>
+                <li class="nav-item"><a href="process.html" class="nav-link">Our Process</a></li>
+                <li class="nav-item"><a href="gallery.html" class="nav-link">Gallery</a></li>
+                <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+                <li class="nav-item"><a href="shop.html" class="nav-link shop-btn">Shop Now</a></li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>About Freshplug Organics</h1>
+            <p>Committed to sustainable farming and premium organic poultry</p>
+            <div class="breadcrumb">
+                <a href="index.html">Home</a>
+                <span>/</span>
+                <span>About Us</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Story -->
+    <section class="about-section">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-text">
+                    <h2>Our Story</h2>
+                    <p>Founded in 2015, Freshplug Organics Poultry Farm began as a small family venture with a simple mission: to provide the freshest, highest-quality organic poultry products while maintaining the highest standards of animal welfare and environmental sustainability.</p>
+                    <p>What started as a passion project with just 50 hens has grown into a thriving operation that serves hundreds of satisfied customers throughout the region. Our commitment to organic practices, transparent farming methods, and community engagement has made us a trusted name in sustainable agriculture.</p>
+                    <p>Today, we're proud to be certified organic and continue to lead by example in responsible farming practices that benefit our animals, our customers, and our planet.</p>
+                </div>
+                <div class="about-image">
+                    <img src="assets/images/farm-story.jpg" alt="Freshplug Organics Farm Story">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics -->
+    <section class="about-section" style="background: var(--warm-beige);">
+        <div class="container">
+            <h2 class="section-title">Our Impact</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">2000+</div>
+                    <div class="stat-label">Happy Chickens</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Satisfied Customers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">50</div>
+                    <div class="stat-label">Acres of Organic Land</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">9</div>
+                    <div class="stat-label">Years of Excellence</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission & Values -->
+    <section class="about-section">
+        <div class="container">
+            <h2 class="section-title">Our Mission & Values</h2>
+            <div class="about-grid">
+                <div class="about-text">
+                    <h3>Our Mission</h3>
+                    <p>To provide premium organic poultry products through sustainable farming practices that prioritize animal welfare, environmental stewardship, and community health. We believe that healthy, happy animals produce the best products, and that responsible farming creates a better world for everyone.</p>
+                </div>
+                <div class="values-grid">
+                    <div class="value-card">
+                        <div class="value-icon">
+                            <i class="fas fa-leaf"></i>
+                        </div>
+                        <h3>Sustainability</h3>
+                        <p>We use eco-friendly practices that protect our environment for future generations.</p>
+                    </div>
+                    <div class="value-card">
+                        <div class="value-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <h3>Animal Welfare</h3>
+                        <p>Our animals live in spacious, natural environments with the highest care standards.</p>
+                    </div>
+                    <div class="value-card">
+                        <div class="value-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <h3>Quality</h3>
+                        <p>We maintain rigorous quality standards in everything we do, from feed to final product.</p>
+                    </div>
+                    <div class="value-card">
+                        <div class="value-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>Community</h3>
+                        <p>We're committed to supporting our local community and building lasting relationships.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Meet Our Team -->
+    <section class="about-section team-section">
+        <div class="container">
+            <h2 class="section-title">Meet Our Team</h2>
+            <div class="team-grid">
+                <div class="team-card">
+                    <img src="assets/images/team-john.jpg" alt="John Anderson">
+                    <div class="team-info">
+                        <h3>John Anderson</h3>
+                        <div class="role">Farm Owner & Manager</div>
+                        <p>With over 20 years in sustainable agriculture, John leads our farm operations and ensures our commitment to organic practices.</p>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <img src="assets/images/team-mary.jpg" alt="Mary Anderson">
+                    <div class="team-info">
+                        <h3>Mary Anderson</h3>
+                        <div class="role">Animal Welfare Specialist</div>
+                        <p>Mary oversees the health and wellbeing of all our animals, ensuring they receive the best care possible.</p>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <img src="assets/images/team-david.jpg" alt="David Chen">
+                    <div class="team-info">
+                        <h3>David Chen</h3>
+                        <div class="role">Organic Certification Manager</div>
+                        <p>David manages our organic certification and quality control processes, maintaining our high standards.</p>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <img src="assets/images/team-sarah.jpg" alt="Sarah Johnson">
+                    <div class="team-info">
+                        <h3>Sarah Johnson</h3>
+                        <div class="role">Customer Relations Manager</div>
+                        <p>Sarah ensures our customers receive exceptional service and stays connected with our community.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Journey Timeline -->
+    <section class="about-section">
+        <div class="container">
+            <h2 class="section-title">Our Journey</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-year">2015</div>
+                    <div class="timeline-content">
+                        <h3>Humble Beginnings</h3>
+                        <p>Started with 50 heritage breed hens on 5 acres of land, focusing on pasture-raised, organic practices from day one.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2017</div>
+                    <div class="timeline-content">
+                        <h3>Organic Certification</h3>
+                        <p>Achieved USDA Organic certification after two years of rigorous compliance with organic standards.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2019</div>
+                    <div class="timeline-content">
+                        <h3>Farm Expansion</h3>
+                        <p>Expanded to 25 acres and increased our flock to 500 birds, adding turkey and duck production.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2021</div>
+                    <div class="timeline-content">
+                        <h3>Community Recognition</h3>
+                        <p>Received the "Sustainable Farm of the Year" award from the State Agriculture Department.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2024</div>
+                    <div class="timeline-content">
+                        <h3>Continued Growth</h3>
+                        <p>Now operating on 50 acres with over 2000 birds, serving 500+ customers with farm-fresh products.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Certifications -->
+    <section class="about-section" style="background: var(--warm-beige);">
+        <div class="container">
+            <h2 class="section-title">Our Certifications</h2>
+            <div class="certifications">
+                <div class="cert-badge">
+                    <img src="assets/images/usda-organic.png" alt="USDA Organic">
+                    <h4>USDA Organic</h4>
+                    <p>Certified since 2017</p>
+                </div>
+                <div class="cert-badge">
+                    <img src="assets/images/animal-welfare-approved.png" alt="Animal Welfare Approved">
+                    <h4>Animal Welfare Approved</h4>
+                    <p>Highest welfare standards</p>
+                </div>
+                <div class="cert-badge">
+                    <img src="assets/images/certified-humane.png" alt="Certified Humane">
+                    <h4>Certified Humane</h4>
+                    <p>Humane treatment verified</p>
+                </div>
+                <div class="cert-badge">
+                    <img src="assets/images/local-harvest.png" alt="Local Harvest Member">
+                    <h4>Local Harvest</h4>
+                    <p>Proud member since 2016</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="about-section">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-text">
+                    <h2>Visit Our Farm</h2>
+                    <p>We believe in transparency and invite you to see our farming practices firsthand. Schedule a farm tour to meet our animals, learn about our processes, and experience the difference that organic, sustainable farming makes.</p>
+                    <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                        <a href="contact.html" class="btn btn-primary">Schedule a Tour</a>
+                        <a href="shop.html" class="btn btn-secondary">Shop Our Products</a>
+                    </div>
+                </div>
+                <div class="about-image">
+                    <img src="assets/images/farm-visit.jpg" alt="Visit Our Farm">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <img src="assets/images/freshplug-logo-small.svg" alt="Freshplug Organics Poultry Farm">
+                        <h3>Freshplug Organics</h3>
+                    </div>
+                    <p>Premium organic poultry products from our farm to your table. Committed to sustainable farming and exceptional quality.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="products.html">Products</a></li>
+                        <li><a href="shop.html">Shop Online</a></li>
+                        <li><a href="gallery.html">Gallery</a></li>
+                        <li><a href="blog.html">Farm Blog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Products</h4>
+                    <ul>
+                        <li><a href="shop.html#eggs">Fresh Eggs</a></li>
+                        <li><a href="shop.html#chicken">Organic Chicken</a></li>
+                        <li><a href="shop.html#turkey">Turkey</a></li>
+                        <li><a href="shop.html#live">Live Chickens</a></li>
+                        <li><a href="shop.html#chicks">Day-old Chicks</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <div class="contact-info">
+                        <p><i class="fas fa-map-marker-alt"></i> 123 Farm Road, Countryside, ST 12345</p>
+                        <p><i class="fas fa-phone"></i> (555) 123-4567</p>
+                        <p><i class="fas fa-envelope"></i> info@freshplugorganics.com</p>
+                        <p><i class="fas fa-clock"></i> Mon-Sat: 8AM-6PM</p>
+                    </div>
+                    <a href="https://wa.me/254714221885" class="whatsapp-btn">
+                        <i class="fab fa-whatsapp"></i> WhatsApp Us
+                    </a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; <span id="currentYear">2024</span> Freshplug Organics Poultry Farm. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                    <a href="faq.html">FAQ</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Float Button -->
+    <div class="whatsapp-float">
+        <a href="https://wa.me/254714221885" target="_blank">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+    </div>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

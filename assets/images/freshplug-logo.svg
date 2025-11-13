@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="250" height="80" viewBox="0 0 250 80" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="40" cy="40" r="35" fill="#2e7d32" stroke="#1b5e20" stroke-width="2"/>
+  
+  <!-- Chicken Silhouette -->
+  <g transform="translate(20, 25)">
+    <!-- Body -->
+    <ellipse cx="20" cy="20" rx="18" ry="12" fill="#fff"/>
+    <!-- Head -->
+    <circle cx="35" cy="12" r="8" fill="#fff"/>
+    <!-- Beak -->
+    <polygon points="42,12 48,10 45,15" fill="#ffb74d"/>
+    <!-- Eye -->
+    <circle cx="38" cy="10" r="2" fill="#333"/>
+    <!-- Comb -->
+    <path d="M35,4 Q32,2 30,4 Q33,1 35,4 Q37,1 40,4 Q38,2 35,4" fill="#f44336"/>
+    <!-- Wing -->
+    <ellipse cx="18" cy="18" rx="8" ry="5" fill="#e8f5e8" opacity="0.8"/>
+    <!-- Tail feathers -->
+    <path d="M5,15 Q2,12 8,18 Q5,20 2,25 Q8,22 10,25" fill="#e8f5e8"/>
+  </g>
+  
+  <!-- Company Name -->
+  <g font-family="Arial, sans-serif">
+    <!-- "FRESHPLUG" -->
+    <text x="85" y="25" font-size="18" font-weight="bold" fill="#2e7d32">FRESHPLUG</text>
+    <!-- "ORGANICS" -->
+    <text x="85" y="42" font-size="12" font-weight="normal" fill="#4caf50" letter-spacing="1px">ORGANICS</text>
+    <!-- "Poultry Farm" -->
+    <text x="85" y="55" font-size="10" font-weight="normal" fill="#666" letter-spacing="0.5px">POULTRY FARM</text>
+    <!-- Tagline -->
+    <text x="85" y="68" font-size="8" font-style="italic" fill="#888">Farm Fresh • Naturally Raised</text>
+  </g>
+  
+  <!-- Decorative elements -->
+  <g stroke="#4caf50" stroke-width="1" fill="none" opacity="0.6">
+    <!-- Small leaves -->
+    <path d="M75,35 Q80,30 85,35 Q80,40 75,35"/>
+    <path d="M75,45 Q80,40 85,45 Q80,50 75,45"/>
+  </g>
+</svg>

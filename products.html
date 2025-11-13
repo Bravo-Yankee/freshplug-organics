@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Premium organic poultry products from Freshplug Organics - fresh eggs, organic chicken, live birds, and day-old chicks.">
+    <title>Our Products - Freshplug Organics Poultry Farm</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
+            color: white;
+            padding: 8rem 0 4rem;
+            text-align: center;
+            margin-top: 80px;
+        }
+        .products-hero {
+            padding: 4rem 0;
+            background: var(--warm-beige);
+            text-align: center;
+        }
+        .products-intro {
+            max-width: 800px;
+            margin: 0 auto;
+            color: var(--text-light);
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        .product-category {
+            padding: 4rem 0;
+        }
+        .product-category:nth-child(even) {
+            background: var(--warm-beige);
+        }
+        .category-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .category-title {
+            font-size: 2.5rem;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+        .category-description {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        .product-showcase {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+        .product-image {
+            text-align: center;
+        }
+        .product-image img {
+            width: 100%;
+            max-width: 400px;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+        .product-details h3 {
+            font-size: 1.8rem;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+        .product-features {
+            list-style: none;
+            margin: 1.5rem 0;
+        }
+        .product-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.8rem;
+            color: var(--text-light);
+        }
+        .product-features i {
+            color: var(--primary-green);
+            font-size: 1.1rem;
+        }
+        .price-range {
+            background: var(--primary-green);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            display: inline-block;
+            margin: 1rem 0;
+        }
+        .product-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .certifications {
+            padding: 3rem 0;
+            background: white;
+        }
+        .cert-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+        .cert-item {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px var(--shadow);
+        }
+        .cert-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--primary-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2rem;
+            color: white;
+        }
+        .comparison-section {
+            padding: 4rem 0;
+            background: var(--warm-beige);
+        }
+        .comparison-table {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px var(--shadow);
+            margin-top: 2rem;
+        }
+        .comparison-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .comparison-table th {
+            background: var(--primary-green);
+            color: white;
+            padding: 1.5rem;
+            text-align: left;
+            font-weight: 600;
+        }
+        .comparison-table td {
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .comparison-table tr:hover {
+            background: #f8f9fa;
+        }
+        .check-mark {
+            color: var(--primary-green);
+            font-weight: bold;
+        }
+        .cross-mark {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .seasonal-info {
+            padding: 3rem 0;
+            background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+            color: white;
+            text-align: center;
+        }
+        .seasonal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .seasonal-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .seasonal-item h4 {
+            margin-bottom: 1rem;
+        }
+        .ordering-info {
+            padding: 4rem 0;
+            text-align: center;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        .info-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px var(--shadow);
+            text-align: center;
+        }
+        .info-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--warm-orange);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+            color: white;
+        }
+        @media (max-width: 768px) {
+            .product-showcase {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            .product-actions {
+                justify-content: center;
+            }
+            .comparison-table {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="assets/images/freshplug-logo.svg" alt="Freshplug Organics Poultry Farm" class="logo">
+                <h2>Freshplug Organics</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="about.html" class="nav-link">About Us</a></li>
+                <li class="nav-item"><a href="products.html" class="nav-link active">Products</a></li>
+                <li class="nav-item"><a href="process.html" class="nav-link">Our Process</a></li>
+                <li class="nav-item"><a href="gallery.html" class="nav-link">Gallery</a></li>
+                <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+                <li class="nav-item"><a href="shop.html" class="nav-link shop-btn">Shop Now</a></li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Our Premium Products</h1>
+            <p>From farm-fresh eggs to healthy live birds - all raised with organic excellence</p>
+            <div class="breadcrumb">
+                <a href="index.html">Home</a>
+                <span>/</span>
+                <span>Products</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Hero -->
+    <section class="products-hero">
+        <div class="container">
+            <h2 class="section-title">Quality You Can Taste & Trust</h2>
+            <div class="products-intro">
+                <p>At Freshplug Organics, we specialize in premium organic poultry products that bring the best of farm-fresh quality to your table. Our commitment to sustainable farming practices ensures that every product meets the highest standards of nutrition, taste, and ethical production.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Fresh Organic Eggs -->
+    <section class="product-category">
+        <div class="container">
+            <div class="category-header">
+                <h2 class="category-title">Fresh Organic Eggs</h2>
+                <p class="category-description">Our signature product - farm-fresh eggs from free-range hens fed on 100% organic feed</p>
+            </div>
+            <div class="product-showcase">
+                <div class="product-image">
+                    <img src="assets/images/fresh-eggs-hero.jpg" alt="Fresh Organic Eggs" onerror="this.src='assets/images/placeholder.jpg'">
+                </div>
+                <div class="product-details">
+                    <h3>Premium Farm-Fresh Eggs</h3>
+                    <ul class="product-features">
+                        <li><i class="fas fa-check"></i> Free-range hens with outdoor access</li>
+                        <li><i class="fas fa-check"></i> 100% organic feed - no GMOs</li>
+                        <li><i class="fas fa-check"></i> No antibiotics or hormones</li>
+                        <li><i class="fas fa-check"></i> Rich, golden yolks with superior nutrition</li>
+                        <li><i class="fas fa-check"></i> Collected daily for maximum freshness</li>
+                        <li><i class="fas fa-check"></i> Available in multiple sizes</li>
+                    </ul>
+                    <div class="price-range">KSH 400 - 500 per tray (30 eggs)</div>
+                    <p><strong>Available Sizes:</strong> Small, Medium, Large, Extra Large</p>
+                    <div class="product-actions">
+                        <a href="shop.html#eggs" class="btn btn-primary">Order Now</a>
+                        <a href="https://wa.me/254714221885?text=Hi! I'm interested in your fresh organic eggs" class="btn btn-secondary">
+                            <i class="fab fa-whatsapp"></i> WhatsApp
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Organic Chicken -->
+    <section class="product-category">
+        <div class="container">
+            <div class="category-header">
+                <h2 class="category-title">Organic Chicken</h2>
+                <p class="category-description">Premium organic chicken meat from birds raised in natural, stress-free environments</p>
+            </div>
+            <div class="product-showcase">
+                <div class="product-details">
+                    <h3>Farm-Raised Organic Chicken</h3>
+                    <ul class="product-features">
+                        <li><i class="fas fa-check"></i> Pasture-raised with room to roam</li>
+                        <li><i class="fas fa-check"></i> Organic feed and natural foraging</li>
+                        <li><i class="fas fa-check"></i> No growth hormones or antibiotics</li>
+                        <li><i class="fas fa-check"></i> Superior flavor and texture</li>
+                        <li><i class="fas fa-check"></i> Processed hygienically on-farm</li>
+                        <li><i class="fas fa-check"></i> Available whole or cut portions</li>
+                    </ul>
+                    <div class="price-range">KSH 650 - 800 per kg</div>
+                    <p><strong>Available Cuts:</strong> Whole chicken, breast, thighs, wings, drumsticks</p>
+                    <div class="product-actions">
+                        <a href="shop.html#chicken" class="btn btn-primary">Order Now</a>
+                        <a href="https://wa.me/254714221885?text=Hi! I'm interested in your organic chicken" class="btn btn-secondary">
+                            <i class="fab fa-whatsapp"></i> WhatsApp
+                        </a>
+                    </div>
+                </div>
+                <div class="product-image">
+                    <img src="assets/images/organic-chicken-hero.jpg" alt="Organic Chicken" onerror="this.src='assets/images/placeholder.jpg'">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Chickens -->
+    <section class="product-category">
+        <div class="container">
+            <div class="category-header">
+                <h2 class="category-title">Live Chickens</h2>
+                <p class="category-description">Healthy, well-bred chickens for breeding, laying, and backyard farming</p>
+            </div>
+            <div class="product-showcase">
+                <div class="product-image">
+                    <img src="assets/images/live-chickens-hero.jpg" alt="Live Chickens" onerror="this.src='assets/images/placeholder.jpg'">
+                </div>
+                <div class="product-details">
+                    <h3>Quality Live Birds</h3>
+                    <ul class="product-features">
+                        <li><i class="fas fa-check"></i> Multiple breeds available</li>
+                        <li><i class="fas fa-check"></i> Vaccinated and health-checked</li>
+                        <li><i class="fas fa-check"></i> Excellent laying capacity</li>
+                        <li><i class="fas fa-check"></i> Hardy, disease-resistant birds</li>
+                        <li><i class="fas fa-check"></i> Perfect for backyard farming</li>
+                        <li><i class="fas fa-check"></i> Expert advice provided</li>
+                    </ul>
+                    <div class="price-range">KSH 1,200 - 2,500 each</div>
+                    <p><strong>Popular Breeds:</strong> Rhode Island Red, Kuroiler, Kienyeji, New Hampshire</p>
+                    <div class="product-actions">
+                        <a href="shop.html#live" class="btn btn-primary">Order Now</a>
+                        <a href="https://wa.me/254714221885?text=Hi! I'm interested in your live chickens" class="btn btn-secondary">
+                            <i class="fab fa-whatsapp"></i> WhatsApp
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Day-old Chicks -->
+    <section class="product-category">
+        <div class="container">
+            <div class="category-header">
+                <h2 class="category-title">Day-old Chicks</h2>
+                <p class="category-description">Fresh, healthy day-old chicks for raising your own flock from the beginning</p>
+            </div>
+            <div class="product-showcase">
+                <div class="product-details">
+                    <h3>Premium Day-old Chicks</h3>
+                    <ul class="product-features">
+                        <li><i class="fas fa-check"></i> High-quality breeding stock</li>
+                        <li><i class="fas fa-check"></i> Excellent survival rates</li>
+                        <li><i class="fas fa-check"></i> Fast growth and good feed conversion</li>
+                        <li><i class="fas fa-check"></i> Vaccinated at hatchery</li>
+                        <li><i class="fas fa-check"></i> Available year-round</li>
+                        <li><i class="fas fa-check"></i> Brooding guidance provided</li>
+                    </ul>
+                    <div class="price-range">KSH 120 - 180 each</div>
+                    <p><strong>Minimum Order:</strong> 50 chicks (special arrangements for smaller orders)</p>
+                    <div class="product-actions">
+                        <a href="shop.html#chicks" class="btn btn-primary">Order Now</a>
+                        <a href="https://wa.me/254714221885?text=Hi! I'm interested in your day-old chicks" class="btn btn-secondary">
+                            <i class="fab fa-whatsapp"></i> WhatsApp
+                        </a>
+                    </div>
+                </div>
+                <div class="product-image">
+                    <img src="assets/images/day-old-chicks-hero.jpg" alt="Day-old Chicks" onerror="this.src='assets/images/placeholder.jpg'">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Certifications -->
+    <section class="certifications">
+        <div class="container">
+            <h2 class="section-title">Our Quality Certifications</h2>
+            <div class="cert-grid">
+                <div class="cert-item">
+                    <div class="cert-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h3>Organic Certified</h3>
+                    <p>USDA and local organic certification ensuring no synthetic chemicals, GMOs, or artificial additives</p>
+                </div>
+                <div class="cert-item">
+                    <div class="cert-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3>Animal Welfare Approved</h3>
+                    <p>Highest welfare standards ensuring our animals live in natural, stress-free environments</p>
+                </div>
+                <div class="cert-item">
+                    <div class="cert-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Food Safety Certified</h3>
+                    <p>Rigorous food safety protocols ensuring clean, safe products from farm to table</p>
+                </div>
+                <div class="cert-item">
+                    <div class="cert-icon">
+                        <i class="fas fa-recycle"></i>
+                    </div>
+                    <h3>Sustainability Verified</h3>
+                    <p>Environmentally responsible farming practices that protect our planet for future generations</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Section -->
+    <section class="comparison-section">
+        <div class="container">
+            <h2 class="section-title">Why Choose Freshplug Organics?</h2>
+            <p style="text-align: center; color: var(--text-light); margin-bottom: 2rem;">
+                See how our organic products compare to conventional alternatives
+            </p>
+            <div class="comparison-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Features</th>
+                            <th>Freshplug Organics</th>
+                            <th>Conventional Farms</th>
+                            <th>Store-Bought</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Organic Feed</strong></td>
+                            <td><span class="check-mark">✓ 100% Organic</span></td>
+                            <td><span class="cross-mark">✗ Conventional</span></td>
+                            <td><span class="cross-mark">✗ Unknown</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Free-Range Access</strong></td>
+                            <td><span class="check-mark">✓ Daily Outdoor Access</span></td>
+                            <td><span class="cross-mark">✗ Limited/None</span></td>
+                            <td><span class="cross-mark">✗ Cage Systems</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>No Antibiotics</strong></td>
+                            <td><span class="check-mark">✓ Never Used</span></td>
+                            <td><span class="cross-mark">✗ Routinely Used</span></td>
+                            <td><span class="cross-mark">✗ Often Used</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Freshness</strong></td>
+                            <td><span class="check-mark">✓ Same Day Collection</span></td>
+                            <td>2-3 Days</td>
+                            <td>1-4 Weeks Old</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Traceability</strong></td>
+                            <td><span class="check-mark">✓ Complete Farm History</span></td>
+                            <td>Partial</td>
+                            <td><span class="cross-mark">✗ Unknown Origin</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Environmental Impact</strong></td>
+                            <td><span class="check-mark">✓ Sustainable Practices</span></td>
+                            <td>Standard</td>
+                            <td>High Carbon Footprint</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seasonal Availability -->
+    <section class="seasonal-info">
+        <div class="container">
+            <h2>Seasonal Product Availability</h2>
+            <p>While most products are available year-round, some items have peak seasons</p>
+            <div class="seasonal-grid">
+                <div class="seasonal-item">
+                    <h4>Year-Round</h4>
+                    <p>Fresh eggs, live chickens, day-old chicks available every day of the year</p>
+                </div>
+                <div class="seasonal-item">
+                    <h4>Peak Season (Nov-Feb)</h4>
+                    <p>Turkeys, special breeds, and holiday orders have highest availability</p>
+                </div>
+                <div class="seasonal-item">
+                    <h4>Breeding Season (Mar-Aug)</h4>
+                    <p>Best time for purchasing breeding stock and starting new flocks</p>
+                </div>
+                <div class="seasonal-item">
+                    <h4>Custom Orders</h4>
+                    <p>Special requests and bulk orders can be arranged with advance notice</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ordering Information -->
+    <section class="ordering-info">
+        <div class="container">
+            <h2 class="section-title">How to Order</h2>
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="info-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <h3>Online Shop</h3>
+                    <p>Browse our full catalog and place orders directly through our online shop with secure checkout</p>
+                    <a href="shop.html" class="btn btn-primary" style="margin-top: 1rem;">Visit Shop</a>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <h3>WhatsApp Orders</h3>
+                    <p>Quick and easy ordering through WhatsApp with instant confirmation and personalized service</p>
+                    <a href="https://wa.me/254714221885" class="btn btn-primary" style="margin-top: 1rem;">Message Us</a>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <h3>Phone Orders</h3>
+                    <p>Call us directly to place orders, get advice, or discuss custom requirements</p>
+                    <a href="tel:+254714221885" class="btn btn-primary" style="margin-top: 1rem;">Call Now</a>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <h3>Farm Visits</h3>
+                    <p>Visit our farm store for direct purchases and to see our operation firsthand</p>
+                    <a href="contact.html" class="btn btn-primary" style="margin-top: 1rem;">Get Directions</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <img src="assets/images/freshplug-logo-small.svg" alt="Freshplug Organics Poultry Farm">
+                        <h3>Freshplug Organics</h3>
+                    </div>
+                    <p>Premium organic poultry products from our farm to your table. Committed to sustainable farming and exceptional quality.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Our Products</h4>
+                    <ul>
+                        <li><a href="#eggs">Fresh Organic Eggs</a></li>
+                        <li><a href="#chicken">Organic Chicken</a></li>
+                        <li><a href="#live">Live Chickens</a></li>
+                        <li><a href="#chicks">Day-old Chicks</a></li>
+                        <li><a href="shop.html">Browse All Products</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="process.html">Our Process</a></li>
+                        <li><a href="gallery.html">Gallery</a></li>
+                        <li><a href="blog.html">Farm Blog</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <div class="contact-info">
+                        <p><i class="fas fa-map-marker-alt"></i> 123 Farm Road, Countryside, ST 12345</p>
+                        <p><i class="fas fa-phone"></i> +254 714 221885</p>
+                        <p><i class="fas fa-envelope"></i> info@freshplugorganics.com</p>
+                        <p><i class="fas fa-clock"></i> Mon-Sat: 8AM-6PM</p>
+                    </div>
+                    <a href="https://wa.me/254714221885" class="whatsapp-btn">
+                        <i class="fab fa-whatsapp"></i> WhatsApp Us
+                    </a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; <span id="currentYear">2024</span> Freshplug Organics Poultry Farm. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                    <a href="faq.html">FAQ</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Float Button -->
+    <div class="whatsapp-float">
+        <a href="https://wa.me/254714221885" target="_blank">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+    </div>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

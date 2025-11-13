@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Shop premium organic poultry products - fresh eggs, organic chicken, live birds, and more from Freshplug Organics Poultry Farm.">
+    <title>Shop - Freshplug Organics Poultry Farm</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
+            color: white;
+            padding: 8rem 0 4rem;
+            text-align: center;
+            margin-top: 80px;
+        }
+        .shop-filters {
+            background: white;
+            padding: 2rem 0;
+            border-bottom: 1px solid #eee;
+            position: sticky;
+            top: 80px;
+            z-index: 100;
+        }
+        .filter-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        .filter-tabs {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .filter-tab {
+            padding: 0.8rem 1.5rem;
+            border: 2px solid var(--primary-green);
+            background: transparent;
+            color: var(--primary-green);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        .filter-tab.active,
+        .filter-tab:hover {
+            background: var(--primary-green);
+            color: white;
+        }
+        .search-sort {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        .search-box {
+            position: relative;
+        }
+        .search-box input {
+            padding: 0.8rem 2.5rem 0.8rem 1rem;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        .search-box input:focus {
+            border-color: var(--primary-green);
+        }
+        .search-box i {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+        .sort-select {
+            padding: 0.8rem;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            cursor: pointer;
+        }
+        .shop-content {
+            padding: 3rem 0;
+        }
+        .products-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .product-item {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px var(--shadow);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .product-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+        }
+        .product-badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: var(--warm-orange);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 2;
+        }
+        .product-badge.organic {
+            background: var(--primary-green);
+        }
+        .product-badge.fresh {
+            background: var(--golden-yellow);
+        }
+        .product-image {
+            position: relative;
+            overflow: hidden;
+        }
+        .product-image img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        .product-item:hover .product-image img {
+            transform: scale(1.05);
+        }
+        .quick-view {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .product-item:hover .quick-view {
+            transform: translate(-50%, -50%) scale(1);
+        }
+        .product-details {
+            padding: 1.5rem;
+        }
+        .product-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+        .product-description {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        .product-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .product-price {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--warm-orange);
+        }
+        .product-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .stars {
+            color: var(--golden-yellow);
+            font-size: 0.9rem;
+        }
+        .rating-count {
+            color: var(--text-light);
+            font-size: 0.8rem;
+        }
+        .product-options {
+            margin-bottom: 1rem;
+        }
+        .option-group {
+            margin-bottom: 0.8rem;
+        }
+        .option-label {
+            font-weight: 500;
+            color: var(--text-dark);
+            margin-bottom: 0.3rem;
+            display: block;
+        }
+        .option-select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+        }
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .quantity-btn {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .quantity-input {
+            width: 60px;
+            text-align: center;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            outline: none;
+        }
+        .product-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .add-to-cart {
+            flex: 1;
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            padding: 0.8rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .add-to-cart:hover {
+            background: var(--secondary-green);
+            transform: translateY(-2px);
+        }
+        .wishlist-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--primary-green);
+            background: white;
+            color: var(--primary-green);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .wishlist-btn:hover {
+            background: var(--primary-green);
+            color: white;
+        }
+        .cart-sidebar {
+            position: fixed;
+            right: -400px;
+            top: 0;
+            width: 400px;
+            height: 100vh;
+            background: white;
+            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
+            z-index: 10000;
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+        .cart-sidebar.active {
+            right: 0;
+        }
+        .cart-header {
+            padding: 2rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .cart-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        .cart-items {
+            padding: 1rem;
+        }
+        .cart-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        .cart-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .cart-item-details {
+            flex: 1;
+        }
+        .cart-item-name {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+        .cart-item-price {
+            color: var(--warm-orange);
+            font-weight: 600;
+        }
+        .cart-footer {
+            padding: 2rem;
+            border-top: 1px solid #eee;
+            background: #f9f9f9;
+        }
+        .cart-total {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .checkout-btn {
+            width: 100%;
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+        .cart-toggle {
+            position: fixed;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--warm-orange);
+            color: white;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .delivery-info {
+            background: var(--warm-beige);
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        .delivery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        .delivery-item {
+            text-align: center;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .delivery-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-green);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 1rem;
+        }
+        @media (max-width: 768px) {
+            .filter-container {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+            }
+            .filter-tabs {
+                justify-content: center;
+            }
+            .search-sort {
+                justify-content: center;
+            }
+            .products-container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            .cart-sidebar {
+                width: 100%;
+                right: -100%;
+            }
+            .cart-toggle {
+                bottom: 80px;
+                top: auto;
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="assets/images/freshplug-logo.svg" alt="Freshplug Organics Poultry Farm" class="logo">
+                <h2>Freshplug Organics</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="about.html" class="nav-link">About Us</a></li>
+                <li class="nav-item"><a href="products.html" class="nav-link">Products</a></li>
+                <li class="nav-item"><a href="process.html" class="nav-link">Our Process</a></li>
+                <li class="nav-item"><a href="gallery.html" class="nav-link">Gallery</a></li>
+                <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+                <li class="nav-item"><a href="shop.html" class="nav-link shop-btn active">Shop Now</a></li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Shop Our Products</h1>
+            <p>Fresh, organic poultry products delivered to your door</p>
+        </div>
+    </section>
+
+    <!-- Shop Filters -->
+    <section class="shop-filters">
+        <div class="container">
+            <div class="filter-container">
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-category="all">All Products</button>
+                    <button class="filter-tab" data-category="eggs">Fresh Eggs</button>
+                    <button class="filter-tab" data-category="chicken">Chicken</button>
+                    <button class="filter-tab" data-category="turkey">Turkey</button>
+                    <button class="filter-tab" data-category="live">Live Birds</button>
+                    <button class="filter-tab" data-category="chicks">Day-old Chicks</button>
+                </div>
+                <div class="search-sort">
+                    <div class="search-box">
+                        <input type="text" placeholder="Search products..." id="product-search">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <select class="sort-select" id="sort-products">
+                        <option value="name">Sort by Name</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="rating">Highest Rated</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Shop Content -->
+    <section class="shop-content">
+        <div class="container">
+            <div class="products-container" id="products-container">
+                <!-- Product items will be dynamically generated -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Delivery Information -->
+    <section class="delivery-info">
+        <div class="container">
+            <h2 class="section-title">Delivery & Pickup Information</h2>
+            <div class="delivery-grid">
+                <div class="delivery-item">
+                    <div class="delivery-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <h3>Free Local Delivery</h3>
+                    <p>Free delivery within 20 miles for orders over KSH 3,000</p>
+                </div>
+                <div class="delivery-item">
+                    <div class="delivery-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Same-Day Pickup</h3>
+                    <p>Order by 2 PM for same-day pickup at the farm</p>
+                </div>
+                <div class="delivery-item">
+                    <div class="delivery-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h3>Fresh Guarantee</h3>
+                    <p>All products guaranteed fresh or your money back</p>
+                </div>
+                <div class="delivery-item">
+                    <div class="delivery-icon">
+                        <i class="fas fa-calendar"></i>
+                    </div>
+                    <h3>Weekly Subscriptions</h3>
+                    <p>Set up weekly deliveries and save 10%</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Toggle Button -->
+    <button class="cart-toggle" id="cart-toggle">
+        <i class="fas fa-shopping-cart"></i>
+        <span class="cart-count" id="cart-count">0</span>
+    </button>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-sidebar" id="cart-sidebar">
+        <div class="cart-header">
+            <h3>Your Cart</h3>
+            <button class="cart-close" id="cart-close">&times;</button>
+        </div>
+        <div class="cart-items" id="cart-items">
+            <!-- Cart items will be dynamically generated -->
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                Total: KSH <span id="cart-total">0.00</span>
+            </div>
+            <button class="checkout-btn" onclick="proceedToCheckout()">Proceed to Checkout</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <img src="assets/images/freshplug-logo-small.svg" alt="Freshplug Organics Poultry Farm">
+                        <h3>Freshplug Organics</h3>
+                    </div>
+                    <p>Premium organic poultry products from our farm to your table.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="products.html">Products</a></li>
+                        <li><a href="shop.html">Shop Online</a></li>
+                        <li><a href="gallery.html">Gallery</a></li>
+                        <li><a href="blog.html">Farm Blog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Products</h4>
+                    <ul>
+                        <li><a href="shop.html#eggs">Fresh Eggs</a></li>
+                        <li><a href="shop.html#chicken">Organic Chicken</a></li>
+                        <li><a href="shop.html#turkey">Turkey</a></li>
+                        <li><a href="shop.html#live">Live Chickens</a></li>
+                        <li><a href="shop.html#chicks">Day-old Chicks</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <div class="contact-info">
+                        <p><i class="fas fa-map-marker-alt"></i> 123 Farm Road, Countryside, ST 12345</p>
+                        <p><i class="fas fa-phone"></i> (555) 123-4567</p>
+                        <p><i class="fas fa-envelope"></i> info@freshplugorganics.com</p>
+                        <p><i class="fas fa-clock"></i> Mon-Sat: 8AM-6PM</p>
+                    </div>
+                    <a href="https://wa.me/254714221885" class="whatsapp-btn">
+                        <i class="fab fa-whatsapp"></i> WhatsApp Us
+                    </a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; <span id="currentYear">2024</span> Freshplug Organics Poultry Farm. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                    <a href="faq.html">FAQ</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Float Button -->
+    <div class="whatsapp-float">
+        <a href="https://wa.me/15551234567" target="_blank">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+    </div>
+
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/shop.js"></script>
+</body>
+</html>

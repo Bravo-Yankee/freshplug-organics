@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Contact Freshplug Organics Poultry Farm - Get in touch for orders, farm visits, wholesale inquiries, or general information.">
+    <title>Contact Us - Freshplug Organics Poultry Farm</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
+            color: white;
+            padding: 8rem 0 4rem;
+            text-align: center;
+            margin-top: 80px;
+        }
+        .contact-section {
+            padding: 4rem 0;
+        }
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+        }
+        .contact-info {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px var(--shadow);
+        }
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        .contact-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-green);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        .contact-details h3 {
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .contact-details p {
+            color: var(--text-light);
+            margin-bottom: 0.3rem;
+        }
+        .contact-details a {
+            color: var(--primary-green);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .contact-details a:hover {
+            text-decoration: underline;
+        }
+        .contact-form {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px var(--shadow);
+        }
+        .form-group {
+            margin-bottom: 2rem;
+        }
+        .form-group label {
+            display: block;
+            color: var(--text-dark);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--primary-green);
+        }
+        .form-group textarea {
+            height: 120px;
+            resize: vertical;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .submit-btn {
+            width: 100%;
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            padding: 1.2rem;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+        .submit-btn:hover {
+            background: var(--secondary-green);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .map-section {
+            padding: 3rem 0;
+            background: var(--warm-beige);
+        }
+        .map-container {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px var(--shadow);
+        }
+        .map-placeholder {
+            width: 100%;
+            height: 400px;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 1.2rem;
+        }
+        .business-hours {
+            background: white;
+            padding: 3rem 0;
+        }
+        .hours-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .hours-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px var(--shadow);
+            text-align: center;
+        }
+        .hours-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--primary-green);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1.5rem;
+        }
+        .hours-table {
+            width: 100%;
+            margin-top: 1rem;
+        }
+        .hours-table th,
+        .hours-table td {
+            padding: 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        .hours-table th {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+        .hours-table td {
+            color: var(--text-light);
+        }
+        .social-section {
+            background: var(--primary-green);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+        .social-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .social-card {
+            padding: 1.5rem;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .social-card:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+        }
+        .social-card i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .social-card h3 {
+            margin-bottom: 0.5rem;
+        }
+        .social-card a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .form-success {
+            background: #d4edda;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            border: 1px solid #c3e6cb;
+            display: none;
+        }
+        .form-error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            border: 1px solid #f5c6cb;
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .contact-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .hours-grid {
+                grid-template-columns: 1fr;
+            }
+            .social-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 480px) {
+            .social-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="assets/images/freshplug-logo.svg" alt="Freshplug Organics Poultry Farm" class="logo">
+                <h2>Freshplug Organics</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="about.html" class="nav-link">About Us</a></li>
+                <li class="nav-item"><a href="products.html" class="nav-link">Products</a></li>
+                <li class="nav-item"><a href="process.html" class="nav-link">Our Process</a></li>
+                <li class="nav-item"><a href="gallery.html" class="nav-link">Gallery</a></li>
+                <li class="nav-item"><a href="contact.html" class="nav-link active">Contact</a></li>
+                <li class="nav-item"><a href="shop.html" class="nav-link shop-btn">Shop Now</a></li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Contact Us</h1>
+            <p>Get in touch for orders, inquiries, or to schedule a farm visit</p>
+            <div class="breadcrumb">
+                <a href="index.html">Home</a>
+                <span>/</span>
+                <span>Contact</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="container">
+            <div class="contact-grid">
+                <!-- Contact Information -->
+                <div class="contact-info">
+                    <h2 style="margin-bottom: 2rem; color: var(--text-dark);">Get in Touch</h2>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h3>Farm Address</h3>
+                            <p>123 Farm Road</p>
+                            <p>Countryside, ST 12345</p>
+                            <a href="https://maps.google.com/?q=123+Farm+Road+Countryside+ST+12345" target="_blank">Get Directions</a>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h3>Phone Number</h3>
+                            <p><a href="tel:+15551234567">(555) 123-4567</a></p>
+                            <p>Call us for immediate assistance</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h3>Email Address</h3>
+                            <p><a href="mailto:info@freshplugorganics.com">info@freshplugorganics.com</a></p>
+                            <p>We respond within 24 hours</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fab fa-whatsapp"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h3>WhatsApp</h3>
+                            <p><a href="https://wa.me/254714221885" target="_blank">+254 714 221885</a></p>
+                            <p>Quick responses for urgent inquiries</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Form -->
+                <div class="contact-form">
+                    <h2 style="margin-bottom: 2rem; color: var(--text-dark);">Send us a Message</h2>
+                    
+                    <div class="form-success" id="form-success">
+                        <i class="fas fa-check-circle"></i> Thank you! Your message has been sent successfully. We'll get back to you within 24 hours.
+                    </div>
+                    
+                    <div class="form-error" id="form-error">
+                        <i class="fas fa-exclamation-circle"></i> <span id="error-message">Please fill in all required fields.</span>
+                    </div>
+
+                    <form id="contact-form" novalidate>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="first-name">First Name *</label>
+                                <input type="text" id="first-name" name="firstName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="last-name">Last Name *</label>
+                                <input type="text" id="last-name" name="lastName" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="email">Email Address *</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Phone Number</label>
+                                <input type="tel" id="phone" name="phone">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="inquiry-type">Inquiry Type *</label>
+                            <select id="inquiry-type" name="inquiryType" required>
+                                <option value="">Select inquiry type</option>
+                                <option value="order">Product Order</option>
+                                <option value="wholesale">Wholesale Inquiry</option>
+                                <option value="farm-visit">Farm Visit Request</option>
+                                <option value="general">General Question</option>
+                                <option value="feedback">Feedback/Complaint</option>
+                                <option value="partnership">Partnership Opportunity</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="subject">Subject *</label>
+                            <input type="text" id="subject" name="subject" required placeholder="Brief subject of your inquiry">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message">Message *</label>
+                            <textarea id="message" name="message" required placeholder="Please provide details about your inquiry..."></textarea>
+                        </div>
+
+                        <button type="submit" class="submit-btn">
+                            <span class="btn-text">Send Message</span>
+                            <span class="btn-loading" style="display: none;">
+                                <i class="fas fa-spinner fa-spin"></i> Sending...
+                            </span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="map-section">
+        <div class="container">
+            <h2 class="section-title">Find Our Farm</h2>
+            <div class="map-container">
+                <!-- Google Maps Embed would go here -->
+                <div class="map-placeholder">
+                    <div>
+                        <i class="fas fa-map-marker-alt" style="font-size: 3rem; margin-bottom: 1rem; color: var(--primary-green);"></i>
+                        <br>
+                        Interactive Map Coming Soon
+                        <br>
+                        <small style="margin-top: 0.5rem; display: block;">
+                            <a href="https://maps.google.com/?q=123+Farm+Road+Countryside+ST+12345" target="_blank" style="color: var(--primary-green);">
+                                Click here for directions on Google Maps
+                            </a>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Business Hours -->
+    <section class="business-hours">
+        <div class="container">
+            <h2 class="section-title">Business Hours & Information</h2>
+            <div class="hours-grid">
+                <div class="hours-card">
+                    <div class="hours-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Farm Store Hours</h3>
+                    <table class="hours-table">
+                        <tr>
+                            <th>Monday - Friday</th>
+                            <td>8:00 AM - 6:00 PM</td>
+                        </tr>
+                        <tr>
+                            <th>Saturday</th>
+                            <td>8:00 AM - 4:00 PM</td>
+                        </tr>
+                        <tr>
+                            <th>Sunday</th>
+                            <td>Closed</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="hours-card">
+                    <div class="hours-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3>Farm Tours</h3>
+                    <p style="margin-bottom: 1rem; color: var(--text-light);">Guided tours available by appointment</p>
+                    <table class="hours-table">
+                        <tr>
+                            <th>Tuesday & Thursday</th>
+                            <td>2:00 PM - 4:00 PM</td>
+                        </tr>
+                        <tr>
+                            <th>Saturday</th>
+                            <td>10:00 AM - 2:00 PM</td>
+                        </tr>
+                        <tr>
+                            <th>Group Tours</th>
+                            <td>By Appointment</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="hours-card">
+                    <div class="hours-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <h3>Delivery Schedule</h3>
+                    <p style="margin-bottom: 1rem; color: var(--text-light);">Local delivery within 20 miles</p>
+                    <table class="hours-table">
+                        <tr>
+                            <th>Monday & Wednesday</th>
+                            <td>Morning Routes</td>
+                        </tr>
+                        <tr>
+                            <th>Friday</th>
+                            <td>Afternoon Routes</td>
+                        </tr>
+                        <tr>
+                            <th>Same Day Pickup</th>
+                            <td>Order by 2:00 PM</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Media -->
+    <section class="social-section">
+        <div class="container">
+            <h2>Follow Our Farm Journey</h2>
+            <p>Stay connected with daily farm life, new products, and special offers</p>
+            
+            <div class="social-grid">
+                <div class="social-card">
+                    <i class="fab fa-facebook"></i>
+                    <h3>Facebook</h3>
+                    <p>Daily updates and community</p>
+                    <a href="#" target="_blank">@FreshplugOrganics</a>
+                </div>
+                
+                <div class="social-card">
+                    <i class="fab fa-instagram"></i>
+                    <h3>Instagram</h3>
+                    <p>Beautiful farm photos</p>
+                    <a href="#" target="_blank">@freshplug_organics</a>
+                </div>
+                
+                <div class="social-card">
+                    <i class="fab fa-youtube"></i>
+                    <h3>YouTube</h3>
+                    <p>Farm tours and education</p>
+                    <a href="#" target="_blank">Freshplug Organics</a>
+                </div>
+                
+                <div class="social-card">
+                    <i class="fab fa-twitter"></i>
+                    <h3>Twitter</h3>
+                    <p>Quick updates and news</p>
+                    <a href="#" target="_blank">@FreshplugFarm</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <img src="assets/images/freshplug-logo-small.svg" alt="Freshplug Organics Poultry Farm">
+                        <h3>Freshplug Organics</h3>
+                    </div>
+                    <p>Premium organic poultry products from our farm to your table. Committed to sustainable farming and exceptional quality.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="products.html">Products</a></li>
+                        <li><a href="shop.html">Shop Online</a></li>
+                        <li><a href="gallery.html">Gallery</a></li>
+                        <li><a href="blog.html">Farm Blog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Products</h4>
+                    <ul>
+                        <li><a href="shop.html#eggs">Fresh Eggs</a></li>
+                        <li><a href="shop.html#chicken">Organic Chicken</a></li>
+                        <li><a href="shop.html#turkey">Turkey</a></li>
+                        <li><a href="shop.html#live">Live Chickens</a></li>
+                        <li><a href="shop.html#chicks">Day-old Chicks</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <div class="contact-info">
+                        <p><i class="fas fa-map-marker-alt"></i> 123 Farm Road, Countryside, ST 12345</p>
+                        <p><i class="fas fa-phone"></i> (555) 123-4567</p>
+                        <p><i class="fas fa-envelope"></i> info@freshplugorganics.com</p>
+                        <p><i class="fas fa-clock"></i> Mon-Sat: 8AM-6PM</p>
+                    </div>
+                    <a href="https://wa.me/254714221885" class="whatsapp-btn">
+                        <i class="fab fa-whatsapp"></i> WhatsApp Us
+                    </a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; <span id="currentYear">2024</span> Freshplug Organics Poultry Farm. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                    <a href="faq.html">FAQ</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Float Button -->
+    <div class="whatsapp-float">
+        <a href="https://wa.me/254714221885" target="_blank">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+    </div>
+
+    <script src="assets/js/main.js"></script>
+    <script>
+        // Contact form handling
+        document.getElementById('contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const formSuccess = document.getElementById('form-success');
+            const formError = document.getElementById('form-error');
+            const submitBtn = this.querySelector('.submit-btn');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const btnLoading = submitBtn.querySelector('.btn-loading');
+            
+            // Hide previous messages
+            formSuccess.style.display = 'none';
+            formError.style.display = 'none';
+            
+            // Validate form
+            if (!validateContactForm(formData)) {
+                return;
+            }
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            btnText.style.display = 'none';
+            btnLoading.style.display = 'inline';
+            
+            // Simulate form submission
+            setTimeout(() => {
+                // Hide loading state
+                submitBtn.disabled = false;
+                btnText.style.display = 'inline';
+                btnLoading.style.display = 'none';
+                
+                // Show success message
+                formSuccess.style.display = 'block';
+                
+                // Clear form
+                this.reset();
+                
+                // Scroll to success message
+                formSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // Send WhatsApp message (optional)
+                const inquiryType = formData.get('inquiryType');
+                const subject = formData.get('subject');
+                const message = formData.get('message');
+                const name = `${formData.get('firstName')} ${formData.get('lastName')}`;
+                const email = formData.get('email');
+                const phone = formData.get('phone') || 'Not provided';
+                
+                const whatsappMessage = `New ${inquiryType} inquiry from website:
+
+Name: ${name}
+Email: ${email}
+Phone: ${phone}
+Subject: ${subject}
+
+Message: ${message}`;
+                
+                // You could automatically send to WhatsApp or just show the success message
+                console.log('Form submitted:', whatsappMessage);
+                
+            }, 2000); // Simulate network delay
+        });
+        
+        function validateContactForm(formData) {
+            const requiredFields = ['firstName', 'lastName', 'email', 'inquiryType', 'subject', 'message'];
+            const formError = document.getElementById('form-error');
+            const errorMessage = document.getElementById('error-message');
+            
+            // Check required fields
+            for (const field of requiredFields) {
+                if (!formData.get(field) || formData.get(field).trim() === '') {
+                    const fieldLabel = document.querySelector(`label[for="${field.replace('Name', '-name').replace('Type', '-type')}"]`).textContent;
+                    errorMessage.textContent = `Please fill in the ${fieldLabel} field.`;
+                    formError.style.display = 'block';
+                    formError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    return false;
+                }
+            }
+            
+            // Validate email format
+            const email = formData.get('email');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                errorMessage.textContent = 'Please enter a valid email address.';
+                formError.style.display = 'block';
+                formError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return false;
+            }
+            
+            return true;
+        }
+        
+        // Auto-populate subject based on inquiry type
+        document.getElementById('inquiry-type').addEventListener('change', function() {
+            const subject = document.getElementById('subject');
+            const inquiryTypes = {
+                'order': 'Product Order Inquiry',
+                'wholesale': 'Wholesale Partnership Inquiry',
+                'farm-visit': 'Farm Visit Request',
+                'general': 'General Question',
+                'feedback': 'Feedback/Complaint',
+                'partnership': 'Partnership Opportunity'
+            };
+            
+            if (this.value && !subject.value) {
+                subject.value = inquiryTypes[this.value] || '';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Learn about Freshplug Organics' farm-to-table process - from sustainable farming practices to quality delivery.">
+    <title>Our Process - Freshplug Organics Poultry Farm</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
+            color: white;
+            padding: 8rem 0 4rem;
+            text-align: center;
+            margin-top: 80px;
+        }
+        .process-intro {
+            padding: 4rem 0;
+            background: var(--warm-beige);
+            text-align: center;
+        }
+        .intro-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .process-timeline {
+            padding: 4rem 0;
+            position: relative;
+        }
+        .timeline-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--primary-green);
+            transform: translateX(-50%);
+        }
+        .timeline-item {
+            display: flex;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+        .timeline-item:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+        .timeline-content {
+            width: 45%;
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px var(--shadow);
+            position: relative;
+        }
+        .timeline-item:nth-child(even) .timeline-content {
+            margin-right: 10%;
+        }
+        .timeline-item:nth-child(odd) .timeline-content {
+            margin-left: 10%;
+        }
+        .timeline-number {
+            position: absolute;
+            left: 50%;
+            top: 2rem;
+            width: 60px;
+            height: 60px;
+            background: var(--primary-green);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            transform: translateX(-50%);
+            z-index: 2;
+        }
+        .process-step h3 {
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        .process-step p {
+            color: var(--text-light);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        .step-features {
+            list-style: none;
+            margin-top: 1rem;
+        }
+        .step-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        .step-features i {
+            color: var(--primary-green);
+        }
+        .standards-section {
+            padding: 4rem 0;
+            background: var(--warm-beige);
+        }
+        .standards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .standard-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px var(--shadow);
+            text-align: center;
+        }
+        .standard-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--primary-green);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1.5rem;
+        }
+        .quality-metrics {
+            padding: 4rem 0;
+            background: white;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .metric-card {
+            text-align: center;
+            padding: 2rem;
+            border: 2px solid var(--primary-green);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+        .metric-card:hover {
+            background: var(--primary-green);
+            color: white;
+        }
+        .metric-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            margin-bottom: 0.5rem;
+        }
+        .metric-card:hover .metric-number {
+            color: white;
+        }
+        .sustainability-section {
+            padding: 4rem 0;
+            background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+            color: white;
+        }
+        .sustainability-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .sustainability-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .sustainability-item h4 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        .traceability-section {
+            padding: 4rem 0;
+        }
+        .traceability-flow {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .trace-step {
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+            position: relative;
+        }
+        .trace-step::after {
+            content: '→';
+            position: absolute;
+            right: -15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            color: var(--primary-green);
+            font-weight: bold;
+        }
+        .trace-step:last-child::after {
+            display: none;
+        }
+        .trace-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-green);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 1rem;
+        }
+        .farm-tour-cta {
+            padding: 4rem 0;
+            background: var(--warm-beige);
+            text-align: center;
+        }
+        .cta-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        @media (max-width: 768px) {
+            .timeline-line {
+                left: 30px;
+            }
+            .timeline-item {
+                flex-direction: column !important;
+            }
+            .timeline-content {
+                width: 100%;
+                margin-left: 60px !important;
+                margin-right: 0 !important;
+            }
+            .timeline-number {
+                left: 30px;
+            }
+            .traceability-flow {
+                flex-direction: column;
+            }
+            .trace-step::after {
+                content: '↓';
+                right: 50%;
+                top: auto;
+                bottom: -20px;
+                transform: translateX(50%);
+            }
+            .trace-step:last-child::after {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="assets/images/freshplug-logo.svg" alt="Freshplug Organics Poultry Farm" class="logo">
+                <h2>Freshplug Organics</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="about.html" class="nav-link">About Us</a></li>
+                <li class="nav-item"><a href="products.html" class="nav-link">Products</a></li>
+                <li class="nav-item"><a href="process.html" class="nav-link active">Our Process</a></li>
+                <li class="nav-item"><a href="gallery.html" class="nav-link">Gallery</a></li>
+                <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+                <li class="nav-item"><a href="shop.html" class="nav-link shop-btn">Shop Now</a></li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Our Farm-to-Table Process</h1>
+            <p>Transparency in every step from sustainable farming to quality delivery</p>
+            <div class="breadcrumb">
+                <a href="index.html">Home</a>
+                <span>/</span>
+                <span>Our Process</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Introduction -->
+    <section class="process-intro">
+        <div class="container">
+            <div class="intro-content">
+                <h2 class="section-title">Excellence Through Every Step</h2>
+                <p style="font-size: 1.2rem; color: var(--text-light); line-height: 1.6;">
+                    At Freshplug Organics, we believe that exceptional products come from exceptional processes. Our comprehensive approach ensures that every egg, every bird, and every product meets the highest standards of quality, sustainability, and ethical farming practices.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Timeline -->
+    <section class="process-timeline">
+        <div class="container">
+            <h2 class="section-title" style="text-align: center; margin-bottom: 3rem;">Our 7-Step Process</h2>
+            <div class="timeline-container">
+                <div class="timeline-line"></div>
+                
+                <!-- Step 1: Breeding & Selection -->
+                <div class="timeline-item">
+                    <div class="timeline-number">1</div>
+                    <div class="timeline-content">
+                        <div class="process-step">
+                            <h3>Breeding & Selection</h3>
+                            <p>We carefully select our breeding stock from heritage and proven genetic lines to ensure healthy, productive birds with excellent disease resistance.</p>
+                            <ul class="step-features">
+                                <li><i class="fas fa-check"></i> Heritage breed selection for hardy genetics</li>
+                                <li><i class="fas fa-check"></i> Health screening and vaccination protocols</li>
+                                <li><i class="fas fa-check"></i> Optimal breeding ratios maintained</li>
+                                <li><i class="fas fa-check"></i> Genetic diversity preservation</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Natural Incubation -->
+                <div class="timeline-item">
+                    <div class="timeline-number">2</div>
+                    <div class="timeline-content">
+                        <div class="process-step">
+                            <h3>Natural Incubation & Hatching</h3>
+                            <p>Our eggs are incubated under optimal conditions with precise temperature and humidity control to ensure the highest hatch rates and chick quality.</p>
+                            <ul class="step-features">
+                                <li><i class="fas fa-check"></i> 21-day incubation period with daily monitoring</li>
+                                <li><i class="fas fa-check"></i> Natural brooding encouraged when possible</li>
+                                <li><i class="fas fa-check"></i> Climate-controlled hatchery facilities</li>
+                                <li><i class="fas fa-check"></i> Health checks on all hatchlings</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Organic Feeding -->
+                <div class="timeline-item">
+                    <div class="timeline-number">3</div>
+                    <div class="timeline-content">
+                        <div class="process-step">
+                            <h3>100% Organic Feeding Program</h3>
+                            <p>Our birds receive carefully formulated organic feed supplemented with natural foraging opportunities to ensure optimal nutrition and health.</p>
+                            <ul class="step-features">
+                                <li><i class="fas fa-check"></i> Certified organic feed ingredients only</li>
+                                <li><i class="fas fa-check"></i> No GMOs, antibiotics, or growth hormones</li>
+                                <li><i class="fas fa-check"></i> Natural foraging encouraged daily</li>
+                                <li><i class="fas fa-check"></i> Fresh water available 24/7</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Free-Range Environment -->
+                <div class="timeline-item">
+                    <div class="timeline-number">4</div>
+                    <div class="timeline-content">
+                        <div class="process-step">
+                            <h3>Free-Range Living Environment</h3>
+                            <p>Our chickens enjoy spacious outdoor areas with natural vegetation, dust baths, and comfortable roosting areas that promote natural behaviors.</p>
+                            <ul class="step-features">
+                                <li><i class="fas fa-check"></i> Minimum 10 sq ft per bird outdoor space</li>
+                                <li><i class="fas fa-check"></i> Natural vegetation and shade trees</li>
+                                <li><i class="fas fa-check"></i> Predator-proof fencing for safety</li>
+                                <li><i class="fas fa-check"></i> Mobile coops rotated for pasture health</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 5: Health Management -->
+                <div class="timeline-item">
+                    <div class="timeline-number">5</div>
+                    <div class="timeline-content">
+                        <div class="process-step">
+                            <h3>Preventive Health Management</h3>
+                            <p>We focus on prevention through excellent hygiene, natural immunity building, and regular health monitoring by qualified veterinarians.</p>
+                            <ul class="step-features">
+                                <li><i class="fas fa-check"></i> Daily health observation by trained staff</li>
+                                <li><i class="fas fa-check"></i> Quarantine protocols for new birds</li>
+                                <li><i class="fas fa-check"></i> Natural health supplements and probiotics</li>
+                                <li><i class="fas fa-check"></i> Regular veterinary inspections</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 6: Harvest & Processing -->
+                <div class="timeline-item">
+                    <div class="timeline-number">6</div>
+                    <div class="timeline-content">
+                        <div class="process-step">
+                            <h3>Ethical Harvest & Processing</h3>
+                            <p>Eggs are collected daily at optimal times, while meat processing follows strict humane and hygiene standards in our certified facilities.</p>
+                            <ul class="step-features">
+                                <li><i class="fas fa-check"></i> Multiple daily egg collections for freshness</li>
+                                <li><i class="fas fa-check"></i> Stress-free, humane processing methods</li>
+                                <li><i class="fas fa-check"></i> HACCP-certified processing facility</li>
+                                <li><i class="fas fa-check"></i> Immediate cooling and packaging</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 7: Quality Delivery -->
+                <div class="timeline-item">
+                    <div class="timeline-number">7</div>
+                    <div class="timeline-content">
+                        <div class="process-step">
+                            <h3>Fresh Delivery & Customer Care</h3>
+                            <p>Our products are carefully packaged and delivered fresh to maintain quality, with full traceability and customer support throughout the process.</p>
+                            <ul class="step-features">
+                                <li><i class="fas fa-check"></i> Temperature-controlled packaging</li>
+                                <li><i class="fas fa-check"></i> Same-day or next-day delivery options</li>
+                                <li><i class="fas fa-check"></i> Full batch tracking and traceability</li>
+                                <li><i class="fas fa-check"></i> Customer satisfaction guarantee</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quality Standards -->
+    <section class="standards-section">
+        <div class="container">
+            <h2 class="section-title">Our Quality Standards</h2>
+            <div class="standards-grid">
+                <div class="standard-card">
+                    <div class="standard-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h3>Organic Certification</h3>
+                    <p>Fully certified organic operation meeting all national and international standards for organic agriculture and livestock production.</p>
+                </div>
+                <div class="standard-card">
+                    <div class="standard-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3>Animal Welfare</h3>
+                    <p>Highest animal welfare standards ensuring our birds live natural, stress-free lives with access to outdoors and natural behaviors.</p>
+                </div>
+                <div class="standard-card">
+                    <div class="standard-icon">
+                        <i class="fas fa-microscope"></i>
+                    </div>
+                    <h3>Food Safety</h3>
+                    <p>Rigorous food safety protocols including HACCP principles, regular testing, and complete batch traceability from farm to table.</p>
+                </div>
+                <div class="standard-card">
+                    <div class="standard-icon">
+                        <i class="fas fa-recycle"></i>
+                    </div>
+                    <h3>Sustainability</h3>
+                    <p>Environmentally responsible practices including waste management, soil conservation, and renewable energy use where possible.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quality Metrics -->
+    <section class="quality-metrics">
+        <div class="container">
+            <h2 class="section-title">Measurable Quality Results</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-number">99.2%</div>
+                    <div class="metric-label">Customer Satisfaction</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-number">95%</div>
+                    <div class="metric-label">Hatch Rate Success</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-number">24hrs</div>
+                    <div class="metric-label">Average Egg Freshness</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-number">100%</div>
+                    <div class="metric-label">Antibiotic-Free</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-number">10+</div>
+                    <div class="metric-label">Sq Ft Per Bird</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-number">0</div>
+                    <div class="metric-label">Chemical Pesticides</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sustainability Practices -->
+    <section class="sustainability-section">
+        <div class="container">
+            <h2 style="text-align: center; margin-bottom: 2rem;">Sustainable Farming Practices</h2>
+            <p style="text-align: center; margin-bottom: 3rem; opacity: 0.9;">
+                Our commitment to the environment extends beyond organic certification
+            </p>
+            <div class="sustainability-grid">
+                <div class="sustainability-item">
+                    <h4><i class="fas fa-seedling"></i> Soil Health</h4>
+                    <p>Rotational grazing and natural fertilizer from our birds improve soil health and prevent erosion.</p>
+                </div>
+                <div class="sustainability-item">
+                    <h4><i class="fas fa-tint"></i> Water Conservation</h4>
+                    <p>Efficient water systems and rainwater harvesting minimize water usage while maintaining bird health.</p>
+                </div>
+                <div class="sustainability-item">
+                    <h4><i class="fas fa-recycle"></i> Waste Reduction</h4>
+                    <p>Comprehensive composting program turns farm waste into valuable organic fertilizer for local farmers.</p>
+                </div>
+                <div class="sustainability-item">
+                    <h4><i class="fas fa-solar-panel"></i> Renewable Energy</h4>
+                    <p>Solar panels power our operations where possible, reducing carbon footprint and energy costs.</p>
+                </div>
+                <div class="sustainability-item">
+                    <h4><i class="fas fa-tree"></i> Biodiversity</h4>
+                    <p>Native plant species and wildlife corridors support local ecosystem health and biodiversity.</p>
+                </div>
+                <div class="sustainability-item">
+                    <h4><i class="fas fa-truck"></i> Local Delivery</h4>
+                    <p>Efficient delivery routes and local sourcing reduce transportation impact and support community.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Traceability -->
+    <section class="traceability-section">
+        <div class="container">
+            <h2 class="section-title">Complete Traceability</h2>
+            <p style="text-align: center; color: var(--text-light); margin-bottom: 3rem;">
+                Every product can be traced back to its source for complete transparency
+            </p>
+            <div class="traceability-flow">
+                <div class="trace-step">
+                    <div class="trace-icon">
+                        <i class="fas fa-egg"></i>
+                    </div>
+                    <h4>Breeding Records</h4>
+                    <p>Parent bird lineage and breeding date</p>
+                </div>
+                <div class="trace-step">
+                    <div class="trace-icon">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <h4>Feed Batch</h4>
+                    <p>Specific feed lot and ingredient sources</p>
+                </div>
+                <div class="trace-step">
+                    <div class="trace-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <h4>Housing Location</h4>
+                    <p>Specific coop and pasture area</p>
+                </div>
+                <div class="trace-step">
+                    <div class="trace-icon">
+                        <i class="fas fa-calendar"></i>
+                    </div>
+                    <h4>Collection Date</h4>
+                    <p>Exact harvest and processing date</p>
+                </div>
+                <div class="trace-step">
+                    <div class="trace-icon">
+                        <i class="fas fa-shipping-fast"></i>
+                    </div>
+                    <h4>Delivery Details</h4>
+                    <p>Complete delivery chain record</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Farm Tour CTA -->
+    <section class="farm-tour-cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2>See Our Process in Action</h2>
+                <p style="color: var(--text-light); font-size: 1.1rem; margin: 1.5rem 0;">
+                    We believe in complete transparency. Visit our farm to see our organic processes firsthand and meet the team behind your food.
+                </p>
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="contact.html" class="btn btn-primary">Schedule Farm Tour</a>
+                    <a href="gallery.html" class="btn btn-secondary">View Photo Gallery</a>
+                    <a href="https://wa.me/254714221885?text=Hi! I'd like to schedule a farm visit" class="btn btn-outline">
+                        <i class="fab fa-whatsapp"></i> WhatsApp Us
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <img src="assets/images/freshplug-logo-small.svg" alt="Freshplug Organics Poultry Farm">
+                        <h3>Freshplug Organics</h3>
+                    </div>
+                    <p>Premium organic poultry products from our farm to your table. Committed to sustainable farming and exceptional quality.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Our Process</h4>
+                    <ul>
+                        <li><a href="#breeding">Breeding & Selection</a></li>
+                        <li><a href="#feeding">Organic Feeding</a></li>
+                        <li><a href="#environment">Free-Range Environment</a></li>
+                        <li><a href="#health">Health Management</a></li>
+                        <li><a href="#processing">Ethical Processing</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Quality Standards</h4>
+                    <ul>
+                        <li><a href="#organic">Organic Certification</a></li>
+                        <li><a href="#welfare">Animal Welfare</a></li>
+                        <li><a href="#safety">Food Safety</a></li>
+                        <li><a href="#sustainability">Sustainability</a></li>
+                        <li><a href="#traceability">Full Traceability</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <div class="contact-info">
+                        <p><i class="fas fa-map-marker-alt"></i> 123 Farm Road, Countryside, ST 12345</p>
+                        <p><i class="fas fa-phone"></i> +254 714 221885</p>
+                        <p><i class="fas fa-envelope"></i> info@freshplugorganics.com</p>
+                        <p><i class="fas fa-clock"></i> Mon-Sat: 8AM-6PM</p>
+                    </div>
+                    <a href="https://wa.me/254714221885" class="whatsapp-btn">
+                        <i class="fab fa-whatsapp"></i> WhatsApp Us
+                    </a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; <span id="currentYear">2024</span> Freshplug Organics Poultry Farm. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms of Service</a>
+                    <a href="faq.html">FAQ</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Float Button -->
+    <div class="whatsapp-float">
+        <a href="https://wa.me/254714221885" target="_blank">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+    </div>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Frequently Asked Questions about Freshplug Organics Poultry Farm - organic practices, delivery, ordering, and more.">
+    <title>FAQ - Freshplug Organics Poultry Farm</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
+            color: white;
+            padding: 8rem 0 4rem;
+            text-align: center;
+            margin-top: 80px;
+        }
+        .faq-section {
+            padding: 4rem 0;
+        }
+        .faq-categories {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+        .faq-category {
+            padding: 0.8rem 1.5rem;
+            border: 2px solid var(--primary-green);
+            background: transparent;
+            color: var(--primary-green);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        .faq-category.active,
+        .faq-category:hover {
+            background: var(--primary-green);
+            color: white;
+        }
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .faq-item {
+            background: white;
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 5px 20px var(--shadow);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .faq-item:hover {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        .faq-question {
+            padding: 1.5rem 2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            transition: all 0.3s ease;
+        }
+        .faq-question:hover {
+            background: #f8f9fa;
+        }
+        .faq-question h3 {
+            margin: 0;
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+        .faq-icon {
+            font-size: 1.2rem;
+            color: var(--primary-green);
+            transition: transform 0.3s ease;
+        }
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+        .faq-answer {
+            padding: 0 2rem 1.5rem;
+            color: var(--text-light);
+            line-height: 1.6;
+            display: none;
+        }
+        .faq-item.active .faq-answer {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .search-faq {
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+        .search-faq input {
+            padding: 1rem 1.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            width: 100%;
+            max-width: 400px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        .search-faq input:focus {
+            border-color: var(--primary-green);
+        }
+        @media (max-width: 768px) {
+            .faq-question {
+                padding: 1rem 1.5rem;
+            }
+            .faq-answer {
+                padding: 0 1.5rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="assets/images/freshplug-logo.svg" alt="Freshplug Organics Poultry Farm" class="logo">
+                <h2>Freshplug Organics</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="about.html" class="nav-link">About Us</a></li>
+                <li class="nav-item"><a href="products.html" class="nav-link">Products</a></li>
+                <li class="nav-item"><a href="process.html" class="nav-link">Our Process</a></li>
+                <li class="nav-item"><a href="gallery.html" class="nav-link">Gallery</a></li>
+                <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+                <li class="nav-item"><a href="shop.html" class="nav-link shop-btn">Shop Now</a></li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Frequently Asked Questions</h1>
+            <p>Find answers to common questions about our farm and products</p>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="container">
+            <!-- Search -->
+            <div class="search-faq">
+                <input type="text" id="faq-search" placeholder="Search FAQ...">
+            </div>
+
+            <!-- Categories -->
+            <div class="faq-categories">
+                <button class="faq-category active" data-category="all">All Questions</button>
+                <button class="faq-category" data-category="products">Products</button>
+                <button class="faq-category" data-category="ordering">Ordering</button>
+                <button class="faq-category" data-category="delivery">Delivery</button>
+                <button class="faq-category" data-category="organic">Organic Practices</button>
+                <button class="faq-category" data-category="farm">Farm Visits</button>
+            </div>
+
+            <!-- FAQ Items -->
+            <div class="faq-container">
+                <!-- Products Category -->
+                <div class="faq-item" data-category="products">
+                    <div class="faq-question">
+                        <h3>What makes your eggs different from store-bought eggs?</h3>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Our eggs come from hens that are truly free-range, feeding on organic grasses, insects, and certified organic feed. This results in eggs with richer yolks, better flavor, and higher nutritional content including more omega-3 fatty acids and vitamins A and E compared to conventional eggs.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-category="products">
+                    <div class="faq-question">
+                        <h3>Are all your products certified organic?</h3>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes! We are USDA Certified Organic, which means our animals are fed 100% organic feed, have access to the outdoors, and are raised without antibiotics, hormones, or synthetic chemicals. We undergo annual inspections to maintain our certification.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-category="products">
+                    <div class="faq-question">
+                        <h3>What breeds of chickens do you raise?</h3>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We raise several heritage and popular breeds including Rhode Island Reds, Buff Orpingtons, New Hampshire Reds, and Barred Plymouth Rocks for laying hens. For meat birds, we raise Cornish Cross and Freedom Ranger varieties.</p>
+                    </div>
+                </div>
+
+                <!-- Ordering Category -->
+                <div class="faq-item" data-category="ordering">
+                    <div class="faq-question">
+                        <h3>How do I place an order?</h3>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>You can order through our website, call us at (555) 123-4567, send us a WhatsApp message, or visit our farm store. Online orders are processed Monday through Friday, and we'll confirm availability within 24 hours.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-category="ordering">
+                    <div class="faq-question">
+                        <h3>What payment methods do you accept?</h3>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We accept cash, check, credit/debit cards, and mobile payments like Apple Pay and Google Pay. For delivery orders, payment can be made upon delivery or in advance.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-category="ordering">
+                    <div class="faq-question">
+                        <h3>Is there a minimum order requirement?</h3>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>For delivery, we have a minimum order of KSH 1,500. For pickup at the farm, there's no minimum order. We offer free delivery for orders over KSH 3,000 within our 20-mile delivery radius.</p>
+                    </div>
+                </div>
+
+                <!-- Delivery Category -->
+                <div class="faq-item" data-category="delivery">
+                    <div class="faq-question">
+                        <h3>What areas do you deliver to?</h3>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We deliver within a 20-mile radius of our farm. This includes most of the surrounding counties. Contact us with your zip code to confirm if we deliver to your area.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-category="delivery">
+                    <div class="faq-question">
+                        <h3>How often do you deliver?</h3>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We deliver three times per week - Monday and Wednesday mornings, and Friday afternoons. You can also set up weekly or bi-weekly deliveries and save 10% on regular orders.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-category="delivery">
+                    <div class="faq-question">
+                        <h3>How do you keep products fresh during delivery?</h3>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We use insulated coolers and ice packs to maintain proper temperatures during transport. Eggs and dairy products are kept refrigerated, and meat products are kept frozen until delivery.</p>
+                    </div>
+                </div>
+
+                <!-- Organic Practices Category -->
+                <div class="faq-item" data-category="organic">
+                    <div class="faq-question">
+                        <h3>What do you feed your chickens?</h3>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Our chickens eat certified organic feed made from corn, soybeans, and other grains, plus whatever they forage naturally including grass, insects, worms, and seeds. No GMOs, antibiotics, or artificial additives.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-category="organic">
+                    <div class="faq-question">
+                        <h3>How much space do your chickens have?</h3>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Our chickens have access to large pastures with a minimum of 108 square feet per bird outdoors, well exceeding organic standards. They can roam freely during daylight hours and return to secure coops at night for protection.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-category="organic">
+                    <div class="faq-question">
+                        <h3>Do you use any medications or vaccines?</h3>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We never use antibiotics or growth hormones. We do provide necessary vaccinations for chick health as required by organic standards, but focus on prevention through good nutrition, clean living conditions, and natural healthcare practices.</p>
+                    </div>
+                </div>
+
+                <!-- Farm Visits Category -->
+                <div class="faq-item" data-category="farm">
+                    <div class="faq-question">
+                        <h3>Can I visit your farm?</h3>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Absolutely! We offer guided tours on Tuesdays and Thursdays from 2-4 PM, and Saturdays from 10 AM-2 PM. Please call ahead to reserve your spot. Group tours for schools and organizations can be arranged by appointment.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-category="farm">
+                    <div class="faq-question">
+                        <h3>Is there a fee for farm tours?</h3>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Farm tours are free for families and small groups (up to 6 people). For larger groups or educational tours, we charge KSH 300 per person to help cover our time and resources. Children under 5 are always free.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-category="farm">
+                    <div class="faq-question">
+                        <h3>What should I expect during a farm tour?</h3>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>During our 45-60 minute tours, you'll see our chicken coops and pastures, learn about organic farming practices, watch the chickens in action, and visit our egg collection and processing areas. You'll also have a chance to ask questions and purchase fresh products.</p>
+                    </div>
+                </div>
+
+                <!-- General Questions -->
+                <div class="faq-item" data-category="general">
+                    <div class="faq-question">
+                        <h3>How long do your eggs stay fresh?</h3>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Our eggs stay fresh for 4-5 weeks when refrigerated properly. We date all our egg cartons, and unlike store eggs that can be weeks old when purchased, our eggs are typically collected within 1-3 days of laying.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-category="general">
+                    <div class="faq-question">
+                        <h3>Do you offer wholesale pricing?</h3>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes! We offer wholesale pricing for restaurants, grocery stores, and other businesses. Wholesale orders require a minimum purchase and advance ordering. Contact us to discuss wholesale pricing and availability.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-category="general">
+                    <div class="faq-question">
+                        <h3>Can I return products if I'm not satisfied?</h3>
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We stand behind the quality of our products. If you're not completely satisfied, contact us within 48 hours of purchase and we'll make it right with a replacement or full refund.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <img src="assets/images/freshplug-logo-small.svg" alt="Freshplug Organics Poultry Farm">
+                        <h3>Freshplug Organics</h3>
+                    </div>
+                    <p>Premium organic poultry products from our farm to your table.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="shop.html">Shop Online</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Products</h4>
+                    <ul>
+                        <li><a href="shop.html#eggs">Fresh Eggs</a></li>
+                        <li><a href="shop.html#chicken">Organic Chicken</a></li>
+                        <li><a href="shop.html#turkey">Turkey</a></li>
+                        <li><a href="shop.html#live">Live Chickens</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <div class="contact-info">
+                        <p><i class="fas fa-map-marker-alt"></i> 123 Farm Road, Countryside, ST 12345</p>
+                        <p><i class="fas fa-phone"></i> (555) 123-4567</p>
+                        <p><i class="fas fa-envelope"></i> info@freshplugorganics.com</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; <span id="currentYear">2024</span> Freshplug Organics Poultry Farm. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+    <script>
+        // FAQ functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const faqItems = document.querySelectorAll('.faq-item');
+            const faqCategories = document.querySelectorAll('.faq-category');
+            const searchInput = document.getElementById('faq-search');
+
+            // Toggle FAQ items
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                question.addEventListener('click', () => {
+                    const isActive = item.classList.contains('active');
+                    
+                    // Close all other FAQ items
+                    faqItems.forEach(otherItem => {
+                        otherItem.classList.remove('active');
+                    });
+                    
+                    // Toggle current item
+                    if (!isActive) {
+                        item.classList.add('active');
+                    }
+                });
+            });
+
+            // Category filtering
+            faqCategories.forEach(category => {
+                category.addEventListener('click', () => {
+                    // Update active category
+                    faqCategories.forEach(cat => cat.classList.remove('active'));
+                    category.classList.add('active');
+                    
+                    const selectedCategory = category.dataset.category;
+                    
+                    // Filter FAQ items
+                    faqItems.forEach(item => {
+                        if (selectedCategory === 'all' || item.dataset.category === selectedCategory) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                            item.classList.remove('active');
+                        }
+                    });
+                });
+            });
+
+            // Search functionality
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                
+                faqItems.forEach(item => {
+                    const question = item.querySelector('.faq-question h3').textContent.toLowerCase();
+                    const answer = item.querySelector('.faq-answer').textContent.toLowerCase();
+                    
+                    if (question.includes(searchTerm) || answer.includes(searchTerm)) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                        item.classList.remove('active');
+                    }
+                });
+                
+                // Reset category filter when searching
+                if (searchTerm.length > 0) {
+                    faqCategories.forEach(cat => cat.classList.remove('active'));
+                    document.querySelector('[data-category="all"]').classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
