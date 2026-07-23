@@ -63,18 +63,21 @@ window.addEventListener('scroll', function() {
 });
 
 // Newsletter Form Submission
-document.querySelector('.newsletter-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const email = this.querySelector('input[type="email"]').value;
-    
-    if (validateEmail(email)) {
-        // Simulate API call
-        showNotification('Thank you for subscribing! You\'ll receive farm updates and special offers.', 'success');
-        this.querySelector('input[type="email"]').value = '';
-    } else {
-        showNotification('Please enter a valid email address.', 'error');
-    }
-});
+const newsletterForm = document.querySelector('.newsletter-form');
+if (newsletterForm) {
+    newsletterForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const email = this.querySelector('input[type="email"]').value;
+
+        if (validateEmail(email)) {
+            // Simulate API call
+            showNotification('Thank you for subscribing! You\'ll receive farm updates and special offers.', 'success');
+            this.querySelector('input[type="email"]').value = '';
+        } else {
+            showNotification('Please enter a valid email address.', 'error');
+        }
+    });
+}
 
 // Email Validation
 function validateEmail(email) {
