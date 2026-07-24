@@ -244,8 +244,8 @@ class MpesaPaymentGateway {
                         </div>
                         
                         <div class="payment-instructions" style="background: #e8f5e9; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
-                            <h4 style="margin: 0 0 0.5rem 0; color: var(--primary-green);">Payment Instructions:</h4>
-                            <ol style="margin: 0; padding-left: 1.2rem; color: var(--text-dark);">
+                            <h4 style="margin: 0 0 0.5rem 0; color: var(--clay);">Payment Instructions:</h4>
+                            <ol style="margin: 0; padding-left: 1.2rem; color: var(--charcoal);">
                                 <li>Enter your M-Pesa phone number above</li>
                                 <li>Click "Pay Now" to initiate payment</li>
                                 <li>You'll receive an M-Pesa prompt on your phone</li>
@@ -346,7 +346,7 @@ class MpesaPaymentGateway {
             if (result.success) {
                 this.showPaymentStatus('pending', `
                     <div style="text-align: center;">
-                        <i class="fas fa-mobile-alt" style="font-size: 2rem; color: var(--primary-green); margin-bottom: 1rem;"></i>
+                        <i class="fas fa-mobile-alt" style="font-size: 2rem; color: var(--clay); margin-bottom: 1rem;"></i>
                         <h4>Payment Request Sent!</h4>
                         <p>Please check your phone (${phoneNumber}) for the M-Pesa payment prompt.</p>
                         <p>Enter your M-Pesa PIN to complete the payment.</p>
@@ -411,7 +411,7 @@ class MpesaPaymentGateway {
         // Show success message
         this.showPaymentStatus('success', `
             <div style="text-align: center;">
-                <i class="fas fa-check-circle" style="font-size: 2rem; color: var(--primary-green); margin-bottom: 1rem;"></i>
+                <i class="fas fa-check-circle" style="font-size: 2rem; color: var(--clay); margin-bottom: 1rem;"></i>
                 <h4>Payment Successful!</h4>
                 <p>Your payment of KSH ${this.getCartTotal().toLocaleString()} has been received.</p>
                 <p><strong>Transaction ID:</strong> ${paymentData.MpesaReceiptNumber || 'N/A'}</p>

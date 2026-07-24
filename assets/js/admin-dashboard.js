@@ -353,19 +353,19 @@ class AdminDashboard {
             container.innerHTML = `
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
                     <div style="text-align: center; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
-                        <div style="font-size: 2rem; font-weight: bold; color: var(--primary-green);">${report.overview.openRate}</div>
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--clay);">${report.overview.openRate}</div>
                         <div>Email Open Rate</div>
                     </div>
                     <div style="text-align: center; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
-                        <div style="font-size: 2rem; font-weight: bold; color: var(--warm-orange);">${report.overview.clickThroughRate}</div>
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--gold);">${report.overview.clickThroughRate}</div>
                         <div>Click Through Rate</div>
                     </div>
                     <div style="text-align: center; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
-                        <div style="font-size: 2rem; font-weight: bold; color: var(--text-dark);">${report.overview.totalCustomers}</div>
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--charcoal);">${report.overview.totalCustomers}</div>
                         <div>Total Customers</div>
                     </div>
                     <div style="text-align: center; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
-                        <div style="font-size: 2rem; font-weight: bold; color: var(--secondary-green);">${report.overview.conversionRate}</div>
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--clay-deep);">${report.overview.conversionRate}</div>
                         <div>Conversion Rate</div>
                     </div>
                 </div>

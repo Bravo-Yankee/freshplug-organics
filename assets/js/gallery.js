@@ -380,7 +380,7 @@ function playVideo(videoId) {
             </div>
         </div>
         <button onclick="this.parentElement.remove(); document.body.style.overflow = 'auto';" style="
-            background: var(--primary-green);
+            background: var(--clay);
             color: white;
             border: none;
             padding: 1rem 2rem;

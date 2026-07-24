@@ -149,7 +149,7 @@ class MarketingAutomation {
                     <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
                         <h3>🎁 Special Welcome Offer: 15% OFF your first order</h3>
                         <p>Use code: <strong>WELCOME15</strong></p>
-                        <a href="{{shop_url}}" style="background: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px;">Shop Now</a>
+                        <a href="{{shop_url}}" style="background: #A6371F; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px;">Shop Now</a>
                     </div>
                     <p>Here's what makes us special:</p>
                     <ul>
@@ -169,7 +169,7 @@ class MarketingAutomation {
                         <h3>⏰ Limited Time: Free Delivery on orders over KSH 1,000</h3>
                         <p>Complete your order within 24 hours to qualify!</p>
                     </div>
-                    <a href="{{cart_url}}" style="background: #FF8A65; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px;">Complete Your Order</a>
+                    <a href="{{cart_url}}" style="background: #D6A536; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px;">Complete Your Order</a>
                     <p>Questions? Reply to this email or WhatsApp us at +254 714 221885</p>
                 `
             },
@@ -186,7 +186,7 @@ class MarketingAutomation {
                             <li>Live Chickens - Special breeding pairs available</li>
                         </ul>
                     </div>
-                    <a href="{{shop_url}}" style="background: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px;">Shop Weekly Specials</a>
+                    <a href="{{shop_url}}" style="background: #A6371F; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px;">Shop Weekly Specials</a>
                 `
             },
             win_back: {
@@ -204,7 +204,7 @@ class MarketingAutomation {
                         <li>Expanded delivery areas</li>
                         <li>Fresh seasonal products</li>
                     </ul>
-                    <a href="{{shop_url}}" style="background: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px;">Explore What's New</a>
+                    <a href="{{shop_url}}" style="background: #A6371F; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px;">Explore What's New</a>
                 `
             },
             birthday_special: {

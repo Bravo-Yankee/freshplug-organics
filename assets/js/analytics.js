@@ -561,7 +561,7 @@ class CustomerJourneyTracker {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background: var(--primary-green);
+            background: var(--clay);
             color: white;
             padding: 1.5rem;
             border-radius: 10px;
@@ -578,7 +578,7 @@ class CustomerJourneyTracker {
                     <h4 style="margin: 0 0 0.5rem 0;">Items in your cart!</h4>
                     <p style="margin: 0; font-size: 0.9rem; opacity: 0.9;">Complete your order now for fresh delivery</p>
                     <button onclick="document.getElementById('cart-toggle').click(); this.closest('div').remove();" 
-                            style="background: white; color: var(--primary-green); border: none; padding: 0.5rem 1rem; border-radius: 5px; margin-top: 0.5rem; cursor: pointer;">
+                            style="background: white; color: var(--clay); border: none; padding: 0.5rem 1rem; border-radius: 5px; margin-top: 0.5rem; cursor: pointer;">
                         View Cart
                     </button>
                 </div>

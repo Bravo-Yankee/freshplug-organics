@@ -239,7 +239,7 @@ class CustomerAccount {
         
         activityContainer.innerHTML = activities.map(activity => `
             <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 8px; margin-bottom: 0.5rem;">
-                <div style="width: 40px; height: 40px; background: var(--primary-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
+                <div style="width: 40px; height: 40px; background: var(--clay); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
                     <i class="${activity.icon}"></i>
                 </div>
                 <div style="flex: 1;">
@@ -367,7 +367,7 @@ class CustomerAccount {
                 <div>
                     <p><strong>Next Delivery:</strong> ${this.formatDate(sub.nextDelivery)}</p>
                     <p><strong>Started:</strong> ${this.formatDate(sub.startDate)}</p>
-                    <p><strong>Status:</strong> <span style="color: ${sub.status === 'active' ? 'var(--primary-green)' : 'var(--text-light)'}">${sub.status}</span></p>
+                    <p><strong>Status:</strong> <span style="color: ${sub.status === 'active' ? 'var(--clay)' : 'var(--text-light)'}">${sub.status}</span></p>
                 </div>
             </div>
         `).join('');

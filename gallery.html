@@ -6,15 +6,31 @@
     <meta name="description" content="Photo gallery showcasing Freshplug Organics Poultry Farm - see our chickens, facilities, products, and farm life.">
     <title>Photo Gallery - Freshplug Organics Poultry Farm</title>
     <link rel="stylesheet" href="assets/css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+    <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Libre+Franklin:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .page-header {
-            background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
+            background: linear-gradient(135deg, var(--clay) 0%, var(--clay-deep) 100%);
             color: white;
             padding: 8rem 0 4rem;
             text-align: center;
             margin-top: 80px;
+        }
+        .breadcrumb {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .breadcrumb a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+        }
+        .breadcrumb a:hover {
+            color: white;
         }
         .gallery-section {
             padding: 4rem 0;
@@ -28,9 +44,9 @@
         }
         .gallery-filter {
             padding: 0.8rem 1.5rem;
-            border: 2px solid var(--primary-green);
+            border: 2px solid var(--clay);
             background: transparent;
-            color: var(--primary-green);
+            color: var(--clay);
             border-radius: 25px;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -38,7 +54,7 @@
         }
         .gallery-filter.active,
         .gallery-filter:hover {
-            background: var(--primary-green);
+            background: var(--clay);
             color: white;
         }
         .gallery-grid {
@@ -74,7 +90,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(76, 175, 80, 0.9);
+            background: rgba(166, 55, 31, 0.9);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -100,7 +116,7 @@
             margin-top: 1rem;
             padding: 0.5rem 1rem;
             background: white;
-            color: var(--primary-green);
+            color: var(--clay);
             border: none;
             border-radius: 20px;
             cursor: pointer;
@@ -108,11 +124,11 @@
             transition: all 0.3s ease;
         }
         .view-btn:hover {
-            background: var(--warm-orange);
+            background: var(--gold);
             color: white;
         }
         .video-section {
-            background: var(--warm-beige);
+            background: var(--cream);
             padding: 4rem 0;
         }
         .video-grid {
@@ -141,7 +157,7 @@
             position: absolute;
             width: 60px;
             height: 60px;
-            background: var(--primary-green);
+            background: var(--clay);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -152,14 +168,14 @@
             transition: all 0.3s ease;
         }
         .play-button:hover {
-            background: var(--secondary-green);
+            background: var(--clay-deep);
             transform: scale(1.1);
         }
         .video-info {
             padding: 1.5rem;
         }
         .video-info h3 {
-            color: var(--text-dark);
+            color: var(--charcoal);
             margin-bottom: 0.5rem;
         }
         .video-info p {
@@ -193,7 +209,7 @@
             top: 2rem;
             right: 2rem;
             background: white;
-            color: #333;
+            color: var(--charcoal);
             border: none;
             width: 50px;
             height: 50px;
@@ -209,7 +225,7 @@
             top: 50%;
             transform: translateY(-50%);
             background: rgba(255, 255, 255, 0.8);
-            color: #333;
+            color: var(--charcoal);
             border: none;
             width: 50px;
             height: 50px;
@@ -235,7 +251,7 @@
             margin-top: 3rem;
         }
         .load-more-btn {
-            background: var(--primary-green);
+            background: var(--clay);
             color: white;
             border: none;
             padding: 1rem 2rem;
@@ -245,7 +261,7 @@
             transition: all 0.3s ease;
         }
         .load-more-btn:hover {
-            background: var(--secondary-green);
+            background: var(--clay-deep);
             transform: translateY(-2px);
         }
         @media (max-width: 768px) {

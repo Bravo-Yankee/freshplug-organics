@@ -6,15 +6,31 @@
     <meta name="description" content="Contact Freshplug Organics Poultry Farm - Get in touch for orders, farm visits, wholesale inquiries, or general information.">
     <title>Contact Us - Freshplug Organics Poultry Farm</title>
     <link rel="stylesheet" href="assets/css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+    <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Libre+Franklin:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .page-header {
-            background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
+            background: linear-gradient(135deg, var(--clay) 0%, var(--clay-deep) 100%);
             color: white;
             padding: 8rem 0 4rem;
             text-align: center;
             margin-top: 80px;
+        }
+        .breadcrumb {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .breadcrumb a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+        }
+        .breadcrumb a:hover {
+            color: white;
         }
         .contact-section {
             padding: 4rem 0;
@@ -39,7 +55,7 @@
         .contact-icon {
             width: 60px;
             height: 60px;
-            background: var(--primary-green);
+            background: var(--clay);
             color: white;
             border-radius: 50%;
             display: flex;
@@ -49,7 +65,7 @@
             flex-shrink: 0;
         }
         .contact-details h3 {
-            color: var(--text-dark);
+            color: var(--charcoal);
             margin-bottom: 0.5rem;
             font-weight: 600;
         }
@@ -58,7 +74,7 @@
             margin-bottom: 0.3rem;
         }
         .contact-details a {
-            color: var(--primary-green);
+            color: var(--clay);
             text-decoration: none;
             font-weight: 500;
         }
@@ -76,7 +92,7 @@
         }
         .form-group label {
             display: block;
-            color: var(--text-dark);
+            color: var(--charcoal);
             font-weight: 500;
             margin-bottom: 0.5rem;
         }
@@ -85,17 +101,17 @@
         .form-group textarea {
             width: 100%;
             padding: 1rem;
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--line);
             border-radius: 10px;
             font-size: 1rem;
             outline: none;
             transition: border-color 0.3s ease;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Libre Franklin', sans-serif;
         }
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
-            border-color: var(--primary-green);
+            border-color: var(--clay);
         }
         .form-group textarea {
             height: 120px;
@@ -108,7 +124,7 @@
         }
         .submit-btn {
             width: 100%;
-            background: var(--primary-green);
+            background: var(--clay);
             color: white;
             border: none;
             padding: 1.2rem;
@@ -120,18 +136,18 @@
             margin-top: 1rem;
         }
         .submit-btn:hover {
-            background: var(--secondary-green);
+            background: var(--clay-deep);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+            box-shadow: 0 5px 15px rgba(166, 55, 31, 0.3);
         }
         .submit-btn:disabled {
-            background: #ccc;
+            background: var(--disabled);
             cursor: not-allowed;
             transform: none;
         }
         .map-section {
             padding: 3rem 0;
-            background: var(--warm-beige);
+            background: var(--cream);
         }
         .map-container {
             border-radius: 15px;
@@ -141,7 +157,7 @@
         .map-placeholder {
             width: 100%;
             height: 400px;
-            background: #e0e0e0;
+            background: var(--line);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -167,7 +183,7 @@
         .hours-icon {
             width: 80px;
             height: 80px;
-            background: var(--primary-green);
+            background: var(--clay);
             color: white;
             border-radius: 50%;
             display: flex;
@@ -187,14 +203,14 @@
             border-bottom: 1px solid #eee;
         }
         .hours-table th {
-            color: var(--text-dark);
+            color: var(--charcoal);
             font-weight: 600;
         }
         .hours-table td {
             color: var(--text-light);
         }
         .social-section {
-            background: var(--primary-green);
+            background: var(--clay);
             color: white;
             padding: 3rem 0;
             text-align: center;
@@ -311,7 +327,7 @@
             <div class="contact-grid">
                 <!-- Contact Information -->
                 <div class="contact-info">
-                    <h2 style="margin-bottom: 2rem; color: var(--text-dark);">Get in Touch</h2>
+                    <h2 style="margin-bottom: 2rem; color: var(--charcoal);">Get in Touch</h2>
                     
                     <div class="contact-item">
                         <div class="contact-icon">
@@ -361,7 +377,7 @@
 
                 <!-- Contact Form -->
                 <div class="contact-form">
-                    <h2 style="margin-bottom: 2rem; color: var(--text-dark);">Send us a Message</h2>
+                    <h2 style="margin-bottom: 2rem; color: var(--charcoal);">Send us a Message</h2>
                     
                     <div class="form-success" id="form-success">
                         <i class="fas fa-check-circle"></i> Thank you! Your message has been sent successfully. We'll get back to you within 24 hours.
@@ -437,12 +453,12 @@
                 <!-- Google Maps Embed would go here -->
                 <div class="map-placeholder">
                     <div>
-                        <i class="fas fa-map-marker-alt" style="font-size: 3rem; margin-bottom: 1rem; color: var(--primary-green);"></i>
+                        <i class="fas fa-map-marker-alt" style="font-size: 3rem; margin-bottom: 1rem; color: var(--clay);"></i>
                         <br>
                         Interactive Map Coming Soon
                         <br>
                         <small style="margin-top: 0.5rem; display: block;">
-                            <a href="https://maps.google.com/?q=123+Farm+Road+Countryside+ST+12345" target="_blank" style="color: var(--primary-green);">
+                            <a href="https://maps.google.com/?q=123+Farm+Road+Countryside+ST+12345" target="_blank" style="color: var(--clay);">
                                 Click here for directions on Google Maps
                             </a>
                         </small>

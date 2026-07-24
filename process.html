@@ -6,19 +6,35 @@
     <meta name="description" content="Learn about Freshplug Organics' farm-to-table process - from sustainable farming practices to quality delivery.">
     <title>Our Process - Freshplug Organics Poultry Farm</title>
     <link rel="stylesheet" href="assets/css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+    <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Libre+Franklin:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .page-header {
-            background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
+            background: linear-gradient(135deg, var(--clay) 0%, var(--clay-deep) 100%);
             color: white;
             padding: 8rem 0 4rem;
             text-align: center;
             margin-top: 80px;
         }
+        .breadcrumb {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .breadcrumb a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+        }
+        .breadcrumb a:hover {
+            color: white;
+        }
         .process-intro {
             padding: 4rem 0;
-            background: var(--warm-beige);
+            background: var(--cream);
             text-align: center;
         }
         .intro-content {
@@ -40,7 +56,7 @@
             top: 0;
             bottom: 0;
             width: 4px;
-            background: var(--primary-green);
+            background: var(--clay);
             transform: translateX(-50%);
         }
         .timeline-item {
@@ -71,7 +87,7 @@
             top: 2rem;
             width: 60px;
             height: 60px;
-            background: var(--primary-green);
+            background: var(--clay);
             color: white;
             border-radius: 50%;
             display: flex;
@@ -83,7 +99,7 @@
             z-index: 2;
         }
         .process-step h3 {
-            color: var(--text-dark);
+            color: var(--charcoal);
             margin-bottom: 1rem;
             font-size: 1.5rem;
         }
@@ -105,11 +121,11 @@
             font-size: 0.9rem;
         }
         .step-features i {
-            color: var(--primary-green);
+            color: var(--clay);
         }
         .standards-section {
             padding: 4rem 0;
-            background: var(--warm-beige);
+            background: var(--cream);
         }
         .standards-grid {
             display: grid;
@@ -126,7 +142,7 @@
         .standard-icon {
             width: 80px;
             height: 80px;
-            background: var(--primary-green);
+            background: var(--clay);
             color: white;
             border-radius: 50%;
             display: flex;
@@ -148,18 +164,18 @@
         .metric-card {
             text-align: center;
             padding: 2rem;
-            border: 2px solid var(--primary-green);
+            border: 2px solid var(--clay);
             border-radius: 15px;
             transition: all 0.3s ease;
         }
         .metric-card:hover {
-            background: var(--primary-green);
+            background: var(--clay);
             color: white;
         }
         .metric-number {
             font-size: 2.5rem;
             font-weight: 700;
-            color: var(--primary-green);
+            color: var(--clay);
             margin-bottom: 0.5rem;
         }
         .metric-card:hover .metric-number {
@@ -167,7 +183,7 @@
         }
         .sustainability-section {
             padding: 4rem 0;
-            background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+            background: linear-gradient(135deg, var(--clay), var(--clay-deep));
             color: white;
         }
         .sustainability-grid {
@@ -210,7 +226,7 @@
             top: 50%;
             transform: translateY(-50%);
             font-size: 1.5rem;
-            color: var(--primary-green);
+            color: var(--clay);
             font-weight: bold;
         }
         .trace-step:last-child::after {
@@ -219,7 +235,7 @@
         .trace-icon {
             width: 60px;
             height: 60px;
-            background: var(--primary-green);
+            background: var(--clay);
             color: white;
             border-radius: 50%;
             display: flex;
@@ -230,7 +246,7 @@
         }
         .farm-tour-cta {
             padding: 4rem 0;
-            background: var(--warm-beige);
+            background: var(--cream);
             text-align: center;
         }
         .cta-content {

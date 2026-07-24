@@ -6,7 +6,10 @@
     <meta name="description" content="Admin Dashboard for Freshplug Organics - Manage payments, marketing, and business analytics.">
     <title>Admin Dashboard - Freshplug Organics</title>
     <link rel="stylesheet" href="assets/css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+    <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Libre+Franklin:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .admin-header {
@@ -31,9 +34,9 @@
         }
         .admin-nav-item {
             padding: 0.8rem 1.5rem;
-            border: 2px solid var(--primary-green);
+            border: 2px solid var(--clay);
             background: transparent;
-            color: var(--primary-green);
+            color: var(--clay);
             border-radius: 25px;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -42,7 +45,7 @@
         }
         .admin-nav-item.active,
         .admin-nav-item:hover {
-            background: var(--primary-green);
+            background: var(--clay);
             color: white;
         }
         .dashboard-content {
@@ -67,7 +70,7 @@
             border-radius: 15px;
             box-shadow: 0 10px 30px var(--shadow);
             text-align: center;
-            border-left: 4px solid var(--primary-green);
+            border-left: 4px solid var(--clay);
         }
         .stat-card.mpesa {
             border-left-color: #00a86b;
@@ -90,7 +93,7 @@
             color: white;
         }
         .stat-card .stat-icon {
-            background: var(--primary-green);
+            background: var(--clay);
         }
         .stat-card.mpesa .stat-icon {
             background: #00a86b;
@@ -104,7 +107,7 @@
         .stat-number {
             font-size: 2.5rem;
             font-weight: 700;
-            color: var(--text-dark);
+            color: var(--charcoal);
             margin-bottom: 0.5rem;
         }
         .stat-label {
@@ -133,7 +136,7 @@
         .panel-title {
             font-size: 1.3rem;
             font-weight: 600;
-            color: var(--text-dark);
+            color: var(--charcoal);
             margin: 0;
         }
         .config-form {
@@ -147,13 +150,13 @@
         .config-group label {
             margin-bottom: 0.5rem;
             font-weight: 500;
-            color: var(--text-dark);
+            color: var(--charcoal);
         }
         .config-group input,
         .config-group select,
         .config-group textarea {
             padding: 0.8rem;
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--line);
             border-radius: 8px;
             outline: none;
             transition: border-color 0.3s ease;
@@ -161,19 +164,19 @@
         .config-group input:focus,
         .config-group select:focus,
         .config-group textarea:focus {
-            border-color: var(--primary-green);
+            border-color: var(--clay);
         }
         .toggle-switch {
             position: relative;
             width: 50px;
             height: 25px;
-            background: #ccc;
+            background: var(--disabled);
             border-radius: 15px;
             cursor: pointer;
             transition: background 0.3s ease;
         }
         .toggle-switch.active {
-            background: var(--primary-green);
+            background: var(--clay);
         }
         .toggle-switch::after {
             content: '';
@@ -225,7 +228,7 @@
         }
         .activity-title {
             font-weight: 600;
-            color: var(--text-dark);
+            color: var(--charcoal);
             margin-bottom: 0.3rem;
         }
         .activity-desc {
@@ -238,7 +241,7 @@
         }
         .chart-container {
             height: 300px;
-            background: #f8f9fa;
+            background: var(--paper);
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -251,7 +254,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 1rem;
-            background: #f8f9fa;
+            background: var(--paper);
             border-radius: 8px;
             margin-bottom: 1rem;
         }

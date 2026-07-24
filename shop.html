@@ -6,11 +6,14 @@
     <meta name="description" content="Shop premium organic poultry products - fresh eggs, organic chicken, live birds, and more from Freshplug Organics Poultry Farm.">
     <title>Shop - Freshplug Organics Poultry Farm</title>
     <link rel="stylesheet" href="assets/css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+    <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Libre+Franklin:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .page-header {
-            background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
+            background: linear-gradient(135deg, var(--clay) 0%, var(--clay-deep) 100%);
             color: white;
             padding: 8rem 0 4rem;
             text-align: center;
@@ -38,9 +41,9 @@
         }
         .filter-tab {
             padding: 0.8rem 1.5rem;
-            border: 2px solid var(--primary-green);
+            border: 2px solid var(--clay);
             background: transparent;
-            color: var(--primary-green);
+            color: var(--clay);
             border-radius: 25px;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -48,7 +51,7 @@
         }
         .filter-tab.active,
         .filter-tab:hover {
-            background: var(--primary-green);
+            background: var(--clay);
             color: white;
         }
         .search-sort {
@@ -67,7 +70,7 @@
             transition: border-color 0.3s ease;
         }
         .search-box input:focus {
-            border-color: var(--primary-green);
+            border-color: var(--clay);
         }
         .search-box i {
             position: absolute;
@@ -107,7 +110,7 @@
             position: absolute;
             top: 1rem;
             left: 1rem;
-            background: var(--warm-orange);
+            background: var(--gold);
             color: white;
             padding: 0.3rem 0.8rem;
             border-radius: 15px;
@@ -116,10 +119,10 @@
             z-index: 2;
         }
         .product-badge.organic {
-            background: var(--primary-green);
+            background: var(--clay);
         }
         .product-badge.fresh {
-            background: var(--golden-yellow);
+            background: var(--gold-bright);
         }
         .product-image {
             position: relative;
@@ -154,7 +157,7 @@
         .product-title {
             font-size: 1.3rem;
             font-weight: 600;
-            color: var(--text-dark);
+            color: var(--charcoal);
             margin-bottom: 0.5rem;
         }
         .product-description {
@@ -172,7 +175,7 @@
         .product-price {
             font-size: 1.2rem;
             font-weight: 700;
-            color: var(--warm-orange);
+            color: var(--gold);
         }
         .product-rating {
             display: flex;
@@ -180,7 +183,7 @@
             gap: 0.3rem;
         }
         .stars {
-            color: var(--golden-yellow);
+            color: var(--gold-bright);
             font-size: 0.9rem;
         }
         .rating-count {
@@ -195,7 +198,7 @@
         }
         .option-label {
             font-weight: 500;
-            color: var(--text-dark);
+            color: var(--charcoal);
             margin-bottom: 0.3rem;
             display: block;
         }
@@ -237,7 +240,7 @@
         }
         .add-to-cart {
             flex: 1;
-            background: var(--primary-green);
+            background: var(--clay);
             color: white;
             border: none;
             padding: 0.8rem;
@@ -247,15 +250,15 @@
             transition: all 0.3s ease;
         }
         .add-to-cart:hover {
-            background: var(--secondary-green);
+            background: var(--clay-deep);
             transform: translateY(-2px);
         }
         .wishlist-btn {
             width: 40px;
             height: 40px;
-            border: 2px solid var(--primary-green);
+            border: 2px solid var(--clay);
             background: white;
-            color: var(--primary-green);
+            color: var(--clay);
             border-radius: 8px;
             cursor: pointer;
             display: flex;
@@ -264,7 +267,7 @@
             transition: all 0.3s ease;
         }
         .wishlist-btn:hover {
-            background: var(--primary-green);
+            background: var(--clay);
             color: white;
         }
         .cart-sidebar {
@@ -318,7 +321,7 @@
             margin-bottom: 0.3rem;
         }
         .cart-item-price {
-            color: var(--warm-orange);
+            color: var(--gold);
             font-weight: 600;
         }
         .cart-footer {
@@ -334,7 +337,7 @@
         }
         .checkout-btn {
             width: 100%;
-            background: var(--primary-green);
+            background: var(--clay);
             color: white;
             border: none;
             padding: 1rem;
@@ -348,7 +351,7 @@
             top: 50%;
             right: 20px;
             transform: translateY(-50%);
-            background: var(--primary-green);
+            background: var(--clay);
             color: white;
             border: none;
             width: 60px;
@@ -363,7 +366,7 @@
             position: absolute;
             top: -5px;
             right: -5px;
-            background: var(--warm-orange);
+            background: var(--gold);
             color: white;
             border-radius: 50%;
             width: 25px;
@@ -375,7 +378,7 @@
             font-weight: 600;
         }
         .delivery-info {
-            background: var(--warm-beige);
+            background: var(--cream);
             padding: 2rem 0;
             margin-top: 3rem;
         }
@@ -394,7 +397,7 @@
         .delivery-icon {
             width: 60px;
             height: 60px;
-            background: var(--primary-green);
+            background: var(--clay);
             color: white;
             border-radius: 50%;
             display: flex;
