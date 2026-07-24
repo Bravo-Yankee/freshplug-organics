@@ -346,7 +346,6 @@ window.addEventListener('load', () => {
     // Preload critical images
     const criticalImages = [
         'assets/images/hero-farm.jpg',
-        'assets/images/fresh-eggs.jpg',
         'assets/images/organic-chicken.jpg'
     ];
     

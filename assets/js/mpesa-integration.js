@@ -187,7 +187,7 @@ class MpesaPaymentGateway {
                 const mpesaButton = document.createElement('button');
                 mpesaButton.className = 'btn mpesa-btn';
                 mpesaButton.innerHTML = `
-                    <img src="assets/images/mpesa-logo.png" alt="M-Pesa" style="height: 20px; margin-right: 8px;">
+                    <img src="assets/images/mpesa-logo.png" alt="M-Pesa" style="height: 20px; margin-right: 8px;" onerror="this.style.display='none'">
                     Pay with M-Pesa
                 `;
                 mpesaButton.style.cssText = `
@@ -226,7 +226,7 @@ class MpesaPaymentGateway {
             <div class="modal-content" style="max-width: 500px;">
                 <div class="modal-header">
                     <h3>
-                        <img src="assets/images/mpesa-logo.png" alt="M-Pesa" style="height: 25px; margin-right: 10px;">
+                        <img src="assets/images/mpesa-logo.png" alt="M-Pesa" style="height: 25px; margin-right: 10px;" onerror="this.style.display='none'">
                         M-Pesa Payment
                     </h3>
                     <button class="modal-close" onclick="mpesaGateway.closeMpesaModal()">&times;</button>

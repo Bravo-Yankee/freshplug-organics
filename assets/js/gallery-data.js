@@ -11,7 +11,7 @@ const galleryData = [
     },
     {
         id: 2,
-        src: 'assets/images/live-chickens.jpg',
+        src: 'assets/images/hero-farm.jpg',
         title: 'Healthy Flock',
         description: 'Well-cared for chickens enjoying outdoor life',
         category: 'chickens',
@@ -19,7 +19,7 @@ const galleryData = [
     },
     {
         id: 3,
-        src: 'assets/images/happy-hens.jpg',
+        src: 'assets/images/organic-chicken.jpg',
         title: 'Content Laying Hens',
         description: 'Our laying hens in their comfortable environment',
         category: 'chickens',
@@ -63,7 +63,7 @@ const galleryData = [
     // Fresh Products Category
     {
         id: 8,
-        src: 'assets/images/fresh-eggs.jpg',
+        src: 'assets/images/organic-chicken.jpg',
         title: 'Farm-Fresh Eggs',
         description: 'Daily collection of fresh, organic eggs',
         category: 'products',
@@ -71,7 +71,7 @@ const galleryData = [
     },
     {
         id: 9,
-        src: 'assets/images/egg-collection.jpg',
+        src: 'assets/images/hero-farm.jpg',
         title: 'Egg Collection Process',
         description: 'Careful collection of eggs from our happy hens',
         category: 'products',
@@ -91,7 +91,7 @@ const galleryData = [
     // Our Team Category
     {
         id: 11,
-        src: 'assets/images/farm-chickens.jpg',
+        src: 'assets/images/team-member.jpg',
         title: 'Daily Care Routine',
         description: 'Our dedicated team caring for the chickens',
         category: 'team',

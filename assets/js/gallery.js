@@ -10,16 +10,16 @@ const galleryImages = [
     },
     {
         id: 2,
-        src: 'assets/images/live-chickens.jpg',
-        thumb: 'assets/images/live-chickens.jpg',
+        src: 'assets/images/hero-farm.jpg',
+        thumb: 'assets/images/hero-farm.jpg',
         title: 'Healthy Flock',
         description: 'Well-cared for chickens enjoying outdoor life',
         category: 'chickens'
     },
     {
         id: 3,
-        src: 'assets/images/happy-hens.jpg',
-        thumb: 'assets/images/happy-hens.jpg',
+        src: 'assets/images/organic-chicken.jpg',
+        thumb: 'assets/images/organic-chicken.jpg',
         title: 'Content Laying Hens',
         description: 'Our laying hens in their comfortable environment',
         category: 'chickens'
@@ -58,16 +58,16 @@ const galleryImages = [
     },
     {
         id: 8,
-        src: 'assets/images/fresh-eggs.jpg',
-        thumb: 'assets/images/fresh-eggs.jpg',
+        src: 'assets/images/organic-chicken.jpg',
+        thumb: 'assets/images/organic-chicken.jpg',
         title: 'Farm-Fresh Eggs',
         description: 'Daily collection of fresh, organic eggs',
         category: 'products'
     },
     {
         id: 9,
-        src: 'assets/images/egg-collection.jpg',
-        thumb: 'assets/images/egg-collection.jpg',
+        src: 'assets/images/hero-farm.jpg',
+        thumb: 'assets/images/hero-farm.jpg',
         title: 'Egg Collection Process',
         description: 'Careful collection of eggs from our happy hens',
         category: 'products'
@@ -82,80 +82,80 @@ const galleryImages = [
     },
     {
         id: 11,
-        src: 'assets/images/farm-chickens.jpg',
-        thumb: 'assets/images/farm-chickens.jpg',
+        src: 'assets/images/team-member.jpg',
+        thumb: 'assets/images/team-member.jpg',
         title: 'Daily Care Routine',
         description: 'Our dedicated team caring for the chickens',
         category: 'team'
     },
     {
-        id: 7,
-        src: 'assets/images/gallery/team-1.jpg',
-        thumb: 'assets/images/gallery/thumbs/team-1.jpg',
+        id: 12,
+        src: 'assets/images/customer2.jpg',
+        thumb: 'assets/images/customer2.jpg',
         title: 'Farm Manager at Work',
         description: 'Our dedicated farm manager checking on the flock',
         category: 'team'
     },
     {
-        id: 8,
-        src: 'assets/images/gallery/team-2.jpg',
-        thumb: 'assets/images/gallery/thumbs/team-2.jpg',
-        title: 'Daily Care Routine',
+        id: 13,
+        src: 'assets/images/customer1.jpg',
+        thumb: 'assets/images/customer1.jpg',
+        title: 'Team at Work',
         description: 'Team member providing daily care and attention',
         category: 'team'
     },
     {
-        id: 9,
-        src: 'assets/images/gallery/visitors-1.jpg',
-        thumb: 'assets/images/gallery/thumbs/visitors-1.jpg',
+        id: 14,
+        src: 'assets/images/visitors-farm.jpg',
+        thumb: 'assets/images/visitors-farm.jpg',
         title: 'School Farm Visit',
         description: 'Local school children learning about organic farming',
         category: 'visitors'
     },
     {
-        id: 10,
-        src: 'assets/images/gallery/visitors-2.jpg',
-        thumb: 'assets/images/gallery/thumbs/visitors-2.jpg',
+        id: 15,
+        src: 'assets/images/visitors-farm.jpg',
+        thumb: 'assets/images/visitors-farm.jpg',
         title: 'Family Farm Tour',
         description: 'Families enjoying educational farm tours',
         category: 'visitors'
     },
     {
-        id: 11,
-        src: 'assets/images/gallery/chickens-3.jpg',
-        thumb: 'assets/images/gallery/thumbs/chickens-3.jpg',
+        id: 16,
+        src: 'assets/images/hero-farm.jpg',
+        thumb: 'assets/images/hero-farm.jpg',
         title: 'Broiler Chickens',
         description: 'Healthy broiler chickens in natural environment',
         category: 'chickens'
     },
     {
-        id: 12,
-        src: 'assets/images/gallery/facilities-3.jpg',
-        thumb: 'assets/images/gallery/thumbs/facilities-3.jpg',
+        id: 17,
+        src: 'assets/images/farm-facility.jpg',
+        thumb: 'assets/images/farm-facility.jpg',
         title: 'Water System',
         description: 'Clean water delivery system for our birds',
         category: 'facilities'
     },
     {
-        id: 13,
-        src: 'assets/images/gallery/products-3.jpg',
-        thumb: 'assets/images/gallery/thumbs/products-3.jpg',
+        id: 18,
+        src: 'assets/images/organic-chicken.jpg',
+        thumb: 'assets/images/organic-chicken.jpg',
         title: 'Egg Packaging',
         description: 'Careful packaging of fresh eggs for delivery',
         category: 'products'
     },
     {
-        id: 14,
-        src: 'assets/images/gallery/chickens-4.jpg',
-        thumb: 'assets/images/gallery/thumbs/chickens-4.jpg',
+        id: 19,
+        src: 'assets/images/hero-farm.jpg',
+        thumb: 'assets/images/hero-farm.jpg',
         title: 'Day-old Chicks',
         description: 'Adorable day-old chicks in nursery area',
         category: 'chickens'
     },
     {
-        id: 15,
-        src: 'assets/images/gallery/facilities-4.jpg',
-        thumb: 'assets/images/gallery/thumbs/facilities-4.jpg',
+        id: 20,
+        src: 'assets/images/farm-landscape.jpg',
+        thumb: 'assets/images/farm-landscape.jpg',
         title: 'Farm Entrance',
         description: 'Welcome to Freshplug Organics Poultry Farm',
         category: 'facilities'
