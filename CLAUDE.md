@@ -59,6 +59,10 @@ The real, functioning "checkout" is `shop.js`'s `proceedToCheckout()`: it serial
 
 The business WhatsApp number (`254714221885`) is hardcoded independently in `main.js`, `shop.js`, and `mpesa-integration.js`, plus referenced directly in several `.html` files. There's no single source of truth for it.
 
+### `sw.js` is deliberately a no-op cache
+
+The registered service worker (`assets/js/main.js` registers it on every page) does not cache anything — every `fetch` handler passes straight through to the network. This is intentional so product/price content is never served stale; don't add `caches.open`/`cache.put` logic to it without that tradeoff being asked for explicitly.
+
 ### `drive_assets/`
 
 `drive_assets` is a symlinked local Google Drive folder (gitignored) used for pulling in source images/media outside the repo — it won't exist in a fresh checkout and shouldn't be treated as part of the project's source.
