@@ -41,11 +41,11 @@ class AdminDashboard {
                 emailProvider: 'sendgrid',
                 apiKey: '',
                 automationEnabled: true,
-                defaultSender: 'noreply@freshplugorganics.com'
+                defaultSender: 'freshplugorganics@gmail.com'
             },
             business: {
                 name: 'Freshplug Organics Poultry Farm',
-                email: 'info@freshplugorganics.com',
+                email: 'freshplugorganics@gmail.com',
                 phone: '+254 714 221885',
                 currency: 'KSH'
             },
