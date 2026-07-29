@@ -1,0 +1,118 @@
+.page-header {
+    background: linear-gradient(135deg, var(--clay) 0%, var(--clay-deep) 100%);
+    color: white;
+    padding: 8rem 0 4rem;
+    text-align: center;
+    margin-top: 80px;
+}
+.faq-section {
+    padding: 4rem 0;
+}
+.faq-categories {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+}
+.faq-category {
+    padding: 0.8rem 1.5rem;
+    border: 2px solid var(--clay);
+    background: transparent;
+    color: var(--clay);
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+.faq-category.active,
+.faq-category:hover {
+    background: var(--clay);
+    color: white;
+}
+.faq-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+.faq-item {
+    background: white;
+    border-radius: 15px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 5px 20px var(--shadow);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+.faq-item:hover {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+.faq-question {
+    padding: 1.5rem 2rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    transition: all 0.3s ease;
+    border: none;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+}
+.faq-question:hover {
+    background: var(--paper);
+}
+.faq-question h3 {
+    margin: 0;
+    color: var(--charcoal);
+    font-weight: 600;
+}
+.faq-icon {
+    font-size: 1.2rem;
+    color: var(--clay);
+    transition: transform 0.3s ease;
+}
+.faq-item.active .faq-icon {
+    transform: rotate(180deg);
+}
+.faq-answer {
+    padding: 0 2rem 1.5rem;
+    color: var(--text-light);
+    line-height: 1.6;
+}
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.faq-item.active .faq-answer {
+    animation: slideDown 0.3s ease;
+}
+.search-faq {
+    margin-bottom: 3rem;
+    text-align: center;
+}
+.search-faq input {
+    padding: 1rem 1.5rem;
+    border: 2px solid var(--line);
+    border-radius: 25px;
+    width: 100%;
+    max-width: 400px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+.search-faq input:focus {
+    border-color: var(--clay);
+}
+@media (max-width: 768px) {
+    .faq-question {
+        padding: 1rem 1.5rem;
+    }
+    .faq-answer {
+        padding: 0 1.5rem 1rem;
+    }
+}
