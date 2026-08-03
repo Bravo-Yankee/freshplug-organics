@@ -218,7 +218,23 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeFilters();
     initializeSearch();
     initializeSort();
+    applyCategoryFromHash();
 });
+
+// Links like shop.html#eggs (homepage "Shop Eggs" buttons, footer product
+// lists across the site) are meant to land pre-filtered to that category —
+// activate the matching filter tab instead of leaving the hash inert.
+function applyCategoryFromHash() {
+    const category = window.location.hash.slice(1);
+    if (!category) return;
+
+    const matchingTab = Array.from(filterTabs).find(tab => tab.getAttribute('data-category') === category);
+    if (!matchingTab) return;
+
+    filterTabs.forEach(tab => tab.classList.remove('active'));
+    matchingTab.classList.add('active');
+    filterProducts(category);
+}
 
 // Render products
 function renderProducts(productsToRender) {
