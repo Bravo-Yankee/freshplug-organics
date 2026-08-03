@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import { galleryCategories, galleryPhotos, type GalleryCategory } from "@/content/gallery";
+import { galleryCategories, type GalleryCategory, type GalleryPhoto } from "@/content/gallery";
 
 const IMAGES_PER_LOAD = 6;
 
@@ -32,7 +32,7 @@ const videos = [
   },
 ];
 
-export function GalleryClient() {
+export function GalleryClient({ photos: galleryPhotos }: { photos: GalleryPhoto[] }) {
   const [activeFilter, setActiveFilter] = useState<GalleryCategory | "all">("all");
   const [visibleCount, setVisibleCount] = useState(IMAGES_PER_LOAD);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
@@ -43,7 +43,7 @@ export function GalleryClient() {
       activeFilter === "all"
         ? galleryPhotos
         : galleryPhotos.filter((photo) => photo.category === activeFilter),
-    [activeFilter],
+    [activeFilter, galleryPhotos],
   );
 
   const visiblePhotos = filteredPhotos.slice(0, visibleCount);

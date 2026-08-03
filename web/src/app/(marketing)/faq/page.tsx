@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import "@/styles/pages/faq.css";
 import { FaqAccordion } from "@/components/faq/FaqAccordion";
+import { getFaqs } from "@/lib/data/faqs";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "FAQ",
@@ -8,7 +11,9 @@ export const metadata: Metadata = {
     "Frequently Asked Questions about Freshplug Organics Poultry Farm - organic practices, delivery, ordering, and more.",
 };
 
-export default function FaqPage() {
+export default async function FaqPage() {
+  const faqs = await getFaqs();
+
   return (
     <>
       <section className="page-header">
@@ -20,7 +25,7 @@ export default function FaqPage() {
 
       <section className="faq-section">
         <div className="container">
-          <FaqAccordion />
+          <FaqAccordion faqs={faqs} />
         </div>
       </section>
     </>

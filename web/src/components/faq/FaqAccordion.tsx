@@ -1,9 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { faqCategories, faqs, type FaqCategory } from "@/content/faqs";
+import { faqCategories, type Faq, type FaqCategory } from "@/content/faqs";
 
-export function FaqAccordion() {
+export function FaqAccordion({ faqs }: { faqs: Faq[] }) {
   const [activeCategory, setActiveCategory] = useState<FaqCategory | "all">("all");
   const [search, setSearch] = useState("");
   const [openQuestion, setOpenQuestion] = useState<string | null>(null);
@@ -18,7 +18,7 @@ export function FaqAccordion() {
         faq.answer.toLowerCase().includes(term);
       return matchesCategory && matchesSearch;
     });
-  }, [activeCategory, search]);
+  }, [activeCategory, search, faqs]);
 
   return (
     <>

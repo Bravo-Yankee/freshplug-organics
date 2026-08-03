@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { blogPosts, type BlogCategory } from "@/content/blog";
+import type { BlogCategory, BlogPost } from "@/content/blog";
 
 const POSTS_PER_PAGE = 5;
 
@@ -45,7 +45,7 @@ function formatCategoryName(category: string) {
     .join(" ");
 }
 
-export function BlogClient() {
+export function BlogClient({ posts: blogPosts }: { posts: BlogPost[] }) {
   const [activeCategory, setActiveCategory] = useState<BlogCategory | "all">("all");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -56,7 +56,7 @@ export function BlogClient() {
       counts[post.category] = (counts[post.category] ?? 0) + 1;
     }
     return counts;
-  }, []);
+  }, [blogPosts]);
 
   const filteredPosts = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -72,7 +72,7 @@ export function BlogClient() {
     return activeCategory === "all"
       ? blogPosts
       : blogPosts.filter((post) => post.category === activeCategory);
-  }, [activeCategory, search]);
+  }, [activeCategory, search, blogPosts]);
 
   const totalPages = Math.max(1, Math.ceil(filteredPosts.length / POSTS_PER_PAGE));
   const currentPage = Math.min(page, totalPages);
@@ -86,7 +86,7 @@ export function BlogClient() {
       [...blogPosts]
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
         .slice(0, 5),
-    [],
+    [blogPosts],
   );
 
   function selectCategory(category: BlogCategory | "all") {

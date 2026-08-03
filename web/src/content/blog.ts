@@ -34,7 +34,10 @@ export interface BlogPost {
   tags: string[];
 }
 
-// Ported verbatim (metadata only) from the legacy assets/js/blog.js.
+// Ported verbatim (metadata only) from the legacy assets/js/blog.js. As of
+// Phase 1, this is seed input for `scripts/seed.ts` only — runtime reads go
+// through `getBlogPosts()`/`getBlogPostById()` in `@/lib/data/blog`, which
+// query the `blog_posts` table. Edit posts in Supabase Studio, not here.
 export const blogPosts: BlogPost[] = [
   {
     id: 1,

@@ -2,6 +2,9 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import "@/styles/pages/gallery.css";
 import { GalleryClient } from "@/components/gallery/GalleryClient";
+import { getGalleryPhotos } from "@/lib/data/gallery";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Photo Gallery",
@@ -9,7 +12,9 @@ export const metadata: Metadata = {
     "Photo gallery showcasing Freshplug Organics Poultry Farm - see our chickens, facilities, products, and farm life.",
 };
 
-export default function GalleryPage() {
+export default async function GalleryPage() {
+  const photos = await getGalleryPhotos();
+
   return (
     <>
       <section className="page-header">
@@ -24,7 +29,7 @@ export default function GalleryPage() {
         </div>
       </section>
 
-      <GalleryClient />
+      <GalleryClient photos={photos} />
     </>
   );
 }

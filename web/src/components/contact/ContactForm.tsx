@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { getSupabaseClient } from "@/lib/supabase/client";
 
 const INQUIRY_SUBJECTS: Record<string, string> = {
   order: "Product Order Inquiry",
@@ -14,10 +15,8 @@ const INQUIRY_SUBJECTS: Record<string, string> = {
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
- * Ported from the legacy contact.html inline script. Still a client-only
- * simulated submission (no real send) — wiring this to a real backend
- * endpoint/CRM is follow-up work, not part of the Phase 0 content-parity
- * migration.
+ * Ported from the legacy contact.html inline script. As of Phase 1,
+ * submission writes a row to the `contact_messages` Supabase table.
  */
 export function ContactForm() {
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
@@ -54,7 +53,22 @@ export function ContactForm() {
     }
 
     setStatus("submitting");
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    const { error } = await getSupabaseClient().from("contact_messages").insert({
+      first_name: String(formData.get("firstName")),
+      last_name: String(formData.get("lastName")),
+      email,
+      phone: formData.get("phone") ? String(formData.get("phone")) : null,
+      inquiry_type: String(formData.get("inquiryType")),
+      subject: String(formData.get("subject")),
+      message: String(formData.get("message")),
+    });
+
+    if (error) {
+      setErrorMessage("Something went wrong sending your message — please try WhatsApp or call us directly.");
+      setStatus("error");
+      return;
+    }
 
     setStatus("success");
     setSubject("");

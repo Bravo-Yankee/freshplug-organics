@@ -2,14 +2,17 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { blogPosts } from "@/content/blog";
+import { getBlogPostById, getBlogPosts } from "@/lib/data/blog";
 
-export function generateStaticParams() {
-  return blogPosts.map((post) => ({ id: String(post.id) }));
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const posts = await getBlogPosts();
+  return posts.map((post) => ({ id: String(post.id) }));
 }
 
-export function generateMetadata({ params }: { params: { id: string } }): Metadata {
-  const post = blogPosts.find((p) => p.id === Number(params.id));
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  const post = await getBlogPostById(Number(params.id));
   if (!post) return {};
   return { title: post.title, description: post.excerpt };
 }
@@ -22,8 +25,8 @@ export function generateMetadata({ params }: { params: { id: string } }): Metada
  * src/content/blog.ts) — this shows the metadata plus a clear
  * placeholder rather than leaving the link broken.
  */
-export default function BlogPostPage({ params }: { params: { id: string } }) {
-  const post = blogPosts.find((p) => p.id === Number(params.id));
+export default async function BlogPostPage({ params }: { params: { id: string } }) {
+  const post = await getBlogPostById(Number(params.id));
   if (!post) notFound();
 
   return (

@@ -32,6 +32,11 @@ export const galleryCategories: { key: GalleryCategory | "all"; label: string }[
  * the real, currently-displayed 20-photo list. Several images are
  * intentionally reused across entries in the source data (no
  * unique-photo-per-entry guarantee) — preserved here, not a migration bug.
+ *
+ * As of Phase 1, this is seed input for `scripts/seed.ts` only — runtime
+ * reads go through `getGalleryPhotos()` in `@/lib/data/gallery`, which
+ * queries the `gallery_photos` table. Edit photos in Supabase Studio, not
+ * here.
  */
 export const galleryPhotos: GalleryPhoto[] = [
   { id: 1, src: "/assets/images/hero-farm.jpg", title: "Free-Range Chickens", description: "Our happy chickens roaming freely in natural pastures", category: "chickens" },

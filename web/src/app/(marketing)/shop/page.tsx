@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import "@/styles/pages/shop.css";
 import { ShopClient } from "@/components/shop/ShopClient";
+import { getProducts } from "@/lib/data/products";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Shop",
@@ -8,7 +11,9 @@ export const metadata: Metadata = {
     "Shop premium organic poultry products - fresh eggs, organic chicken, live birds, and more from Freshplug Organics Poultry Farm.",
 };
 
-export default function ShopPage() {
+export default async function ShopPage() {
+  const products = await getProducts();
+
   return (
     <>
       <section className="page-header">
@@ -18,7 +23,7 @@ export default function ShopPage() {
         </div>
       </section>
 
-      <ShopClient />
+      <ShopClient products={products} />
     </>
   );
 }

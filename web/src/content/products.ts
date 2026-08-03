@@ -19,8 +19,9 @@ export interface Product {
 
 /**
  * Ported verbatim from the legacy assets/js/shop.js hardcoded catalog.
- * This is the source of truth to seed the `products` table in Phase 1 —
- * do not hand-duplicate this list elsewhere.
+ * As of Phase 1, this is seed input for `scripts/seed.ts` only — runtime
+ * reads go through `getProducts()` in `@/lib/data/products`, which queries
+ * the `products` table. Edit product data in Supabase Studio, not here.
  */
 export const products: Product[] = [
   {

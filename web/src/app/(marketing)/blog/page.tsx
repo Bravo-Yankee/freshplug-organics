@@ -2,6 +2,9 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import "@/styles/pages/blog.css";
 import { BlogClient } from "@/components/blog/BlogClient";
+import { getBlogPosts } from "@/lib/data/blog";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Farm Blog",
@@ -9,7 +12,9 @@ export const metadata: Metadata = {
     "Farm blog from Freshplug Organics - farming tips, updates, recipes, and insights into organic poultry farming.",
 };
 
-export default function BlogPage() {
+export default async function BlogPage() {
+  const posts = await getBlogPosts();
+
   return (
     <>
       <section className="page-header">
@@ -26,7 +31,7 @@ export default function BlogPage() {
 
       <section className="blog-section">
         <div className="container">
-          <BlogClient />
+          <BlogClient posts={posts} />
         </div>
       </section>
     </>

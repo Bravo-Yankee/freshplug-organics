@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { products, type ProductCategory } from "@/content/products";
+import type { Product, ProductCategory } from "@/content/products";
 import { siteConfig } from "@/lib/site-config";
 import { useCart } from "@/lib/cart";
+import { getSupabaseClient } from "@/lib/supabase/client";
 import { useToast, ToastViewport } from "@/components/ui/Toast";
 
 const categoryFilters: { key: ProductCategory | "all"; label: string }[] = [
@@ -28,7 +29,7 @@ function defaultOptions(options: Record<string, string[]>): Record<string, strin
   return Object.fromEntries(Object.entries(options).map(([key, values]) => [key, values[0]]));
 }
 
-export function ShopClient() {
+export function ShopClient({ products }: { products: Product[] }) {
   const [activeCategory, setActiveCategory] = useState<ProductCategory | "all">("all");
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<SortKey>("name");
@@ -64,7 +65,7 @@ export function ShopClient() {
       case "rating":
         return sorted.sort((a, b) => b.rating - a.rating);
     }
-  }, [activeCategory, search, sortBy]);
+  }, [activeCategory, search, sortBy, products]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -103,7 +104,7 @@ export function ShopClient() {
     show("Item removed from cart", "success");
   }
 
-  function handleCheckout() {
+  async function handleCheckout() {
     if (cart.items.length === 0) {
       show("Your cart is empty!", "error");
       return;
@@ -124,7 +125,20 @@ export function ShopClient() {
       })
       .join("\n")}\n\nTotal: KSH ${cart.totalPrice.toLocaleString()}\n\nPlease confirm availability and delivery details.`;
 
-    window.open(`https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent(whatsappMessage)}`, "_blank");
+    // Open the tab synchronously (before the await below) so the browser
+    // still treats it as a direct result of the user's click — an await
+    // in between would break that gesture chain and risk a popup blocker.
+    const waWindow = window.open("", "_blank");
+
+    const { error } = await getSupabaseClient()
+      .from("orders")
+      .insert({ items: cart.items, total_ksh: cart.totalPrice });
+    if (error) {
+      // Never block WhatsApp checkout on the order record failing to save.
+      console.error("Failed to record order in Supabase:", error);
+    }
+
+    waWindow?.location.replace(`https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent(whatsappMessage)}`);
     cart.clear();
     setCartOpen(false);
     show("Order sent via WhatsApp! We'll confirm shortly.", "success");
