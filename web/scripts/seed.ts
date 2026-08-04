@@ -10,7 +10,16 @@
  */
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
+import { WebSocket } from "ws";
 import { createClient } from "@supabase/supabase-js";
+
+// @supabase/supabase-js constructs a realtime client unconditionally, which
+// requires a native WebSocket global — only available in Node 22+. This
+// script doesn't use realtime, but still needs something to satisfy that
+// constructor check under older Node.
+if (typeof globalThis.WebSocket === "undefined") {
+  (globalThis as unknown as { WebSocket: typeof WebSocket }).WebSocket = WebSocket;
+}
 import { products } from "../src/content/products";
 import { blogPosts } from "../src/content/blog";
 import { galleryPhotos } from "../src/content/gallery";
