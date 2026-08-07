@@ -101,3 +101,87 @@ create policy "public read" on faqs for select using (true);
 
 create policy "public insert" on orders for insert with check (true);
 create policy "public insert" on contact_messages for insert with check (true);
+
+-- Phase 2 — customer accounts (Supabase Auth, magic link)
+--
+-- Not idempotent, like the rest of this file: if you already ran the block
+-- above against an existing project, run only what follows against that
+-- same project rather than re-running the whole file.
+
+create table profiles (
+  id uuid primary key references auth.users(id) on delete cascade,
+  first_name text,
+  last_name text,
+  phone text,
+  birth_date date,
+  created_at timestamptz not null default now()
+);
+
+-- Every signed-up user gets a bare profile row automatically. Runs as the
+-- function owner (bypasses RLS), so there's no public insert policy on
+-- profiles — the trigger is the only writer of new rows.
+create function handle_new_user()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  insert into public.profiles (id) values (new.id);
+  return new;
+end;
+$$;
+
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure handle_new_user();
+
+create table addresses (
+  id bigint generated always as identity primary key,
+  profile_id uuid not null references profiles(id) on delete cascade,
+  label text,
+  address text not null,
+  city text not null,
+  postal_code text,
+  is_default boolean not null default false
+);
+
+create table subscriptions (
+  id bigint generated always as identity primary key,
+  profile_id uuid not null references profiles(id) on delete cascade,
+  product_id bigint not null references products(id),
+  frequency text not null check (frequency in ('weekly','monthly')),
+  quantity integer not null default 1,
+  next_delivery date,
+  status text not null default 'active' check (status in ('active','paused')),
+  start_date date not null default now()
+);
+
+-- Ties an order to the customer who placed it while logged in. Nullable —
+-- WhatsApp checkout (see ShopClient.handleCheckout) still doesn't require
+-- an account.
+alter table orders add column profile_id uuid references profiles(id);
+
+alter table profiles enable row level security;
+alter table addresses enable row level security;
+alter table subscriptions enable row level security;
+
+create policy "own profile select" on profiles for select using (auth.uid() = id);
+create policy "own profile update" on profiles for update using (auth.uid() = id);
+
+create policy "own addresses select" on addresses for select using (auth.uid() = profile_id);
+create policy "own addresses insert" on addresses for insert with check (auth.uid() = profile_id);
+create policy "own addresses update" on addresses for update using (auth.uid() = profile_id);
+create policy "own addresses delete" on addresses for delete using (auth.uid() = profile_id);
+
+create policy "own subscriptions select" on subscriptions for select using (auth.uid() = profile_id);
+create policy "own subscriptions insert" on subscriptions for insert with check (auth.uid() = profile_id);
+create policy "own subscriptions update" on subscriptions for update using (auth.uid() = profile_id);
+
+-- orders previously had no select policy at all (no read-back, by design,
+-- since there was no auth to scope it to). This is the first read access,
+-- deliberately scoped to the owning user only. The insert policy is
+-- replaced (not left in place alongside a new one) so a logged-in checkout
+-- can't write another user's profile_id onto an order.
+drop policy "public insert" on orders;
+create policy "public insert" on orders for insert with check (profile_id is null or profile_id = auth.uid());
+create policy "own orders select" on orders for select using (profile_id = auth.uid());

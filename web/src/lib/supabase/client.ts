@@ -1,22 +1,9 @@
-import { createClient } from "@supabase/supabase-js";
-
-// @supabase/supabase-js constructs a realtime client unconditionally, which
-// requires a native WebSocket global — only guaranteed in Node 22+. The
-// browser always has WebSocket natively, so this branch only matters for
-// Server Components running under an older Node runtime; the `typeof
-// window === "undefined"` check lets Next.js dead-code-eliminate it (and
-// the `ws` import with it) from the client bundle.
-if (typeof window === "undefined" && typeof globalThis.WebSocket === "undefined") {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  (globalThis as unknown as { WebSocket: unknown }).WebSocket = require("ws").WebSocket;
-}
+import { createBrowserClient } from "@supabase/ssr";
 
 /**
- * Plain REST client (no @supabase/ssr) — there's no auth/session in this
- * phase, so a single fetch-based client works identically in Server
- * Components and Client Components. Content tables are public-read and
- * orders/contact_messages are public-insert-only, enforced by RLS, not by
- * which context this runs in.
+ * Browser client — cookie-backed session (via @supabase/ssr), used from
+ * Client Components. The browser always has native WebSocket, so this file
+ * doesn't need the Node polyfill that lib/supabase/server.ts carries.
  */
 export function getSupabaseClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -28,5 +15,5 @@ export function getSupabaseClient() {
     );
   }
 
-  return createClient(url, anonKey);
+  return createBrowserClient(url, anonKey);
 }

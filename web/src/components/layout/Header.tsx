@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { getSupabaseClient } from "@/lib/supabase/client";
 
 export type HeaderVariant = "marketing" | "legal";
 
@@ -42,6 +43,22 @@ export function Header({ variant }: HeaderProps) {
   const isHome = pathname === "/";
   const [scrollState, setScrollState] = useState<"initial" | "scrolled" | "past100">("initial");
   const [menuOpen, setMenuOpen] = useState(false);
+  // Checked client-side (rather than passed down from a Server Component
+  // reading cookies()) so marketing pages keep their static/ISR rendering —
+  // a layout that reads the session would force every page under it to
+  // render dynamically on every request. Briefly shows "Login" for a
+  // signed-in user on first paint before this resolves; acceptable for a
+  // low-traffic marketing site.
+  const [signedIn, setSignedIn] = useState(false);
+
+  useEffect(() => {
+    const supabase = getSupabaseClient();
+    supabase.auth.getUser().then(({ data }) => setSignedIn(!!data.user));
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => setSignedIn(!!session?.user));
+    return () => subscription.unsubscribe();
+  }, []);
 
   useEffect(() => {
     if (variant !== "marketing") return;
@@ -97,6 +114,11 @@ export function Header({ variant }: HeaderProps) {
                   <i className="fas fa-shopping-cart" /> Shop
                 </Link>
               </li>
+              <li>
+                <Link href={signedIn ? "/account" : "/login"} className="nav-link">
+                  <i className="fas fa-user" /> {signedIn ? "My Account" : "Login"}
+                </Link>
+              </li>
             </ul>
             <button
               type="button"
@@ -141,6 +163,11 @@ export function Header({ variant }: HeaderProps) {
           <li className="nav-item">
             <Link href="/shop" className="nav-link shop-btn">
               Shop Now
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link href={signedIn ? "/account" : "/login"} className="nav-link">
+              <i className="fas fa-user" /> {signedIn ? "My Account" : "Login"}
             </Link>
           </li>
         </ul>
