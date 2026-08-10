@@ -185,3 +185,41 @@ create policy "own subscriptions update" on subscriptions for update using (auth
 drop policy "public insert" on orders;
 create policy "public insert" on orders for insert with check (profile_id is null or profile_id = auth.uid());
 create policy "own orders select" on orders for select using (profile_id = auth.uid());
+
+-- Phase 3 — admin dashboard
+--
+-- Not idempotent, like the rest of this file: run only this block against
+-- a project that already has the Phase 1/2 blocks applied.
+
+alter table profiles add column is_admin boolean not null default false;
+
+-- Bootstrapping the first admin is manual, done once in Studio's SQL
+-- editor: update profiles set is_admin = true where id = '<user-uuid>';
+-- There is deliberately no in-app UI to grant admin (see AGENTS.md).
+
+-- security definer so it can read profiles.is_admin for the *calling*
+-- user without needing a broader policy, and so every policy below can
+-- reuse it instead of repeating the exists(...) subquery four times.
+create function is_admin()
+returns boolean
+language sql
+security definer set search_path = public
+stable
+as $$
+  select exists (
+    select 1 from profiles where profiles.id = auth.uid() and profiles.is_admin
+  );
+$$;
+
+-- profiles: admins can read every row (customer listing), additive
+-- alongside "own profile select" — same-command policies are OR'd, so
+-- this doesn't need to replace it.
+create policy "admin profiles select" on profiles for select using (is_admin());
+
+-- orders: admins can read every row and update status.
+create policy "admin orders select" on orders for select using (is_admin());
+create policy "admin orders update" on orders for update using (is_admin()) with check (is_admin());
+
+-- contact_messages: previously had no select policy at all (public
+-- insert-only). This is the first read access, admin-only.
+create policy "admin contact_messages select" on contact_messages for select using (is_admin());
