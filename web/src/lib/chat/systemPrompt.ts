@@ -26,10 +26,12 @@ function formatFaqs(faqs: Faq[]): string {
 
 /**
  * Renders a deterministic grounding block from the current catalog + FAQ
- * data. Determinism matters here, not just tidiness — getProducts()/getFaqs()
- * already order by id, but formatting must stay stable byte-for-byte across
- * requests with unchanged data, or the cache_control breakpoint on this
- * block never gets a read (see shared/prompt-caching.md).
+ * data, passed as the Gemini systemInstruction on every request.
+ * getProducts()/getFaqs() already order by id; kept deterministic here too
+ * (no timestamps, stable key order) since Gemini's own request-level
+ * caching (ai.caches) needs an identical prefix to hit — not wired up here,
+ * as this grounding text is well under the token minimum for explicit
+ * context caching.
  */
 export async function buildSystemPrompt(): Promise<string> {
   const [products, faqs] = await Promise.all([getProducts(), getFaqs()]);

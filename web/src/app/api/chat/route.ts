@@ -1,9 +1,9 @@
-import Anthropic from "@anthropic-ai/sdk";
+import { GoogleGenAI } from "@google/genai";
 import { buildSystemPrompt } from "@/lib/chat/systemPrompt";
 import { getClientKey, isRateLimited } from "@/lib/chat/rateLimit";
 
 // Never exposed to the browser — read only here, server-side.
-const client = new Anthropic();
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -52,32 +52,24 @@ export async function POST(req: Request) {
 
   const systemPrompt = await buildSystemPrompt();
 
-  const anthropicStream = client.messages.stream({
-    model: "claude-sonnet-5",
-    max_tokens: 1024,
-    thinking: { type: "disabled" },
-    system: [
-      {
-        type: "text",
-        text: systemPrompt,
-        cache_control: { type: "ephemeral" },
-      },
-    ],
-    messages,
-  });
+  // Gemini has no "assistant" role — prior model turns are role: "model".
+  const contents = messages.map((m) => ({
+    role: m.role === "assistant" ? ("model" as const) : ("user" as const),
+    parts: [{ text: m.content }],
+  }));
 
   const encoder = new TextEncoder();
   const responseStream = new ReadableStream<Uint8Array>({
     async start(controller) {
       try {
-        for await (const event of anthropicStream) {
-          if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
-            controller.enqueue(encoder.encode(event.delta.text));
-          }
+        const geminiStream = await ai.models.generateContentStream({
+          model: "gemini-2.5-flash",
+          contents,
+          config: { systemInstruction: systemPrompt },
+        });
+        for await (const chunk of geminiStream) {
+          if (chunk.text) controller.enqueue(encoder.encode(chunk.text));
         }
-        // Surfaces any stream-level error (e.g. a mid-stream refusal) that
-        // wouldn't otherwise throw from the for-await loop above.
-        await anthropicStream.finalMessage();
         controller.close();
       } catch (err) {
         controller.error(err);
