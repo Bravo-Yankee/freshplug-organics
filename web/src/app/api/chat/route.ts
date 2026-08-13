@@ -63,7 +63,7 @@ export async function POST(req: Request) {
     async start(controller) {
       try {
         const geminiStream = await ai.models.generateContentStream({
-          model: "gemini-2.5-flash",
+          model: "gemini-flash-latest",
           contents,
           config: { systemInstruction: systemPrompt },
         });
@@ -72,7 +72,11 @@ export async function POST(req: Request) {
         }
         controller.close();
       } catch (err) {
-        controller.error(err);
+        console.error("Gemini chat request failed:", err);
+        controller.enqueue(
+          encoder.encode("Sorry, the chat assistant is temporarily unavailable. Please try again shortly."),
+        );
+        controller.close();
       }
     },
   });
