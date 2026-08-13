@@ -1,14 +1,23 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-// Node <22 lacks a native WebSocket global, which @supabase/supabase-js
-// needs unconditionally for its (unused here) realtime client. Middleware
-// runs in the Edge runtime, which does have native WebSocket, but this
-// guard is cheap insurance if that ever changes — see the matching guard
-// in lib/supabase/server.ts for the Node-runtime case.
+// @supabase/supabase-js needs a global WebSocket to exist for its (unused
+// here) realtime client, or its constructor throws "native WebSocket not
+// found" — see lib/supabase/server.ts for the full explanation. Vercel's
+// Edge runtime (where this middleware executes) does NOT reliably provide
+// one, and unlike server.ts, this file can't fall back to the Node `ws`
+// package: `ws` is a CommonJS Node module that references `__dirname`,
+// which doesn't exist in Edge and crashes the middleware outright. Since
+// realtime is never actually exercised here (middleware only refreshes the
+// session cookie via auth.getUser()), a stub that merely exists — and
+// throws clearly if anything ever really tries to use it — is enough.
 if (typeof globalThis.WebSocket === "undefined") {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  (globalThis as unknown as { WebSocket: unknown }).WebSocket = require("ws").WebSocket;
+  class UnsupportedEdgeWebSocket {
+    constructor() {
+      throw new Error("WebSocket is not supported in this Edge Middleware context");
+    }
+  }
+  (globalThis as unknown as { WebSocket: unknown }).WebSocket = UnsupportedEdgeWebSocket;
 }
 
 /**
