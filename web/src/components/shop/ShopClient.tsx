@@ -29,6 +29,22 @@ function defaultOptions(options: Record<string, string[]>): Record<string, strin
   return Object.fromEntries(Object.entries(options).map(([key, values]) => [key, values[0]]));
 }
 
+/**
+ * Products with a weight option can price/describe differently per tier
+ * (see Product.weightPricing) — this resolves what should actually be
+ * shown/charged for whichever weight is currently selected, falling back
+ * to the flat price/description for every product that doesn't have
+ * per-weight overrides.
+ */
+function resolveVariant(product: Product, selected: Record<string, string> | undefined) {
+  const weightLabel = selected?.weight;
+  const override = weightLabel ? product.weightPricing?.[weightLabel] : undefined;
+  return {
+    price: override?.price ?? product.price,
+    description: override?.description ?? product.description,
+  };
+}
+
 export function ShopClient({ products }: { products: Product[] }) {
   const [activeCategory, setActiveCategory] = useState<ProductCategory | "all">("all");
   const [search, setSearch] = useState("");
@@ -94,7 +110,9 @@ export function ShopClient({ products }: { products: Product[] }) {
     const product = products.find((p) => p.id === productId);
     if (!product || !product.inStock) return;
     const quantity = quantities[productId] ?? 1;
-    cart.addItem(product, quantity, selectedOptions[productId] ?? {});
+    const options = selectedOptions[productId] ?? {};
+    const { price } = resolveVariant(product, options);
+    cart.addItem({ ...product, price }, quantity, options);
     show(`${product.name} added to cart!`, "success");
     setQuantities((current) => ({ ...current, [productId]: 1 }));
   }
@@ -189,7 +207,12 @@ export function ShopClient({ products }: { products: Product[] }) {
       <section className="shop-content">
         <div className="container">
           <div className="products-container">
-            {filteredProducts.map((product) => (
+            {filteredProducts.map((product) => {
+              const { price: effectivePrice, description: effectiveDescription } = resolveVariant(
+                product,
+                selectedOptions[product.id],
+              );
+              return (
               <div className="product-item" key={product.id} data-category={product.category}>
                 <div className={`product-badge ${product.badge}`}>{product.badge}</div>
                 <div className="product-image">
@@ -204,9 +227,9 @@ export function ShopClient({ products }: { products: Product[] }) {
                 </div>
                 <div className="product-details">
                   <h3 className="product-title">{product.name}</h3>
-                  <p className="product-description">{product.description}</p>
+                  <p className="product-description">{effectiveDescription}</p>
                   <div className="product-meta">
-                    <div className="product-price">KSH {product.price.toLocaleString()}</div>
+                    <div className="product-price">KSH {effectivePrice.toLocaleString()}</div>
                     <div className="product-rating">
                       <div className="stars">{generateStars(product.rating)}</div>
                       <span className="rating-count">({product.reviewCount})</span>
@@ -276,7 +299,8 @@ export function ShopClient({ products }: { products: Product[] }) {
                   </div>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

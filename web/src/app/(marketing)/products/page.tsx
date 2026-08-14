@@ -119,7 +119,9 @@ const categories: {
 ];
 
 function priceRangeFor(products: Product[], category: ProductCategory): string {
-  const prices = products.filter((p) => p.category === category).map((p) => p.price);
+  const prices = products
+    .filter((p) => p.category === category)
+    .flatMap((p) => [p.price, ...Object.values(p.weightPricing ?? {}).map((tier) => tier.price)]);
   if (prices.length === 0) return "Contact us for pricing";
   const min = Math.min(...prices);
   const max = Math.max(...prices);

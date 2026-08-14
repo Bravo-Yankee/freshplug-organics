@@ -13,6 +13,13 @@ export interface Product {
   badge: ProductBadge;
   /** Keys vary by category: size | weight | age | sex+quantity. */
   options: Record<string, string[]>;
+  /**
+   * Per-value price/description override, keyed by the exact label in
+   * options.weight (e.g. "4.5-5.5 kg"). Only present on products where
+   * price genuinely varies by weight tier — everything else falls back to
+   * the flat price/description above.
+   */
+  weightPricing?: Record<string, { price: number; description: string }>;
   inStock: boolean;
   featured: boolean;
 }

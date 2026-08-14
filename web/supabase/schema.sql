@@ -223,3 +223,15 @@ create policy "admin orders update" on orders for update using (is_admin()) with
 -- contact_messages: previously had no select policy at all (public
 -- insert-only). This is the first read access, admin-only.
 create policy "admin contact_messages select" on contact_messages for select using (is_admin());
+
+-- Weight-based per-tier pricing
+--
+-- Not idempotent, like the rest of this file. Products with an
+-- options.weight dropdown (e.g. "4.5-5.5 kg") previously showed one flat
+-- price/description no matter which weight was selected — this column
+-- lets each weight label carry its own price + description, keyed by the
+-- exact label string in options.weight. Products without weight-based
+-- pricing just keep the default '{}' and fall back to the flat
+-- price/description columns (see resolveVariant() in ShopClient.tsx).
+
+alter table products add column weight_pricing jsonb not null default '{}';
