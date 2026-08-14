@@ -74,9 +74,9 @@ export default function HomePage() {
               <Link href="/shop" className="btn btn-primary">
                 Order Fresh Eggs Today
               </Link>
-              <a href="#about" className="btn btn-secondary">
+              <Link href="/about" className="btn btn-secondary">
                 Learn About Our Farm
-              </a>
+              </Link>
             </div>
             <div className="hero-features">
               <div className="feature">

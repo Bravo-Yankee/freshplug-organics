@@ -10,19 +10,16 @@ export type HeaderVariant = "marketing" | "legal";
 
 interface NavItem {
   label: string;
-  /** Page route (used everywhere except the homepage's own in-page sections). */
   href: string;
-  /** Same-page anchor target, used only when this item renders on the homepage itself. */
-  anchor?: string;
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: "Home", href: "/", anchor: "#home" },
-  { label: "About Us", href: "/about", anchor: "#about" },
-  { label: "Products", href: "/products", anchor: "#products" },
-  { label: "Our Process", href: "/process", anchor: "#process" },
-  { label: "Gallery", href: "/gallery", anchor: "#gallery" },
-  { label: "Contact", href: "/contact", anchor: "#contact" },
+  { label: "Home", href: "/" },
+  { label: "About Us", href: "/about" },
+  { label: "Products", href: "/products" },
+  { label: "Our Process", href: "/process" },
+  { label: "Gallery", href: "/gallery" },
+  { label: "Contact", href: "/contact" },
 ];
 
 interface HeaderProps {
@@ -34,13 +31,12 @@ interface HeaderProps {
  * existed across the legacy site's 13 hand-duplicated pages (marketing,
  * app-like, and legal variants — see migration plan). `legal` reproduces
  * the distinct <header class="header"><nav class="nav"> markup/classes
- * that privacy-policy.html and terms-of-service.html used. Active-link and
- * homepage-anchor-vs-page-link logic is derived from the current pathname
- * rather than passed in, so callers just render <Header variant="..." />.
+ * that privacy-policy.html and terms-of-service.html used. Active-link
+ * logic is derived from the current pathname rather than passed in, so
+ * callers just render <Header variant="..." />.
  */
 export function Header({ variant }: HeaderProps) {
   const pathname = usePathname();
-  const isHome = pathname === "/";
   const [scrollState, setScrollState] = useState<"initial" | "scrolled" | "past100">("initial");
   const [menuOpen, setMenuOpen] = useState(false);
   // Checked client-side (rather than passed down from a Server Component
@@ -69,8 +65,8 @@ export function Header({ variant }: HeaderProps) {
 
   const links = NAV_ITEMS.map((item) => ({
     label: item.label,
-    href: isHome && item.anchor ? item.anchor : item.href,
-    isActive: !isHome && pathname === item.href,
+    href: item.href,
+    isActive: pathname === item.href,
   }));
 
   // Matches the legacy main.js scroll effect exactly (it mutated inline
