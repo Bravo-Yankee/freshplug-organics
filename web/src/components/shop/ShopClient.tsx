@@ -260,6 +260,9 @@ export function ShopClient({ products }: { products: Product[] }) {
                     ))}
                   </div>
 
+                  <label className="option-label">
+                    {product.category === "eggs" ? "Number of Trays" : "Quantity"}:
+                  </label>
                   <div className="quantity-selector">
                     <button type="button" className="quantity-btn" onClick={() => changeQuantity(product.id, -1)}>
                       -
