@@ -3,6 +3,10 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import "@/styles/pages/products.css";
 import { siteConfig, whatsappOrderLink } from "@/lib/site-config";
+import { getProducts } from "@/lib/data/products";
+import type { Product, ProductCategory } from "@/content/products";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Our Products",
@@ -11,13 +15,29 @@ export const metadata: Metadata = {
 };
 
 /**
- * NOTE: this is the marketing showcase page, distinct from shop.js's
- * cart-ready product catalog (src/content/products.ts) — it uses
- * qualitative price RANGES as marketing copy, not the fixed per-SKU
- * prices used at checkout. Reconciling the two is an open question for
- * the site owner (see migration plan) rather than an engineering default.
+ * This is the marketing showcase page, distinct from the cart-ready
+ * catalog on /shop — but priceRange below is now derived from the same
+ * live product data (see priceRangeFor), not hand-typed, so the two
+ * pages can't drift apart the way they used to. Deliberately formatted
+ * to match /shop's own "KSH {price}" display exactly (no "per tray" /
+ * "per kg" unit claims) — the old hardcoded units didn't actually match
+ * how these categories are priced in the catalog (eggs by size, not a
+ * 30-egg tray; chicken by cut/weight-range, not a per-kg rate), so
+ * inventing a unit to pair with a real number would just trade one
+ * mismatch for another.
  */
-const categories = [
+const categories: {
+  id: ProductCategory;
+  title: string;
+  description: string;
+  imageFirst: boolean;
+  image: string;
+  heading: string;
+  features: string[];
+  availableLabel: string;
+  availableValue: string;
+  whatsappMessage: string;
+}[] = [
   {
     id: "eggs",
     title: "Fresh Organic Eggs",
@@ -34,7 +54,6 @@ const categories = [
       "Collected daily for maximum freshness",
       "Available in multiple sizes",
     ],
-    priceRange: "KSH 400 - 500 per tray (30 eggs)",
     availableLabel: "Available Sizes",
     availableValue: "Small, Medium, Large, Extra Large",
     whatsappMessage: "Hi! I'm interested in your fresh organic eggs",
@@ -55,7 +74,6 @@ const categories = [
       "Processed hygienically on-farm",
       "Available whole or cut portions",
     ],
-    priceRange: "KSH 650 - 800 per kg",
     availableLabel: "Available Cuts",
     availableValue: "Whole chicken, breast, thighs, wings, drumsticks",
     whatsappMessage: "Hi! I'm interested in your organic chicken",
@@ -75,7 +93,6 @@ const categories = [
       "Perfect for backyard farming",
       "Expert advice provided",
     ],
-    priceRange: "KSH 1,200 - 2,500 each",
     availableLabel: "Popular Breeds",
     availableValue: "Rhode Island Red, Kuroiler, Kienyeji, New Hampshire",
     whatsappMessage: "Hi! I'm interested in your live chickens",
@@ -95,12 +112,21 @@ const categories = [
       "Available year-round",
       "Brooding guidance provided",
     ],
-    priceRange: "KSH 120 - 180 each",
     availableLabel: "Minimum Order",
     availableValue: "50 chicks (special arrangements for smaller orders)",
     whatsappMessage: "Hi! I'm interested in your day-old chicks",
   },
 ];
+
+function priceRangeFor(products: Product[], category: ProductCategory): string {
+  const prices = products.filter((p) => p.category === category).map((p) => p.price);
+  if (prices.length === 0) return "Contact us for pricing";
+  const min = Math.min(...prices);
+  const max = Math.max(...prices);
+  return min === max
+    ? `KSH ${min.toLocaleString()}`
+    : `KSH ${min.toLocaleString()} - ${max.toLocaleString()}`;
+}
 
 const certifications = [
   {
@@ -221,7 +247,9 @@ const orderingOptions = [
   },
 ];
 
-export default function ProductsPage() {
+export default async function ProductsPage() {
+  const products = await getProducts();
+
   return (
     <>
       <section className="page-header">
@@ -266,7 +294,7 @@ export default function ProductsPage() {
                 </li>
               ))}
             </ul>
-            <div className="price-range">{category.priceRange}</div>
+            <div className="price-range">{priceRangeFor(products, category.id)}</div>
             <p>
               <strong>{category.availableLabel}:</strong> {category.availableValue}
             </p>
