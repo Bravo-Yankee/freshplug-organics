@@ -2,8 +2,10 @@
 
 This is the Next.js 14 (App Router) + TypeScript + Tailwind app for Freshplug
 Organics, scaffolded to replace the static HTML site at the repo root via a
-phased Jamstack migration. The root static site is untouched and still
-serves production — changes here don't affect it.
+phased Jamstack migration. As of the Vercel deployment fixes described
+below, **this app is what's actually live in production** — the root
+static site's code is untouched, but the production Vercel project now
+builds and serves `web/`, not it.
 
 ## Migration status
 
@@ -15,9 +17,24 @@ serves production — changes here don't affect it.
   gallery photos, and FAQs; checkout writes an `orders` row and the contact
   form writes to `contact_messages`. See `supabase/schema.sql` for the
   schema and `web/README.md`-adjacent setup below.
-- **Not yet built**: auth, customer accounts, admin dashboard. The legacy
-  root `customer-account.html`/`admin-dashboard.html` are the only things
-  covering that ground today.
+- **Phase 2** (done): real Supabase Auth (email OTP, not a magic link — see
+  the git log for why) replaces the legacy `customer-account.js`'s fake-
+  customer-if-missing `localStorage` pattern. `/login` and `/account`
+  (profile/orders/subscriptions/addresses) mirror the legacy layout. Also
+  shipped under the "Phase 2" label: the AI chat widget (`/api/chat`,
+  currently Gemini), grounded in the live product catalog and FAQ data.
+- **Phase 3** (done): `/admin` — auth-gated (redirects to `/login`) and
+  role-gated (redirects to `/` if `profiles.is_admin` isn't set; RLS in
+  `supabase/schema.sql` is the actual enforcement, the redirect is just
+  UX), showing live orders/messages/customers/stats from Supabase. This
+  fully replaces the legacy root `admin-dashboard.html`.
+- The legacy root `customer-account.html`/`admin-dashboard.html` are now
+  superseded by the above — don't extend them further, extend `web/`.
+
+All of the above is deployed and confirmed working in production (see
+"Deployment" below for what that took) — shop browsing, cart, checkout,
+the chatbot, and login/account/admin have all been manually smoke-tested
+end-to-end. There's no remaining planned phase; this is steady-state.
 
 ## Data layer
 
