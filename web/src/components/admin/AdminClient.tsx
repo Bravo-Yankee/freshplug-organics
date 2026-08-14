@@ -118,41 +118,43 @@ export function AdminClient({ stats, orders, messages, customers }: AdminClientP
               {orderList.length === 0 ? (
                 <p className="admin-empty">No orders yet.</p>
               ) : (
-                <table className="admin-table">
-                  <thead>
-                    <tr>
-                      <th>Order</th>
-                      <th>Date</th>
-                      <th>Customer</th>
-                      <th>Items</th>
-                      <th>Total</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {orderList.map((order) => (
-                      <tr key={order.id}>
-                        <td>#{order.id}</td>
-                        <td>{formatDate(order.createdAt)}</td>
-                        <td>{order.customerName ?? "—"}{order.customerPhone ? ` (${order.customerPhone})` : ""}</td>
-                        <td>{order.items.length} items</td>
-                        <td>KSH {order.totalKsh.toLocaleString()}</td>
-                        <td>
-                          <select
-                            value={order.status}
-                            onChange={(event) => handleStatusChange(order.id, event.target.value as AdminOrder["status"])}
-                          >
-                            {ORDER_STATUSES.map((status) => (
-                              <option value={status} key={status}>
-                                {status.charAt(0).toUpperCase() + status.slice(1)}
-                              </option>
-                            ))}
-                          </select>
-                        </td>
+                <div className="admin-table-wrapper">
+                  <table className="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Order</th>
+                        <th>Date</th>
+                        <th>Customer</th>
+                        <th>Items</th>
+                        <th>Total</th>
+                        <th>Status</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {orderList.map((order) => (
+                        <tr key={order.id}>
+                          <td>#{order.id}</td>
+                          <td>{formatDate(order.createdAt)}</td>
+                          <td>{order.customerName ?? "—"}{order.customerPhone ? ` (${order.customerPhone})` : ""}</td>
+                          <td>{order.items.length} items</td>
+                          <td>KSH {order.totalKsh.toLocaleString()}</td>
+                          <td>
+                            <select
+                              value={order.status}
+                              onChange={(event) => handleStatusChange(order.id, event.target.value as AdminOrder["status"])}
+                            >
+                              {ORDER_STATUSES.map((status) => (
+                                <option value={status} key={status}>
+                                  {status.charAt(0).toUpperCase() + status.slice(1)}
+                                </option>
+                              ))}
+                            </select>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
             </div>
           )}
@@ -163,33 +165,35 @@ export function AdminClient({ stats, orders, messages, customers }: AdminClientP
               {messages.length === 0 ? (
                 <p className="admin-empty">No messages yet.</p>
               ) : (
-                <table className="admin-table">
-                  <thead>
-                    <tr>
-                      <th>Date</th>
-                      <th>From</th>
-                      <th>Type</th>
-                      <th>Subject</th>
-                      <th>Message</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {messages.map((msg) => (
-                      <tr key={msg.id}>
-                        <td>{formatDate(msg.createdAt)}</td>
-                        <td>
-                          {msg.firstName} {msg.lastName}
-                          <br />
-                          {msg.email}
-                          {msg.phone ? <><br />{msg.phone}</> : null}
-                        </td>
-                        <td>{msg.inquiryType}</td>
-                        <td>{msg.subject}</td>
-                        <td>{msg.message}</td>
+                <div className="admin-table-wrapper">
+                  <table className="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>From</th>
+                        <th>Type</th>
+                        <th>Subject</th>
+                        <th>Message</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {messages.map((msg) => (
+                        <tr key={msg.id}>
+                          <td>{formatDate(msg.createdAt)}</td>
+                          <td>
+                            {msg.firstName} {msg.lastName}
+                            <br />
+                            {msg.email}
+                            {msg.phone ? <><br />{msg.phone}</> : null}
+                          </td>
+                          <td>{msg.inquiryType}</td>
+                          <td>{msg.subject}</td>
+                          <td>{msg.message}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
             </div>
           )}
@@ -200,26 +204,28 @@ export function AdminClient({ stats, orders, messages, customers }: AdminClientP
               {customers.length === 0 ? (
                 <p className="admin-empty">No signed-up customers yet.</p>
               ) : (
-                <table className="admin-table">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Phone</th>
-                      <th>Joined</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {customers.map((customer) => (
-                      <tr key={customer.id}>
-                        <td>
-                          {[customer.firstName, customer.lastName].filter(Boolean).join(" ") || "—"}
-                        </td>
-                        <td>{customer.phone ?? "—"}</td>
-                        <td>{formatDate(customer.createdAt)}</td>
+                <div className="admin-table-wrapper">
+                  <table className="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Joined</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {customers.map((customer) => (
+                        <tr key={customer.id}>
+                          <td>
+                            {[customer.firstName, customer.lastName].filter(Boolean).join(" ") || "—"}
+                          </td>
+                          <td>{customer.phone ?? "—"}</td>
+                          <td>{formatDate(customer.createdAt)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
             </div>
           )}

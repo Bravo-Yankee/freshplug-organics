@@ -69,8 +69,15 @@
     padding: 1rem 0 2rem;
 }
 
+.admin-table-wrapper {
+    /* Lets wide tables (orders/messages/customers) scroll horizontally on
+       narrow screens instead of squishing columns unreadably — same
+       pattern as .comparison-table on /products. */
+    overflow-x: auto;
+}
 .admin-table {
     width: 100%;
+    min-width: 600px;
     border-collapse: collapse;
 }
 .admin-table th,

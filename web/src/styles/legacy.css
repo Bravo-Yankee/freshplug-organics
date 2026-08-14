@@ -649,9 +649,11 @@ body {
 
 /* WhatsApp Float Button */
 .whatsapp-float {
+    /* right offset clears the chat widget's 60px button (fixed, right: 20px,
+       z-index: 10000 in ChatWidget.tsx) — same bottom row, no overlap. */
     position: fixed;
     bottom: 20px;
-    right: 20px;
+    right: 90px;
     z-index: 1000;
 }
 

@@ -98,7 +98,7 @@ export function Header({ variant }: HeaderProps) {
                 height={40}
               />
             </Link>
-            <ul className="nav-menu">
+            <ul className={`nav-menu${menuOpen ? " active" : ""}`}>
               {links.map((link) => (
                 <li key={link.label}>
                   <Link
@@ -123,12 +123,12 @@ export function Header({ variant }: HeaderProps) {
             <button
               type="button"
               aria-label="Toggle navigation menu"
-              className="hamburger"
+              className={`hamburger${menuOpen ? " active" : ""}`}
               onClick={() => setMenuOpen((open) => !open)}
             >
-              <span />
-              <span />
-              <span />
+              <span className="bar" />
+              <span className="bar" />
+              <span className="bar" />
             </button>
           </div>
         </nav>

@@ -247,7 +247,9 @@
         flex-direction: column !important;
     }
     .timeline-content {
-        width: 100%;
+        /* Not 100% — margin-left isn't subtracted from a percentage width,
+           so 100% + 60px margin pushed the card past the viewport edge. */
+        width: calc(100% - 60px);
         margin-left: 60px !important;
         margin-right: 0 !important;
     }
