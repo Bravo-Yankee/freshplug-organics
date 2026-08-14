@@ -49,8 +49,13 @@ export function ShopClient({ products }: { products: Product[] }) {
   const [activeCategory, setActiveCategory] = useState<ProductCategory | "all">("all");
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<SortKey>("name");
-  const [quantities, setQuantities] = useState<Record<number, number>>(
-    () => Object.fromEntries(products.map((p) => [p.id, 1])),
+  // Stored as the raw typed string (not a number) so the field can go
+  // through an empty/partial state while the customer is typing — e.g.
+  // backspacing "1" to type "15" — without every keystroke snapping back
+  // to a clamped value first. Parsed/clamped via quantityFor() wherever a
+  // real number is needed, and normalized back to a valid string onBlur.
+  const [quantities, setQuantities] = useState<Record<number, string>>(
+    () => Object.fromEntries(products.map((p) => [p.id, "1"])),
   );
   const [selectedOptions, setSelectedOptions] = useState<Record<number, Record<string, string>>>(
     () => Object.fromEntries(products.map((p) => [p.id, defaultOptions(p.options)])),
@@ -99,22 +104,26 @@ export function ShopClient({ products }: { products: Product[] }) {
     return () => document.removeEventListener("click", handleClickOutside);
   }, [cartOpen]);
 
+  function quantityFor(productId: number): number {
+    return Math.max(1, parseInt(quantities[productId], 10) || 1);
+  }
+
   function changeQuantity(productId: number, delta: number) {
-    setQuantities((current) => {
-      const next = Math.min(10, Math.max(1, (current[productId] ?? 1) + delta));
-      return { ...current, [productId]: next };
-    });
+    setQuantities((current) => ({
+      ...current,
+      [productId]: String(Math.max(1, quantityFor(productId) + delta)),
+    }));
   }
 
   function handleAddToCart(productId: number) {
     const product = products.find((p) => p.id === productId);
     if (!product || !product.inStock) return;
-    const quantity = quantities[productId] ?? 1;
+    const quantity = quantityFor(productId);
     const options = selectedOptions[productId] ?? {};
     const { price } = resolveVariant(product, options);
     cart.addItem({ ...product, price }, quantity, options);
     show(`${product.name} added to cart!`, "success");
-    setQuantities((current) => ({ ...current, [productId]: 1 }));
+    setQuantities((current) => ({ ...current, [productId]: "1" }));
   }
 
   function handleRemoveFromCart(index: number) {
@@ -268,14 +277,22 @@ export function ShopClient({ products }: { products: Product[] }) {
                       -
                     </button>
                     <input
-                      type="number"
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                       className="quantity-input"
-                      min={1}
-                      max={10}
-                      value={quantities[product.id] ?? 1}
+                      value={quantities[product.id] ?? "1"}
                       onChange={(event) => {
-                        const value = Math.min(10, Math.max(1, Number(event.target.value) || 1));
-                        setQuantities((current) => ({ ...current, [product.id]: value }));
+                        // Strip anything that isn't a digit as it's typed —
+                        // the only way to guarantee decimals/negatives/text
+                        // can't get in, rather than trying to reject them
+                        // after the fact. Deliberately not clamped to a
+                        // minimum here so the field can go empty mid-edit.
+                        const digitsOnly = event.target.value.replace(/\D/g, "");
+                        setQuantities((current) => ({ ...current, [product.id]: digitsOnly }));
+                      }}
+                      onBlur={() => {
+                        setQuantities((current) => ({ ...current, [product.id]: String(quantityFor(product.id)) }));
                       }}
                     />
                     <button type="button" className="quantity-btn" onClick={() => changeQuantity(product.id, 1)}>
