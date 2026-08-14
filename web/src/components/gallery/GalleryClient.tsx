@@ -166,28 +166,37 @@ export function GalleryClient({ photos: galleryPhotos }: { photos: GalleryPhoto[
         <button type="button" className="lightbox-close" onClick={closeLightbox}>
           &times;
         </button>
-        <button
-          type="button"
-          className="lightbox-nav lightbox-prev"
-          onClick={() => setLightboxIndex((i) => (i !== null && i > 0 ? i - 1 : i))}
-        >
-          ❮
-        </button>
-        <button
-          type="button"
-          className="lightbox-nav lightbox-next"
-          onClick={() =>
-            setLightboxIndex((i) => (i !== null && i < filteredPhotos.length - 1 ? i + 1 : i))
-          }
-        >
-          ❯
-        </button>
         {lightboxPhoto && (
           // Lightbox needs the true full-size render at viewer-chosen zoom,
           // not a fixed intrinsic box — plain <img> is deliberate here.
           // eslint-disable-next-line @next/next/no-img-element
           <img src={lightboxPhoto.src} alt={lightboxPhoto.title} />
         )}
+        {/*
+          Grouped (rather than two loose siblings) so the mobile breakpoint
+          can lay prev/next out as a row below the image — on desktop
+          they're still just absolutely-positioned overlays at the screen
+          edges, unaffected by this wrapper (see .lightbox-nav-row in
+          gallery.css).
+        */}
+        <div className="lightbox-nav-row">
+          <button
+            type="button"
+            className="lightbox-nav lightbox-prev"
+            onClick={() => setLightboxIndex((i) => (i !== null && i > 0 ? i - 1 : i))}
+          >
+            ❮
+          </button>
+          <button
+            type="button"
+            className="lightbox-nav lightbox-next"
+            onClick={() =>
+              setLightboxIndex((i) => (i !== null && i < filteredPhotos.length - 1 ? i + 1 : i))
+            }
+          >
+            ❯
+          </button>
+        </div>
       </div>
 
       {activeVideo && (

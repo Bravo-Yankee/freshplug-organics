@@ -259,7 +259,27 @@
     .video-grid {
         grid-template-columns: 1fr;
     }
+    /*
+       At left/right: 2rem, .lightbox-nav sits well inside the image's
+       edge (max-width: 90% only leaves ~5% margin on a phone-width
+       screen), so the desktop overlay positioning was hidden here
+       entirely. Instead, stack the lightbox vertically and lay the
+       prev/next row out below the image, out of the image's way.
+    */
+    .lightbox {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1.5rem 1rem;
+    }
+    .lightbox img {
+        max-height: 65vh;
+    }
+    .lightbox-nav-row {
+        display: flex;
+        gap: 1rem;
+    }
     .lightbox-nav {
-        display: none;
+        position: static;
+        transform: none;
     }
 }
