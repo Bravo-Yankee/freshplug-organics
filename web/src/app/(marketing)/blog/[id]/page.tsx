@@ -21,9 +21,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
  * NOTE: the legacy site linked every post to `blog-single.html?id=...`,
  * but that page never existed anywhere in the repo — every "Read More"
  * click 404'd. This is a genuinely new (minimal) page, not a content
- * port: real long-form article bodies still need authoring (see
- * src/content/blog.ts) — this shows the metadata plus a clear
- * placeholder rather than leaving the link broken.
+ * port.
  */
 export default async function BlogPostPage({ params }: { params: { id: string } }) {
   const post = await getBlogPostById(Number(params.id));
@@ -57,11 +55,16 @@ export default async function BlogPostPage({ params }: { params: { id: string } 
         />
 
         <section className="legal-section">
-          <p>{post.excerpt}</p>
-          <p style={{ fontStyle: "italic", color: "var(--text-light)" }}>
-            {post.content} Full article content is still being written — check back soon, or{" "}
-            <Link href="/contact">get in touch</Link> if you have questions in the meantime.
+          <p>
+            <strong>{post.excerpt}</strong>
           </p>
+          {post.content
+            .split(/\n+/)
+            .map((paragraph) => paragraph.trim())
+            .filter(Boolean)
+            .map((paragraph, index) => (
+              <p key={index}>{paragraph}</p>
+            ))}
         </section>
 
         <section className="legal-section">
