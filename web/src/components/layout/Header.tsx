@@ -63,6 +63,14 @@ export function Header({ variant }: HeaderProps) {
     return () => window.removeEventListener("scroll", onScroll);
   }, [variant]);
 
+  // Header lives in the layout, not the page, so it never unmounts between
+  // navigations — nothing else ever resets an open mobile menu. Without
+  // this, tapping a link inside the open menu navigates to the new page
+  // with the menu (and its full-height overlay) still open on top of it.
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
+
   const links = NAV_ITEMS.map((item) => ({
     label: item.label,
     href: item.href,
