@@ -718,6 +718,53 @@ body {
     transform: translateY(-3px);
 }
 
+/* Bottom Tab Bar — mobile only (desktop already has the full Header nav
+   visible). Hidden by default; shown inside the mobile media query below,
+   which also shifts every other bottom-fixed element up to clear it. */
+.bottom-tabbar {
+    display: none;
+}
+
+.bottom-tabbar-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    flex: 1;
+    padding: 0.4rem 0;
+    color: var(--text-light);
+    text-decoration: none;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.bottom-tabbar-item.active {
+    color: var(--clay);
+}
+
+.bottom-tabbar-icon {
+    position: relative;
+    font-size: 1.15rem;
+}
+
+.bottom-tabbar-badge {
+    position: absolute;
+    top: -6px;
+    right: -10px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 3px;
+    border-radius: 999px;
+    background: var(--gold-deep);
+    color: white;
+    font-size: 0.62rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .hamburger {
@@ -748,7 +795,35 @@ body {
     .nav-menu.active {
         left: 0;
     }
-    
+
+    .bottom-tabbar {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background: var(--pure-white);
+        border-top: 1px solid var(--line);
+        box-shadow: 0 -2px 15px var(--shadow);
+        z-index: 2000;
+    }
+
+    body {
+        /* Keeps footer content (and anything else) from ending up hidden
+           behind the fixed tab bar when scrolled all the way down. */
+        padding-bottom: 60px;
+    }
+
+    /* Same 80px clearance .cart-toggle already uses on mobile in
+       shop.css — keeps every bottom-fixed button above the tab bar
+       instead of overlapping it (ChatWidget handles its own equivalent
+       offset in JS, since its position is inline-styled). */
+    .whatsapp-float,
+    .back-to-top {
+        bottom: 80px;
+    }
+
     .hero-content {
         grid-template-columns: 1fr;
         gap: 2rem;

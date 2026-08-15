@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { siteConfig } from "@/lib/site-config";
 import { BackToTop } from "@/components/layout/BackToTop";
+import { BottomTabBar } from "@/components/layout/BottomTabBar";
 
 export type FooterVariant = "marketing" | "legal";
 
@@ -172,6 +173,7 @@ export function Footer({ variant }: FooterProps) {
       )}
 
       <BackToTop />
+      <BottomTabBar />
     </>
   );
 }

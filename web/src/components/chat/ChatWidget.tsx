@@ -24,6 +24,19 @@ export function ChatWidget() {
   const [input, setInput] = useState("");
   const [pending, setPending] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  // Position is inline-styled (not a CSS class), so the mobile bottom-tabbar
+  // clearance — 80px, same offset .cart-toggle/.whatsapp-float/.back-to-top
+  // use via the max-width: 768px media query — has to be applied here in JS
+  // rather than picked up from that stylesheet rule automatically.
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 768px)");
+    setIsMobile(query.matches);
+    const onChange = (event: MediaQueryListEvent) => setIsMobile(event.matches);
+    query.addEventListener("change", onChange);
+    return () => query.removeEventListener("change", onChange);
+  }, []);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
@@ -109,7 +122,7 @@ export function ChatWidget() {
         onClick={() => setOpen((o) => !o)}
         style={{
           position: "fixed",
-          bottom: "20px",
+          bottom: isMobile ? "80px" : "20px",
           right: "20px",
           width: "60px",
           height: "60px",
@@ -130,12 +143,12 @@ export function ChatWidget() {
         <div
           style={{
             position: "fixed",
-            bottom: "90px",
+            bottom: isMobile ? "150px" : "90px",
             right: "20px",
             width: "340px",
             maxWidth: "calc(100vw - 40px)",
             height: "460px",
-            maxHeight: "calc(100vh - 130px)",
+            maxHeight: isMobile ? "calc(100vh - 190px)" : "calc(100vh - 130px)",
             background: "white",
             borderRadius: "12px",
             boxShadow: "0 8px 30px rgba(0, 0, 0, 0.25)",
