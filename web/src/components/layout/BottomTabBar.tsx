@@ -40,8 +40,9 @@ export function BottomTabBar() {
     // Never highlighted, even on /shop — it's a persistent shortcut +
     // counter (like Shop's cart sidebar toggle), not a "which section am I
     // in" indicator, so it doesn't double up with the Shop tab lighting up
-    // for the same route.
-    { label: "Cart", href: "/shop", icon: "fa-shopping-cart", isActive: () => false },
+    // for the same route. The ?cart=open param is read by ShopClient's
+    // CartAutoOpen to pop the sidebar straight open on arrival.
+    { label: "Cart", href: "/shop?cart=open", icon: "fa-shopping-cart", isActive: () => false },
     {
       label: signedIn ? "Account" : "Login",
       href: signedIn ? "/account" : "/login",

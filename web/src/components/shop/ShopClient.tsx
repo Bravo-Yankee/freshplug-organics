@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import type { Product, ProductCategory } from "@/content/products";
 import { siteConfig } from "@/lib/site-config";
 import { useCart } from "@/lib/cart";
@@ -43,6 +44,29 @@ function resolveVariant(product: Product, selected: Record<string, string> | und
     price: override?.price ?? product.price,
     description: override?.description ?? product.description,
   };
+}
+
+/**
+ * Lets the bottom tab bar's Cart link (/shop?cart=open) open the sidebar
+ * directly instead of landing here and requiring a second tap on the
+ * floating cart-toggle button. Split out into its own component (rather
+ * than a hook call in ShopClient directly) because useSearchParams()
+ * requires a Suspense boundary on a statically-rendered page — isolating
+ * it here means only this invisible piece is gated behind Suspense,
+ * instead of delaying the whole product grid behind a fallback.
+ */
+function CartAutoOpen({ onOpen }: { onOpen: () => void }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get("cart") === "open") {
+      onOpen();
+      router.replace("/shop", { scroll: false });
+    }
+  }, [searchParams, router, onOpen]);
+
+  return null;
 }
 
 export function ShopClient({ products }: { products: Product[] }) {
@@ -173,6 +197,10 @@ export function ShopClient({ products }: { products: Product[] }) {
 
   return (
     <>
+      <Suspense fallback={null}>
+        <CartAutoOpen onOpen={() => setCartOpen(true)} />
+      </Suspense>
+
       <section className="shop-filters">
         <div className="container">
           <div className="filter-container">
