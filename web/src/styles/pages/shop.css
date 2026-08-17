@@ -418,12 +418,26 @@
         flex-direction: column;
         align-items: stretch;
         gap: 1rem;
+        /* Without this, the base rule's flex-wrap:wrap (meant for the row
+           layout above 768px) stops align-items:stretch from constraining
+           .filter-tabs/.search-sort to the container's width — each ends up
+           sized to its unwrapped max-content width instead (~460px of pills/
+           search+sort in a single row) and spills off the right edge of the
+           screen. */
+        flex-wrap: nowrap;
     }
     .filter-tabs {
         justify-content: center;
     }
     .search-sort {
-        justify-content: center;
+        /* Search box + sort dropdown side by side don't fit a phone width;
+           stack them full-width instead of letting the dropdown run off. */
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .search-box input,
+    .sort-select {
+        width: 100%;
     }
     .products-container {
         grid-template-columns: 1fr;
