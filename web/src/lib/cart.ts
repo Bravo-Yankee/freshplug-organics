@@ -12,6 +12,21 @@ export interface CartItem {
 }
 
 const CART_STORAGE_KEY = "freshplug_cart";
+// The native `storage` event never fires in the tab that made the write, and
+// this app has more than one useCart() instance mounted at once (BottomTabBar's
+// badge + ShopClient's sidebar, both present on /shop on mobile) — without a
+// same-tab broadcast, one instance's add/remove wouldn't show up in the other
+// until a full reload re-hydrated everyone from localStorage.
+const CART_UPDATED_EVENT = "freshplug_cart_updated";
+
+function writeCart(items: CartItem[]) {
+  try {
+    window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+  } catch {
+    // Ignore quota/availability errors — in-memory state still updates.
+  }
+  window.dispatchEvent(new CustomEvent<CartItem[]>(CART_UPDATED_EVENT, { detail: items }));
+}
 
 /**
  * Canonical cart hook — deliberately the ONE cart implementation in the new
@@ -33,15 +48,17 @@ export function useCart() {
       // Corrupt/blocked localStorage — start with an empty cart rather than throw.
     }
     setHydrated(true);
+
+    function handleCartUpdated(event: Event) {
+      setItems((event as CustomEvent<CartItem[]>).detail);
+    }
+    window.addEventListener(CART_UPDATED_EVENT, handleCartUpdated);
+    return () => window.removeEventListener(CART_UPDATED_EVENT, handleCartUpdated);
   }, []);
 
   const persist = useCallback((next: CartItem[]) => {
     setItems(next);
-    try {
-      window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(next));
-    } catch {
-      // Ignore quota/availability errors — in-memory state still updates.
-    }
+    writeCart(next);
   }, []);
 
   const addItem = useCallback(
@@ -57,23 +74,20 @@ export function useCart() {
         } else {
           next = [...current, { id: product.id, name: product.name, price: product.price, image: product.image, quantity, options }];
         }
-        try {
-          window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(next));
-        } catch {
-          // Ignore quota/availability errors — in-memory state still updates.
-        }
+        writeCart(next);
         return next;
       });
     },
     [],
   );
 
-  const removeItem = useCallback(
-    (index: number) => {
-      persist(items.filter((_, i) => i !== index));
-    },
-    [items, persist],
-  );
+  const removeItem = useCallback((index: number) => {
+    setItems((current) => {
+      const next = current.filter((_, i) => i !== index);
+      writeCart(next);
+      return next;
+    });
+  }, []);
 
   const clear = useCallback(() => persist([]), [persist]);
 

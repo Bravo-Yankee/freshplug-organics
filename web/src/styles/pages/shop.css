@@ -433,9 +433,12 @@
         width: 100%;
         right: -100%;
     }
+    /* The bottom tab bar's Cart tab (BottomTabBar.tsx) already opens this
+       same sidebar and shows its own live badge, so the floating toggle is
+       redundant on mobile — worse, at bottom:80px/right:20px it would sit
+       directly under ChatWidget's higher z-index button (also bottom:80px/
+       right:20px on mobile) and look broken rather than just redundant. */
     .cart-toggle {
-        bottom: 80px;
-        top: auto;
-        transform: none;
+        display: none;
     }
 }
