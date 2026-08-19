@@ -1,5 +1,8 @@
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import type { CartItem } from "@/lib/cart";
+import type { Product } from "@/content/products";
+import type { Category } from "@/content/categories";
+import { toProduct, toCategory, type ProductRow, type CategoryRow } from "@/lib/data/products";
 
 export interface AdminOrder {
   id: number;
@@ -123,6 +126,25 @@ export async function getAllMessages(): Promise<ContactMessage[]> {
     subject: row.subject,
     message: row.message,
   }));
+}
+
+// Uses the cookie-backed server client (not lib/data/products.ts's anon
+// getProducts()/getCategories()) so RLS's "... or is_admin()" clause
+// applies and inactive rows come back too — the whole point of the admin
+// product/category tools being able to see what's hidden, not just what's
+// live on the storefront.
+export async function getAllProducts(): Promise<Product[]> {
+  const supabase = await getSupabaseServerClient();
+  const { data, error } = await supabase.from("products").select("*").order("id");
+  if (error) throw error;
+  return (data as ProductRow[]).map(toProduct);
+}
+
+export async function getAllCategories(): Promise<Category[]> {
+  const supabase = await getSupabaseServerClient();
+  const { data, error } = await supabase.from("categories").select("*").order("sort_order");
+  if (error) throw error;
+  return (data as CategoryRow[]).map(toCategory);
 }
 
 export async function getAllCustomers(): Promise<Customer[]> {

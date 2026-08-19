@@ -3,7 +3,15 @@ import { redirect } from "next/navigation";
 import "@/styles/pages/admin.css";
 import { AdminClient } from "@/components/admin/AdminClient";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
-import { isCurrentUserAdmin, getAdminStats, getAllOrders, getAllMessages, getAllCustomers } from "@/lib/data/admin";
+import {
+  isCurrentUserAdmin,
+  getAdminStats,
+  getAllOrders,
+  getAllMessages,
+  getAllCustomers,
+  getAllProducts,
+  getAllCategories,
+} from "@/lib/data/admin";
 
 // Session-scoped data, not content — ISR doesn't apply here.
 export const revalidate = 0;
@@ -23,11 +31,13 @@ export default async function AdminPage() {
   const isAdmin = await isCurrentUserAdmin();
   if (!isAdmin) redirect("/");
 
-  const [stats, orders, messages, customers] = await Promise.all([
+  const [stats, orders, messages, customers, products, categories] = await Promise.all([
     getAdminStats(),
     getAllOrders(),
     getAllMessages(),
     getAllCustomers(),
+    getAllProducts(),
+    getAllCategories(),
   ]);
 
   return (
@@ -35,11 +45,18 @@ export default async function AdminPage() {
       <section className="page-header">
         <div className="container">
           <h1>Admin Dashboard</h1>
-          <p>Orders, messages, and customers at a glance</p>
+          <p>Orders, messages, customers, and products at a glance</p>
         </div>
       </section>
 
-      <AdminClient stats={stats} orders={orders} messages={messages} customers={customers} />
+      <AdminClient
+        stats={stats}
+        orders={orders}
+        messages={messages}
+        customers={customers}
+        products={products}
+        categories={categories}
+      />
     </>
   );
 }

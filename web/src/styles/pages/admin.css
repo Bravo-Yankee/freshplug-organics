@@ -158,6 +158,141 @@
     font-weight: 500;
 }
 
+.admin-hint {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin-bottom: 1.25rem;
+}
+.admin-subheading {
+    color: var(--charcoal);
+    margin: 2rem 0 1.25rem;
+}
+
+.category-manage-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+.category-manage-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--paper);
+    border-radius: 10px;
+    padding: 0.6rem 1rem;
+}
+.category-manage-label {
+    font-weight: 500;
+    color: var(--charcoal);
+}
+
+.admin-toggle {
+    border: 2px solid var(--line);
+    background: white;
+    color: var(--text-light);
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.admin-toggle.on {
+    background: #d4edda;
+    border-color: #d4edda;
+    color: #155724;
+}
+
+.admin-price-input {
+    width: 100px;
+    padding: 0.5rem 0.75rem;
+    border: 2px solid var(--line);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: 'Libre Franklin', sans-serif;
+    color: var(--charcoal);
+}
+.admin-price-input:focus {
+    outline: none;
+    border-color: var(--clay);
+}
+
+.admin-inline-form {
+    display: flex;
+    gap: 0.75rem;
+    max-width: 420px;
+}
+.admin-inline-form input {
+    flex: 1;
+    padding: 0.7rem 1rem;
+    border: 2px solid var(--line);
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-family: 'Libre Franklin', sans-serif;
+}
+.admin-inline-form input:focus {
+    outline: none;
+    border-color: var(--clay);
+}
+
+.admin-form {
+    max-width: 640px;
+}
+.admin-form .form-group {
+    margin-bottom: 1.5rem;
+}
+.admin-form .form-group label {
+    display: block;
+    color: var(--charcoal);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+.admin-form .form-group input,
+.admin-form .form-group select,
+.admin-form .form-group textarea {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border: 2px solid var(--line);
+    border-radius: 10px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s ease;
+    font-family: 'Libre Franklin', sans-serif;
+}
+.admin-form .form-group input:focus,
+.admin-form .form-group select:focus,
+.admin-form .form-group textarea:focus {
+    border-color: var(--clay);
+}
+.admin-form .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+.admin-form .submit-btn,
+.admin-inline-form .submit-btn {
+    background: var(--clay);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 30px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    white-space: nowrap;
+}
+.admin-form .submit-btn:hover,
+.admin-inline-form .submit-btn:hover {
+    background: var(--clay-deep);
+}
+
+@media (max-width: 900px) {
+    .admin-form .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
 @media (max-width: 900px) {
     .admin-layout {
         grid-template-columns: 1fr;

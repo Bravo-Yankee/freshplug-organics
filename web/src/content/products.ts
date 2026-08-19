@@ -1,4 +1,9 @@
-export type ProductCategory = "eggs" | "chicken" | "turkey" | "live" | "chicks";
+/**
+ * Category is now an admin-managed slug (see src/content/categories.ts and
+ * the `categories` table), not a fixed set a developer hardcodes — so this
+ * is just `string`, kept as its own alias for readability at call sites.
+ */
+export type ProductCategory = string;
 export type ProductBadge = "organic" | "fresh";
 
 export interface Product {
@@ -21,6 +26,13 @@ export interface Product {
    */
   weightPricing?: Record<string, { price: number; description: string }>;
   inStock: boolean;
+  /**
+   * Whether the product shows up in the shop at all — distinct from
+   * inStock, which still lists the product but disables "Add to Cart".
+   * Toggled from /admin (or Supabase Studio) to pull a product without
+   * deleting its data.
+   */
+  isActive: boolean;
   featured: boolean;
 }
 
@@ -43,6 +55,7 @@ export const products: Product[] = [
     badge: "organic",
     options: { size: ["Small", "Medium", "Large", "Extra Large"] },
     inStock: true,
+    isActive: true,
     featured: true,
   },
   {
@@ -57,6 +70,7 @@ export const products: Product[] = [
     badge: "organic",
     options: { size: ["Medium", "Large", "Extra Large"] },
     inStock: true,
+    isActive: true,
     featured: false,
   },
   {
@@ -71,6 +85,7 @@ export const products: Product[] = [
     badge: "organic",
     options: { weight: ["3-4 lbs", "4-5 lbs", "5-6 lbs"] },
     inStock: true,
+    isActive: true,
     featured: true,
   },
   {
@@ -85,6 +100,7 @@ export const products: Product[] = [
     badge: "organic",
     options: { weight: ["1 lb", "2 lbs", "5 lbs"] },
     inStock: true,
+    isActive: true,
     featured: false,
   },
   {
@@ -99,6 +115,7 @@ export const products: Product[] = [
     badge: "organic",
     options: { weight: ["2 lbs", "5 lbs", "10 lbs"] },
     inStock: true,
+    isActive: true,
     featured: false,
   },
   {
@@ -113,6 +130,7 @@ export const products: Product[] = [
     badge: "fresh",
     options: { weight: ["10-12 lbs", "12-15 lbs", "15-18 lbs", "18+ lbs"] },
     inStock: true,
+    isActive: false,
     featured: true,
   },
   {
@@ -127,6 +145,7 @@ export const products: Product[] = [
     badge: "organic",
     options: { weight: ["3-4 lbs", "4-6 lbs", "6-8 lbs"] },
     inStock: true,
+    isActive: false,
     featured: false,
   },
   {
@@ -141,6 +160,7 @@ export const products: Product[] = [
     badge: "fresh",
     options: { age: ["6-8 months", "8-12 months", "12+ months"] },
     inStock: true,
+    isActive: true,
     featured: false,
   },
   {
@@ -155,6 +175,7 @@ export const products: Product[] = [
     badge: "fresh",
     options: { age: ["6-8 months", "8-12 months"] },
     inStock: true,
+    isActive: true,
     featured: false,
   },
   {
@@ -169,6 +190,7 @@ export const products: Product[] = [
     badge: "fresh",
     options: { age: ["4-6 weeks", "6-8 weeks", "8-10 weeks"] },
     inStock: true,
+    isActive: true,
     featured: false,
   },
   {
@@ -186,6 +208,7 @@ export const products: Product[] = [
       quantity: ["10 chicks", "25 chicks", "50 chicks", "100 chicks"],
     },
     inStock: true,
+    isActive: false,
     featured: false,
   },
   {
@@ -203,6 +226,7 @@ export const products: Product[] = [
       quantity: ["10 chicks", "25 chicks", "50 chicks"],
     },
     inStock: true,
+    isActive: false,
     featured: false,
   },
 ];

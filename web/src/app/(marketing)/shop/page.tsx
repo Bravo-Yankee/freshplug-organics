@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "@/styles/pages/shop.css";
 import { ShopClient } from "@/components/shop/ShopClient";
-import { getProducts } from "@/lib/data/products";
+import { getProducts, getCategories } from "@/lib/data/products";
 
 export const revalidate = 60;
 
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ShopPage() {
-  const products = await getProducts();
+  const [products, categories] = await Promise.all([getProducts(), getCategories()]);
 
   return (
     <>
@@ -23,7 +23,7 @@ export default async function ShopPage() {
         </div>
       </section>
 
-      <ShopClient products={products} />
+      <ShopClient products={products} categories={categories} />
     </>
   );
 }

@@ -11,7 +11,7 @@ export const revalidate = 60;
 export const metadata: Metadata = {
   title: "Our Products",
   description:
-    "Premium organic poultry products from Freshplug Organics - fresh eggs, organic chicken, live birds, and day-old chicks.",
+    "Premium organic poultry products from Freshplug Organics - fresh eggs, organic chicken, and live birds.",
 };
 
 /**
@@ -97,25 +97,10 @@ const categories: {
     availableValue: "Rhode Island Red, Kuroiler, Kienyeji, New Hampshire",
     whatsappMessage: "Hi! I'm interested in your live chickens",
   },
-  {
-    id: "chicks",
-    title: "Day-old Chicks",
-    description: "Fresh, healthy day-old chicks for raising your own flock from the beginning",
-    imageFirst: false,
-    image: "/assets/images/hero-farm.jpg",
-    heading: "Premium Day-old Chicks",
-    features: [
-      "High-quality breeding stock",
-      "Excellent survival rates",
-      "Fast growth and good feed conversion",
-      "Vaccinated at hatchery",
-      "Available year-round",
-      "Brooding guidance provided",
-    ],
-    availableLabel: "Minimum Order",
-    availableValue: "50 chicks (special arrangements for smaller orders)",
-    whatsappMessage: "Hi! I'm interested in your day-old chicks",
-  },
+  // Day-old Chicks showcase removed — not currently available at the
+  // farm. The underlying products/category are hidden, not deleted, in
+  // Supabase; re-add a block here (and re-activate the category from
+  // /admin) if they come back.
 ];
 
 function priceRangeFor(products: Product[], category: ProductCategory): string {
@@ -198,11 +183,11 @@ const comparisonRows = [
 const seasonalInfo = [
   {
     title: "Year-Round",
-    description: "Fresh eggs, live chickens, day-old chicks available every day of the year",
+    description: "Fresh eggs and live chickens available every day of the year",
   },
   {
     title: "Peak Season (Nov-Feb)",
-    description: "Turkeys, special breeds, and holiday orders have highest availability",
+    description: "Special breeds and holiday orders have highest availability",
   },
   {
     title: "Breeding Season (Mar-Aug)",

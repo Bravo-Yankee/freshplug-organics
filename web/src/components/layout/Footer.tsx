@@ -88,13 +88,7 @@ export function Footer({ variant }: FooterProps) {
                     <Link href="/shop#chicken">Organic Chicken</Link>
                   </li>
                   <li>
-                    <Link href="/shop#turkey">Turkey</Link>
-                  </li>
-                  <li>
                     <Link href="/shop#live">Live Chickens</Link>
-                  </li>
-                  <li>
-                    <Link href="/shop#chicks">Day-old Chicks</Link>
                   </li>
                 </ul>
               </div>

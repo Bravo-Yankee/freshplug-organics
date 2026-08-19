@@ -4,19 +4,11 @@ import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import type { Product, ProductCategory } from "@/content/products";
+import type { Category } from "@/content/categories";
 import { siteConfig } from "@/lib/site-config";
 import { useCart } from "@/lib/cart";
 import { getSupabaseClient } from "@/lib/supabase/client";
 import { useToast, ToastViewport } from "@/components/ui/Toast";
-
-const categoryFilters: { key: ProductCategory | "all"; label: string }[] = [
-  { key: "all", label: "All Products" },
-  { key: "eggs", label: "Fresh Eggs" },
-  { key: "chicken", label: "Chicken" },
-  { key: "turkey", label: "Turkey" },
-  { key: "live", label: "Live Birds" },
-  { key: "chicks", label: "Day-old Chicks" },
-];
 
 type SortKey = "name" | "price-low" | "price-high" | "rating";
 
@@ -69,7 +61,11 @@ function CartAutoOpen({ onOpen }: { onOpen: () => void }) {
   return null;
 }
 
-export function ShopClient({ products }: { products: Product[] }) {
+export function ShopClient({ products, categories }: { products: Product[]; categories: Category[] }) {
+  const categoryFilters: { key: ProductCategory | "all"; label: string }[] = [
+    { key: "all", label: "All Products" },
+    ...categories.map((category) => ({ key: category.slug, label: category.label })),
+  ];
   const [activeCategory, setActiveCategory] = useState<ProductCategory | "all">("all");
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<SortKey>("name");

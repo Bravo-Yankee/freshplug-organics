@@ -10,7 +10,7 @@ interface ChatMessage {
 const GREETING: ChatMessage = {
   role: "assistant",
   content:
-    "Hi! I'm the Freshplug Organics assistant. Ask me about our eggs, chicken, turkey, chicks, or how ordering and delivery work.",
+    "Hi! I'm the Freshplug Organics assistant. Ask me about our eggs, chicken, live birds, or how ordering and delivery work.",
 };
 
 /**

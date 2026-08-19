@@ -21,6 +21,7 @@ if (typeof globalThis.WebSocket === "undefined") {
   (globalThis as unknown as { WebSocket: typeof WebSocket }).WebSocket = WebSocket;
 }
 import { products } from "../src/content/products";
+import { categories } from "../src/content/categories";
 import { blogPosts } from "../src/content/blog";
 import { galleryPhotos } from "../src/content/gallery";
 import { faqs } from "../src/content/faqs";
@@ -68,7 +69,15 @@ async function seed() {
     badge: p.badge,
     options: p.options,
     in_stock: p.inStock,
+    is_active: p.isActive,
     featured: p.featured,
+  }));
+
+  const categoryRows = categories.map((c) => ({
+    slug: c.slug,
+    label: c.label,
+    sort_order: c.sortOrder,
+    active: c.active,
   }));
 
   const blogRows = blogPosts.map((post) => ({
@@ -87,15 +96,19 @@ async function seed() {
     tags: post.tags,
   }));
 
-  const tables: { name: string; rows: Record<string, unknown>[] }[] = [
-    { name: "products", rows: productRows },
-    { name: "blog_posts", rows: blogRows },
-    { name: "gallery_photos", rows: galleryPhotos as unknown as Record<string, unknown>[] },
-    { name: "faqs", rows: faqs as unknown as Record<string, unknown>[] },
+  // categories conflicts on its slug primary key; everything else conflicts on id.
+  const tables: { name: string; rows: Record<string, unknown>[]; onConflict: string }[] = [
+    { name: "categories", rows: categoryRows, onConflict: "slug" },
+    { name: "products", rows: productRows, onConflict: "id" },
+    { name: "blog_posts", rows: blogRows, onConflict: "id" },
+    { name: "gallery_photos", rows: galleryPhotos as unknown as Record<string, unknown>[], onConflict: "id" },
+    { name: "faqs", rows: faqs as unknown as Record<string, unknown>[], onConflict: "id" },
   ];
 
   for (const table of tables) {
-    const { error, count } = await supabase.from(table.name).upsert(table.rows, { onConflict: "id", count: "exact" });
+    const { error, count } = await supabase
+      .from(table.name)
+      .upsert(table.rows, { onConflict: table.onConflict, count: "exact" });
     if (error) {
       console.error(`Failed seeding ${table.name}:`, error.message);
       process.exit(1);
