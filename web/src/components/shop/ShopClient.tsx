@@ -23,15 +23,21 @@ function defaultOptions(options: Record<string, string[]>): Record<string, strin
 }
 
 /**
- * Products with a weight option can price/describe differently per tier
- * (see Product.weightPricing) — this resolves what should actually be
- * shown/charged for whichever weight is currently selected, falling back
+ * Products can price/describe differently per option tier (see
+ * Product.variantPricing) — this resolves what should actually be
+ * shown/charged for whichever value is currently selected, falling back
  * to the flat price/description for every product that doesn't have
- * per-weight overrides.
+ * variant overrides. A product only ever prices one option group this way
+ * (e.g. weight OR age, never both), so checking every selected value
+ * against the map is sufficient — at most one will match.
  */
 function resolveVariant(product: Product, selected: Record<string, string> | undefined) {
-  const weightLabel = selected?.weight;
-  const override = weightLabel ? product.weightPricing?.[weightLabel] : undefined;
+  if (!selected || !product.variantPricing) {
+    return { price: product.price, description: product.description };
+  }
+  const override = Object.values(selected)
+    .map((value) => product.variantPricing?.[value])
+    .find((tier) => tier !== undefined);
   return {
     price: override?.price ?? product.price,
     description: override?.description ?? product.description,

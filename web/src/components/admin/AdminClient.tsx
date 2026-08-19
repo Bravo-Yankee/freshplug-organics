@@ -187,7 +187,7 @@ export function AdminClient({ stats, orders, messages, customers, products, cate
         options: {},
         in_stock: true,
         is_active: true,
-        weight_pricing: {},
+        variant_pricing: {},
       })
       .select()
       .single();

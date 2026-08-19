@@ -20,11 +20,14 @@ export interface Product {
   options: Record<string, string[]>;
   /**
    * Per-value price/description override, keyed by the exact label in
-   * options.weight (e.g. "4.5-5.5 kg"). Only present on products where
-   * price genuinely varies by weight tier — everything else falls back to
-   * the flat price/description above.
+   * whichever options group varies price (e.g. options.weight's
+   * "4.5-5.5 kg", or options.age's "8-12 months"). Only present on
+   * products where price genuinely varies by that option — everything
+   * else falls back to the flat price/description above. A product only
+   * ever prices one option group this way (see resolveVariant() in
+   * ShopClient.tsx, which checks every selected value against this map).
    */
-  weightPricing?: Record<string, { price: number; description: string }>;
+  variantPricing?: Record<string, { price: number; description: string }>;
   inStock: boolean;
   /**
    * Whether the product shows up in the shop at all — distinct from
@@ -159,6 +162,11 @@ export const products: Product[] = [
     reviewCount: 78,
     badge: "fresh",
     options: { age: ["6-8 months", "8-12 months", "12+ months"] },
+    variantPricing: {
+      "6-8 months": { price: 2100, description: "Healthy Rhode Island Red hens, just coming into lay at 6-8 months old" },
+      "8-12 months": { price: 2400, description: "Healthy Rhode Island Red hens, 8-12 months old and in peak egg production" },
+      "12+ months": { price: 1800, description: "Healthy Rhode Island Red hens, 12+ months old, past peak but still laying" },
+    },
     inStock: true,
     isActive: true,
     featured: false,
@@ -174,6 +182,10 @@ export const products: Product[] = [
     reviewCount: 45,
     badge: "fresh",
     options: { age: ["6-8 months", "8-12 months"] },
+    variantPricing: {
+      "6-8 months": { price: 2280, description: "Docile Buff Orpington hens, just coming into lay at 6-8 months old" },
+      "8-12 months": { price: 2550, description: "Docile Buff Orpington hens, 8-12 months old and in peak egg production" },
+    },
     inStock: true,
     isActive: true,
     featured: false,
@@ -189,6 +201,11 @@ export const products: Product[] = [
     reviewCount: 92,
     badge: "fresh",
     options: { age: ["4-6 weeks", "6-8 weeks", "8-10 weeks"] },
+    variantPricing: {
+      "4-6 weeks": { price: 1200, description: "Fast-growing broiler chickens, 4-6 weeks old" },
+      "6-8 weeks": { price: 1500, description: "Fast-growing broiler chickens, 6-8 weeks old" },
+      "8-10 weeks": { price: 1800, description: "Fast-growing broiler chickens, 8-10 weeks old, full market weight" },
+    },
     inStock: true,
     isActive: true,
     featured: false,

@@ -15,7 +15,7 @@ export interface ProductRow {
   review_count: number;
   badge: ProductBadge;
   options: Record<string, string[]>;
-  weight_pricing: Record<string, { price: number; description: string }>;
+  variant_pricing: Record<string, { price: number; description: string }>;
   in_stock: boolean;
   is_active: boolean;
   featured: boolean;
@@ -33,8 +33,8 @@ export function toProduct(row: ProductRow): Product {
     reviewCount: row.review_count,
     badge: row.badge,
     options: row.options,
-    weightPricing:
-      row.weight_pricing && Object.keys(row.weight_pricing).length > 0 ? row.weight_pricing : undefined,
+    variantPricing:
+      row.variant_pricing && Object.keys(row.variant_pricing).length > 0 ? row.variant_pricing : undefined,
     inStock: row.in_stock,
     isActive: row.is_active,
     featured: row.featured,

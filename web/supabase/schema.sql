@@ -300,3 +300,36 @@ create policy "public read" on products for select using (is_active = true or is
 
 create policy "admin products insert" on products for insert with check (is_admin());
 create policy "admin products update" on products for update using (is_admin()) with check (is_admin());
+
+-- Phase 5 — age-based per-tier pricing for live birds
+--
+-- Not idempotent, like the rest of this file: run only this block against
+-- a project that already has the Phase 1-4 blocks applied.
+--
+-- weight_pricing (added in Phase 3, above the Phase 4 block) was scoped to
+-- options.weight only — resolveVariant() in ShopClient.tsx actually checks
+-- every selected option value against it, so the column works identically
+-- for options.age (live birds) or any other single priced option group. A
+-- straight rename keeps the existing weight-tier JSON for chicken/turkey
+-- products intact while unblocking age-tier pricing for live birds.
+alter table products rename column weight_pricing to variant_pricing;
+
+-- Starting age-tier price/description values for the three live-bird
+-- products (older/peak-laying birds priced higher) — edit freely in
+-- Studio's table editor going forward, same as any other product content.
+update products set variant_pricing = '{
+  "6-8 months": {"price": 2100, "description": "Healthy Rhode Island Red hens, just coming into lay at 6-8 months old"},
+  "8-12 months": {"price": 2400, "description": "Healthy Rhode Island Red hens, 8-12 months old and in peak egg production"},
+  "12+ months": {"price": 1800, "description": "Healthy Rhode Island Red hens, 12+ months old, past peak but still laying"}
+}'::jsonb where id = 8;
+
+update products set variant_pricing = '{
+  "6-8 months": {"price": 2280, "description": "Docile Buff Orpington hens, just coming into lay at 6-8 months old"},
+  "8-12 months": {"price": 2550, "description": "Docile Buff Orpington hens, 8-12 months old and in peak egg production"}
+}'::jsonb where id = 9;
+
+update products set variant_pricing = '{
+  "4-6 weeks": {"price": 1200, "description": "Fast-growing broiler chickens, 4-6 weeks old"},
+  "6-8 weeks": {"price": 1500, "description": "Fast-growing broiler chickens, 6-8 weeks old"},
+  "8-10 weeks": {"price": 1800, "description": "Fast-growing broiler chickens, 8-10 weeks old, full market weight"}
+}'::jsonb where id = 10;
