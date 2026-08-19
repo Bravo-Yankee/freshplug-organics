@@ -28,12 +28,30 @@ builds and serves `web/`, not it.
   `supabase/schema.sql` is the actual enforcement, the redirect is just
   UX), showing live orders/messages/customers/stats from Supabase. This
   fully replaces the legacy root `admin-dashboard.html`.
+- **Phase 4** (done): product categories moved from a hardcoded
+  check-constraint list to a real `categories` table (Phase 4 block in
+  `supabase/schema.sql`), and `/admin` gained a Products tab — a
+  non-coder farm employee can now add a category, add a product, and
+  toggle a product's/category's price, stock, and visibility without
+  touching code or Studio. Turkey and Day-old Chicks are hidden this way
+  (not deleted). See "Managing categories & products" below for the
+  actual workflow.
+- **Phase 5** (done): per-tier option pricing generalized from
+  weight-only to any single priced option group.
+  `products.variant_pricing` (renamed from `weight_pricing` — Phase 5
+  block in `supabase/schema.sql`) now drives age-based pricing for live
+  birds the same way it already drove weight-based pricing for
+  chicken/turkey. `resolveVariant()` in `ShopClient.tsx` checks whichever
+  option value is currently selected against this map, so it works for
+  any option key without new columns. Still Studio-only to edit — no
+  admin UI for it yet.
 - The legacy root `customer-account.html`/`admin-dashboard.html` are now
   superseded by the above — don't extend them further, extend `web/`.
 
 All of the above is deployed and confirmed working in production (see
 "Deployment" below for what that took) — shop browsing, cart, checkout,
-the chatbot, and login/account/admin have all been manually smoke-tested
+the chatbot, login/account/admin, category/product management, and
+per-tier weight/age pricing have all been manually smoke-tested
 end-to-end. There's no remaining planned phase; this is steady-state.
 
 ## Data layer
@@ -45,11 +63,45 @@ end-to-end. There's no remaining planned phase; this is steady-state.
   types, but their arrays are **seed data only**, consumed by
   `scripts/seed.ts`. Don't import them from components/pages — that's what
   the `@/lib/data/*` functions are for.
-- **Content edits happen in Supabase Studio's table editor**, not in code.
-  There is deliberately no admin UI for products/blog/gallery/FAQs.
+- **Most content edits happen in Supabase Studio's table editor**, not in
+  code — still true for blog posts, gallery photos, and FAQs, which have
+  no admin UI at all. Products and categories are the exception since
+  Phase 4: `/admin`'s Products tab covers the common cases (see below),
+  but anything beyond that — a product's `options`, or a
+  `variant_pricing` tier — is still Studio-only.
 - The cart stays client-side in `localStorage` (`useCart()` in
   `src/lib/cart.ts`, key `freshplug_cart`) — only the checkout-time snapshot
   is persisted server-side, as an `orders` row.
+
+## Managing categories & products
+
+- **Add a category**: `/admin` → Products tab → type a name (e.g.
+  "Dairy") into the "New category" field → Add. This inserts a row into
+  `categories` — slug is auto-derived from the label (`slugify()`:
+  lowercased, non-alphanumeric runs collapsed to `-`), `sort_order` is
+  appended to the end (controls the `/shop` filter-tab order), `active`
+  defaults to `true`. It's immediately selectable on the product form and
+  shows up as a shop filter tab. Studio works too (insert directly into
+  `categories`) if you'd rather set `sort_order` precisely.
+- **Hide/show a category**: `/admin` → Products tab → toggle
+  Visible/Hidden next to the category name. Flips `categories.active`,
+  which pulls the category and every product in it from `/shop` (RLS-
+  enforced, not just a UI filter) without deleting anything — same
+  mechanism used for turkey/chicks.
+- **Add a product**: `/admin` → Products tab → "Add Product" form (name,
+  category dropdown, price, image path, description, badge). New
+  products start with a default rating, no `options`, and no
+  `variant_pricing`.
+- **Give a product weight/age/size tiers, or per-tier pricing**: not
+  covered by `/admin` — edit the new row directly in Studio's table
+  editor. Set `options` (jsonb, e.g. `{"age": ["6-8 weeks", "8-10
+  weeks"]}`) for the dropdown itself, and — only if price should actually
+  vary by tier — `variant_pricing` (jsonb keyed by the exact option
+  value, e.g. `{"8-10 weeks": {"price": 1800, "description": "..."}}`).
+  Leave `variant_pricing` as `{}` for a product whose options don't
+  affect price (e.g. egg size, chick sex/quantity) — `resolveVariant()`
+  in `ShopClient.tsx` falls back to the flat price/description whenever a
+  selected value has no entry there.
 
 ## Supabase setup (local dev)
 
