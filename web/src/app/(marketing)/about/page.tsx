@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 const stats = [
   { number: "2000+", label: "Happy Chickens" },
   { number: "500+", label: "Satisfied Customers" },
-  { number: "50", label: "Acres of Organic Land" },
+  { number: "100%", label: "Free-Range & Pasture-Raised" },
   { number: "9", label: "Years of Excellence" },
 ];
 
@@ -39,30 +39,27 @@ const values = [
   },
 ];
 
-const team = [
+const kenyanRoots = [
   {
-    name: "John Anderson",
-    role: "Farm Owner & Manager",
-    image: "/assets/images/team-member.jpg",
-    bio: "With over 20 years in sustainable agriculture, John leads our farm operations and ensures our commitment to organic practices.",
+    icon: "fas fa-hand-holding-heart",
+    title: "Family-Run & Kenyan-Owned",
+    description:
+      "Freshplug Organics is a family farm based right here in Kenya — not a franchise or an import brand, just people who know every bird by name.",
   },
   {
-    name: "Mary Anderson",
-    role: "Animal Welfare Specialist",
-    image: "/assets/images/customer1.jpg",
-    bio: "Mary oversees the health and wellbeing of all our animals, ensuring they receive the best care possible.",
+    icon: "fas fa-seedling",
+    title: "Locally Sourced Feed",
+    description: "We source feed and farm inputs from local Kenyan suppliers, keeping more value within our community.",
   },
   {
-    name: "David Chen",
-    role: "Organic Certification Manager",
-    image: "/assets/images/customer2.jpg",
-    bio: "David manages our organic certification and quality control processes, maintaining our high standards.",
+    icon: "fas fa-truck",
+    title: "Fresh to Nairobi & Beyond",
+    description: "From our farm straight to your table across Nairobi and the surrounding counties — same-day freshness, no middlemen.",
   },
   {
-    name: "Sarah Johnson",
-    role: "Customer Relations Manager",
-    image: "/assets/images/customer3.jpg",
-    bio: "Sarah ensures our customers receive exceptional service and stays connected with our community.",
+    icon: "fas fa-hands-helping",
+    title: "Community First",
+    description: "We create local jobs and reinvest in our community, because a thriving farm should mean a thriving neighborhood.",
   },
 ];
 
@@ -70,35 +67,35 @@ const timeline = [
   {
     year: "2015",
     title: "Humble Beginnings",
-    description: "Started with 50 heritage breed hens on 5 acres of land, focusing on pasture-raised, organic practices from day one.",
+    description: "Started with 50 heritage breed hens on a small family plot, focusing on free-range, pasture-raised, organic practices from day one.",
   },
   {
     year: "2017",
-    title: "Organic Certification",
-    description: "Achieved USDA Organic certification after two years of rigorous compliance with organic standards.",
+    title: "Going Fully Organic",
+    description: "Fully transitioned to organic, free-range farming — no antibiotics, no synthetic feed, just natural care for every bird.",
   },
   {
     year: "2019",
     title: "Farm Expansion",
-    description: "Expanded to 25 acres and increased our flock to 500 birds, adding turkey and duck production.",
+    description: "Expanded our pastures and increased our flock to 500 birds, adding turkey and duck production.",
   },
   {
     year: "2021",
-    title: "Community Recognition",
-    description: 'Received the "Sustainable Farm of the Year" award from the State Agriculture Department.',
+    title: "Growing With Our Community",
+    description: "Became a trusted supplier for families, restaurants, and shops across Nairobi and beyond — entirely through word of mouth.",
   },
   {
     year: "2024",
     title: "Continued Growth",
-    description: "Now operating on 50 acres with over 2000 birds, serving 500+ customers with farm-fresh products.",
+    description: "Now a thriving small-scale operation with over 2000 birds, serving 500+ customers with farm-fresh products.",
   },
 ];
 
 const certifications = [
-  { src: "/assets/images/organic-certified.svg", title: "USDA Organic", note: "Certified since 2017" },
-  { src: "/assets/images/animal-welfare.svg", title: "Animal Welfare Approved", note: "Highest welfare standards" },
-  { src: "/assets/images/sustainable.svg", title: "Certified Humane", note: "Humane treatment verified" },
-  { src: "/assets/images/local-farm.svg", title: "Local Harvest", note: "Proud member since 2016" },
+  { src: "/assets/images/organic-certified.svg", title: "Free-Range & Organic", note: "No antibiotics, no synthetic feed" },
+  { src: "/assets/images/animal-welfare.svg", title: "Animal Welfare Focused", note: "Spacious, natural environments" },
+  { src: "/assets/images/sustainable.svg", title: "Sustainably Farmed", note: "Eco-conscious practices" },
+  { src: "/assets/images/local-farm.svg", title: "Proudly Kenyan", note: "Locally owned & operated" },
 ];
 
 export default function AboutPage() {
@@ -134,7 +131,7 @@ export default function AboutPage() {
                 community engagement has made us a trusted name in sustainable agriculture.
               </p>
               <p>
-                Today, we&apos;re proud to be certified organic and continue to lead by example
+                Today, we&apos;re proud to farm organically and continue to lead by example
                 in responsible farming practices that benefit our animals, our customers, and
                 our planet.
               </p>
@@ -195,16 +192,15 @@ export default function AboutPage() {
 
       <section className="about-section team-section">
         <div className="container">
-          <h2 className="section-title">Meet Our Team</h2>
-          <div className="team-grid">
-            {team.map((member) => (
-              <div className="team-card" key={member.name}>
-                <Image src={member.image} alt={member.name} width={300} height={250} />
-                <div className="team-info">
-                  <h3>{member.name}</h3>
-                  <div className="role">{member.role}</div>
-                  <p>{member.bio}</p>
+          <h2 className="section-title">Proudly Kenyan</h2>
+          <div className="values-grid">
+            {kenyanRoots.map((item) => (
+              <div className="value-card" key={item.title}>
+                <div className="value-icon">
+                  <i className={item.icon} />
                 </div>
+                <h3>{item.title}</h3>
+                <p>{item.description}</p>
               </div>
             ))}
           </div>
@@ -230,7 +226,7 @@ export default function AboutPage() {
 
       <section className="about-section" style={{ background: "var(--cream)" }}>
         <div className="container">
-          <h2 className="section-title">Our Certifications</h2>
+          <h2 className="section-title">Our Farming Standards</h2>
           <div className="certifications">
             {certifications.map((cert) => (
               <div className="cert-badge" key={cert.title}>
