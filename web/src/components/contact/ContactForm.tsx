@@ -1,7 +1,6 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { getSupabaseClient } from "@/lib/supabase/client";
 
 const INQUIRY_SUBJECTS: Record<string, string> = {
   order: "Product Order Inquiry",
@@ -16,7 +15,9 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
  * Ported from the legacy contact.html inline script. As of Phase 1,
- * submission writes a row to the `contact_messages` Supabase table.
+ * submission writes a row to the `contact_messages` Supabase table; as of
+ * the contact-email wiring, it now goes through /api/contact so the same
+ * submission also emails a notification to the farm's inbox.
  */
 export function ContactForm() {
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
@@ -33,7 +34,12 @@ export function ContactForm() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
+    // Captured now, not read off `event.currentTarget` after the `await`
+    // below — React nulls out a SyntheticEvent's currentTarget once the
+    // event has finished dispatching, so it's gone by the time an async
+    // handler resumes.
+    const form = event.currentTarget;
+    const formData = new FormData(form);
 
     const requiredFields = ["firstName", "lastName", "email", "inquiryType", "subject", "message"];
     for (const field of requiredFields) {
@@ -54,17 +60,21 @@ export function ContactForm() {
 
     setStatus("submitting");
 
-    const { error } = await getSupabaseClient().from("contact_messages").insert({
-      first_name: String(formData.get("firstName")),
-      last_name: String(formData.get("lastName")),
-      email,
-      phone: formData.get("phone") ? String(formData.get("phone")) : null,
-      inquiry_type: String(formData.get("inquiryType")),
-      subject: String(formData.get("subject")),
-      message: String(formData.get("message")),
+    const response = await fetch("/api/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        firstName: String(formData.get("firstName")),
+        lastName: String(formData.get("lastName")),
+        email,
+        phone: formData.get("phone") ? String(formData.get("phone")) : null,
+        inquiryType: String(formData.get("inquiryType")),
+        subject: String(formData.get("subject")),
+        message: String(formData.get("message")),
+      }),
     });
 
-    if (error) {
+    if (!response.ok) {
       setErrorMessage("Something went wrong sending your message — please try WhatsApp or call us directly.");
       setStatus("error");
       return;
@@ -73,7 +83,7 @@ export function ContactForm() {
     setStatus("success");
     setSubject("");
     setInquiryType("");
-    event.currentTarget.reset();
+    form.reset();
   }
 
   return (

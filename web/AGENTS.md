@@ -72,6 +72,14 @@ end-to-end. There's no remaining planned phase; this is steady-state.
 - The cart stays client-side in `localStorage` (`useCart()` in
   `src/lib/cart.ts`, key `freshplug_cart`) — only the checkout-time snapshot
   is persisted server-side, as an `orders` row.
+- The Contact page form (`ContactForm.tsx`) posts to `src/app/api/contact/
+  route.ts`, which saves the message to `contact_messages` (as before —
+  still what `/admin`'s Messages tab reads) and, via Resend, emails a
+  notification to `freshplugorganics@gmail.com` with `replyTo` set to the
+  submitter's address, so the farm can just hit reply. Needs
+  `RESEND_API_KEY`; without it the message still saves, the email step is
+  skipped, and a warning is logged. Checkout (`orders`) has no equivalent
+  email notification yet — only Contact does.
 
 ## Managing categories & products
 
@@ -134,8 +142,9 @@ route, check these first:
   routes/functions/middleware, which 404s on every path with no build error
   and no runtime logs to explain why.
 - Production env vars (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
-  `GEMINI_API_KEY`) have to be added in Settings → Environment Variables —
-  `.env.local` is never read by Vercel, only by local `next dev`/`next build`.
+  `GEMINI_API_KEY`, `RESEND_API_KEY`) have to be added in Settings →
+  Environment Variables — `.env.local` is never read by Vercel, only by
+  local `next dev`/`next build`.
 - `middleware.ts` must live at `src/middleware.ts`, not the project root —
   this repo uses a `src/` directory, and Next.js silently ignores a
   root-level `middleware.ts` in that layout (empty build output, no error).
