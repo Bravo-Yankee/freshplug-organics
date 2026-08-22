@@ -163,3 +163,51 @@ export async function getAllCustomers(): Promise<Customer[]> {
     createdAt: row.created_at,
   }));
 }
+
+export interface NewsletterSubscriber {
+  id: number;
+  createdAt: string;
+  email: string;
+  subscribed: boolean;
+}
+
+export async function getAllSubscribers(): Promise<NewsletterSubscriber[]> {
+  const supabase = await getSupabaseServerClient();
+  const { data, error } = await supabase
+    .from("newsletter_subscribers")
+    .select("id, created_at, email, subscribed")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+
+  return data.map((row) => ({
+    id: row.id,
+    createdAt: row.created_at,
+    email: row.email,
+    subscribed: row.subscribed,
+  }));
+}
+
+export interface NewsletterCampaign {
+  id: number;
+  createdAt: string;
+  subject: string;
+  body: string;
+  recipientCount: number;
+}
+
+export async function getAllCampaigns(): Promise<NewsletterCampaign[]> {
+  const supabase = await getSupabaseServerClient();
+  const { data, error } = await supabase
+    .from("newsletter_campaigns")
+    .select("id, created_at, subject, body, recipient_count")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+
+  return data.map((row) => ({
+    id: row.id,
+    createdAt: row.created_at,
+    subject: row.subject,
+    body: row.body,
+    recipientCount: row.recipient_count,
+  }));
+}

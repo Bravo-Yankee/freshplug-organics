@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { BlogCategory, BlogPost } from "@/content/blog";
+import { NewsletterForm } from "@/components/newsletter/NewsletterForm";
 
 const POSTS_PER_PAGE = 5;
 
@@ -277,35 +278,9 @@ export function BlogClient({ posts: blogPosts }: { posts: BlogPost[] }) {
           <p style={{ marginBottom: "1rem", opacity: 0.9 }}>
             Get the latest farm updates and tips delivered to your inbox.
           </p>
-          <SidebarNewsletterForm />
+          <NewsletterForm />
         </div>
       </div>
     </div>
-  );
-}
-
-function SidebarNewsletterForm() {
-  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  return (
-    <form
-      className="newsletter-form"
-      onSubmit={(event) => {
-        event.preventDefault();
-        const email = new FormData(event.currentTarget).get("email");
-        setStatus(email && emailRegex.test(String(email)) ? "success" : "error");
-        if (status !== "error") event.currentTarget.reset();
-      }}
-    >
-      <input type="email" name="email" placeholder="Your email address" required />
-      <button type="submit">Subscribe Now</button>
-      {status === "success" && (
-        <p style={{ fontSize: "0.85rem" }}>Thank you for subscribing!</p>
-      )}
-      {status === "error" && (
-        <p style={{ fontSize: "0.85rem" }}>Please enter a valid email address.</p>
-      )}
-    </form>
   );
 }

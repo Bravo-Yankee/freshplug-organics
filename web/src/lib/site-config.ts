@@ -9,7 +9,7 @@ export const siteConfig = {
   legalName: "Freshplug Organics Poultry Farm",
   description:
     "Premium organic poultry products from our farm to your table. Committed to sustainable farming and exceptional quality.",
-  url: "https://freshplugorganics.example", // TODO: replace with real production domain before launch
+  url: "https://freshplug.org",
   email: "freshplugorganics@gmail.com",
   whatsapp: "254714221885",
   whatsappDisplay: "+254 714 221885",

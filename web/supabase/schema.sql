@@ -333,3 +333,42 @@ update products set variant_pricing = '{
   "6-8 weeks": {"price": 1500, "description": "Fast-growing broiler chickens, 6-8 weeks old"},
   "8-10 weeks": {"price": 1800, "description": "Fast-growing broiler chickens, 8-10 weeks old, full market weight"}
 }'::jsonb where id = 10;
+
+-- Phase 6 — newsletter
+--
+-- Not idempotent, like the rest of this file: run only this block against
+-- a project that already has the Phase 1-5 blocks applied.
+--
+-- Backs the two newsletter signup forms (homepage, blog sidebar) and the
+-- admin "Newsletter" tab's compose/send flow. subscribed is a soft flag,
+-- never a deleted row, so re-subscribing is just flipping it back — same
+-- posture as categories.active/products.is_active elsewhere in this file.
+-- unsubscribe_token gates the public "unsubscribe" update policy below;
+-- RLS itself is deliberately permissive there (same posture as the public
+-- insert policies already in this file) because the unguessable token,
+-- not RLS, is what's actually authorizing the write.
+create table newsletter_subscribers (
+  id bigint generated always as identity primary key,
+  created_at timestamptz not null default now(),
+  email text not null unique,
+  unsubscribe_token uuid not null default gen_random_uuid() unique,
+  subscribed boolean not null default true
+);
+
+alter table newsletter_subscribers enable row level security;
+create policy "public insert" on newsletter_subscribers for insert with check (true);
+create policy "public unsubscribe" on newsletter_subscribers for update using (true) with check (true);
+create policy "admin newsletter_subscribers select" on newsletter_subscribers for select using (is_admin());
+
+-- One row per newsletter send, for the admin history view.
+create table newsletter_campaigns (
+  id bigint generated always as identity primary key,
+  created_at timestamptz not null default now(),
+  subject text not null,
+  body text not null,
+  recipient_count int not null
+);
+
+alter table newsletter_campaigns enable row level security;
+create policy "admin newsletter_campaigns select" on newsletter_campaigns for select using (is_admin());
+create policy "admin newsletter_campaigns insert" on newsletter_campaigns for insert with check (is_admin());

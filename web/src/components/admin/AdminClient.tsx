@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import type { AdminOrder, AdminStats, ContactMessage, Customer } from "@/lib/data/admin";
+import type { AdminOrder, AdminStats, ContactMessage, Customer, NewsletterSubscriber, NewsletterCampaign } from "@/lib/data/admin";
 import type { Product, ProductBadge } from "@/content/products";
 import type { Category } from "@/content/categories";
 import { toProduct, type ProductRow } from "@/lib/data/products";
 import { getSupabaseClient } from "@/lib/supabase/client";
 import { useToast, ToastViewport } from "@/components/ui/Toast";
 
-type Section = "overview" | "orders" | "messages" | "customers" | "products";
+type Section = "overview" | "orders" | "messages" | "customers" | "products" | "newsletter";
 
 const SECTIONS: { key: Section; label: string; icon: string }[] = [
   { key: "overview", label: "Overview", icon: "fa-chart-bar" },
@@ -16,6 +16,7 @@ const SECTIONS: { key: Section; label: string; icon: string }[] = [
   { key: "messages", label: "Messages", icon: "fa-envelope" },
   { key: "customers", label: "Customers", icon: "fa-users" },
   { key: "products", label: "Products", icon: "fa-box" },
+  { key: "newsletter", label: "Newsletter", icon: "fa-paper-plane" },
 ];
 
 const ORDER_STATUSES: AdminOrder["status"][] = ["pending", "confirmed", "fulfilled", "cancelled"];
@@ -56,6 +57,8 @@ function formatDate(value: string | null) {
   return new Date(value).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
 }
 
+const emptyNewsletterForm = { subject: "", body: "" };
+
 interface AdminClientProps {
   stats: AdminStats;
   orders: AdminOrder[];
@@ -63,14 +66,21 @@ interface AdminClientProps {
   customers: Customer[];
   products: Product[];
   categories: Category[];
+  subscribers: NewsletterSubscriber[];
+  campaigns: NewsletterCampaign[];
 }
 
 /**
  * Mirrors AccountClient's single-page, nav-driven section layout. Orders,
  * and now Products/Categories, have write paths — Messages and Customers
- * stay read-only, matching the confirmed scope for this pass.
+ * stay read-only, matching the confirmed scope for this pass. Newsletter's
+ * subscriber table is likewise read-only (subscribers manage themselves
+ * via the unsubscribe link), but its compose/send form is the one admin
+ * write that goes through an API route (POST /api/newsletter/send) rather
+ * than a direct browser-side Supabase call — sending needs the
+ * server-only RESEND_API_KEY.
  */
-export function AdminClient({ stats, orders, messages, customers, products, categories }: AdminClientProps) {
+export function AdminClient({ stats, orders, messages, customers, products, categories, subscribers, campaigns }: AdminClientProps) {
   const { toast, show, dismiss } = useToast();
   const [section, setSection] = useState<Section>("overview");
   const [orderList, setOrderList] = useState(orders);
@@ -81,6 +91,10 @@ export function AdminClient({ stats, orders, messages, customers, products, cate
     ...emptyProductForm,
     category: categories[0]?.slug ?? "",
   }));
+  const [campaignList, setCampaignList] = useState(campaigns);
+  const [newsletterForm, setNewsletterForm] = useState(emptyNewsletterForm);
+  const [sendingNewsletter, setSendingNewsletter] = useState(false);
+  const activeSubscribers = subscribers.filter((subscriber) => subscriber.subscribed);
 
   async function handleStatusChange(orderId: number, newStatus: AdminOrder["status"]) {
     const { error } = await getSupabaseClient().from("orders").update({ status: newStatus }).eq("id", orderId);
@@ -200,6 +214,39 @@ export function AdminClient({ stats, orders, messages, customers, products, cate
     setProductList((current) => [...current, toProduct(data as ProductRow)]);
     setProductForm({ ...emptyProductForm, category: productForm.category });
     show(`"${name}" added.`, "success");
+  }
+
+  async function handleSendNewsletter(event: FormEvent) {
+    event.preventDefault();
+    const subject = newsletterForm.subject.trim();
+    const body = newsletterForm.body.trim();
+    if (!subject || !body) {
+      show("Fill in a subject and message before sending.", "error");
+      return;
+    }
+
+    setSendingNewsletter(true);
+    try {
+      const response = await fetch("/api/newsletter/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ subject, body }),
+      });
+
+      if (!response.ok) {
+        show("Couldn't send the newsletter — please try again.", "error");
+        return;
+      }
+
+      setCampaignList((current) => [
+        { id: Date.now(), createdAt: new Date().toISOString(), subject, body, recipientCount: activeSubscribers.length },
+        ...current,
+      ]);
+      setNewsletterForm(emptyNewsletterForm);
+      show(`Newsletter sent to ${activeSubscribers.length} subscriber${activeSubscribers.length === 1 ? "" : "s"}.`, "success");
+    } finally {
+      setSendingNewsletter(false);
+    }
   }
 
   return (
@@ -567,6 +614,97 @@ export function AdminClient({ stats, orders, messages, customers, products, cate
                     Add Product
                   </button>
                 </form>
+              </div>
+            </>
+          )}
+
+          {section === "newsletter" && (
+            <>
+              <div className="admin-card">
+                <h2>Subscribers</h2>
+                <p className="admin-hint">
+                  {activeSubscribers.length} active subscriber{activeSubscribers.length === 1 ? "" : "s"}.
+                </p>
+                {subscribers.length === 0 ? (
+                  <p className="admin-empty">No subscribers yet.</p>
+                ) : (
+                  <div className="admin-table-wrapper">
+                    <table className="admin-table">
+                      <thead>
+                        <tr>
+                          <th>Date</th>
+                          <th>Email</th>
+                          <th>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {subscribers.map((subscriber) => (
+                          <tr key={subscriber.id}>
+                            <td>{formatDate(subscriber.createdAt)}</td>
+                            <td>{subscriber.email}</td>
+                            <td>{subscriber.subscribed ? "Subscribed" : "Unsubscribed"}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+
+              <div className="admin-card">
+                <h2>Send a Newsletter</h2>
+                <p className="admin-hint">Sends immediately to every active subscriber by email — this can&apos;t be undone.</p>
+                <form className="admin-inline-form" onSubmit={handleSendNewsletter}>
+                  <div className="form-group">
+                    <label>Subject</label>
+                    <input
+                      type="text"
+                      value={newsletterForm.subject}
+                      onChange={(event) => setNewsletterForm((current) => ({ ...current, subject: event.target.value }))}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Message</label>
+                    <textarea
+                      rows={6}
+                      value={newsletterForm.body}
+                      onChange={(event) => setNewsletterForm((current) => ({ ...current, body: event.target.value }))}
+                    />
+                  </div>
+                  <button type="submit" className="submit-btn" disabled={sendingNewsletter || activeSubscribers.length === 0}>
+                    {sendingNewsletter
+                      ? "Sending..."
+                      : `Send to ${activeSubscribers.length} Subscriber${activeSubscribers.length === 1 ? "" : "s"}`}
+                  </button>
+                </form>
+              </div>
+
+              <div className="admin-card">
+                <h2>Past Campaigns</h2>
+                {campaignList.length === 0 ? (
+                  <p className="admin-empty">No newsletters sent yet.</p>
+                ) : (
+                  <div className="admin-table-wrapper">
+                    <table className="admin-table">
+                      <thead>
+                        <tr>
+                          <th>Date</th>
+                          <th>Subject</th>
+                          <th>Recipients</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {campaignList.map((campaign) => (
+                          <tr key={campaign.id}>
+                            <td>{formatDate(campaign.createdAt)}</td>
+                            <td>{campaign.subject}</td>
+                            <td>{campaign.recipientCount}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
             </>
           )}

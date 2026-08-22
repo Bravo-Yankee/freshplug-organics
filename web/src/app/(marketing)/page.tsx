@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { NewsletterForm } from "@/components/newsletter/NewsletterForm";
 
 const testimonials = [
   {
@@ -168,17 +169,7 @@ export default function HomePage() {
           <div className="newsletter-content">
             <h2>Stay Connected with Fresh Updates</h2>
             <p>Get the latest farm news, special offers, and seasonal product availability</p>
-            {/*
-              Real submission handling (persisting to a customers table via
-              an ESP) lands in Phase 6 — this is a static form for content
-              parity with the legacy site's client-only newsletter signup.
-            */}
-            <form className="newsletter-form">
-              <input type="email" placeholder="Enter your email address" required />
-              <button type="submit" className="btn btn-primary">
-                Subscribe
-              </button>
-            </form>
+            <NewsletterForm />
           </div>
         </div>
       </section>

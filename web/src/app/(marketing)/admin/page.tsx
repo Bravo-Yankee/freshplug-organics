@@ -11,6 +11,8 @@ import {
   getAllCustomers,
   getAllProducts,
   getAllCategories,
+  getAllSubscribers,
+  getAllCampaigns,
 } from "@/lib/data/admin";
 
 // Session-scoped data, not content — ISR doesn't apply here.
@@ -31,13 +33,15 @@ export default async function AdminPage() {
   const isAdmin = await isCurrentUserAdmin();
   if (!isAdmin) redirect("/");
 
-  const [stats, orders, messages, customers, products, categories] = await Promise.all([
+  const [stats, orders, messages, customers, products, categories, subscribers, campaigns] = await Promise.all([
     getAdminStats(),
     getAllOrders(),
     getAllMessages(),
     getAllCustomers(),
     getAllProducts(),
     getAllCategories(),
+    getAllSubscribers(),
+    getAllCampaigns(),
   ]);
 
   return (
@@ -56,6 +60,8 @@ export default async function AdminPage() {
         customers={customers}
         products={products}
         categories={categories}
+        subscribers={subscribers}
+        campaigns={campaigns}
       />
     </>
   );
