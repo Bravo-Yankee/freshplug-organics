@@ -118,7 +118,7 @@ export async function POST(req: Request) {
   // turn into a 500 for a visitor whose message was, in fact, recorded.
   if (resend) {
     const { error: emailError } = await resend.emails.send({
-      from: "Freshplug Organics Website <onboarding@resend.dev>",
+      from: "Freshplug Organics Website <noreply@freshplug.org>",
       to: FARM_EMAIL,
       replyTo: email,
       subject: `New website inquiry: ${subject}`,
