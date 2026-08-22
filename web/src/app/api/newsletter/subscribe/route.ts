@@ -39,10 +39,13 @@ function getClientKey(req: Request): string {
 
 /**
  * Backs both newsletter signup forms (homepage, blog sidebar — see
- * NewsletterForm.tsx). Upserts on email so a repeat signup — including one
- * from someone who'd previously unsubscribed — just flips `subscribed`
- * back to true instead of failing on the unique constraint; the existing
- * unsubscribe_token is left untouched since it's not part of the payload.
+ * NewsletterForm.tsx). Plain insert, not upsert — under RLS, INSERT ...
+ * ON CONFLICT DO UPDATE additionally requires a SELECT policy on the
+ * table to detect the conflict, and we deliberately don't grant one
+ * publicly (it would let anyone list every subscriber's email via the
+ * REST API). A repeat signup — including one from someone who'd
+ * previously unsubscribed — hits the unique constraint instead, and gets
+ * handled below as a separate, explicit update.
  */
 export async function POST(req: Request) {
   const clientKey = getClientKey(req);
@@ -64,11 +67,23 @@ export async function POST(req: Request) {
     return new Response("A valid email address is required.", { status: 400 });
   }
 
-  const { error } = await getSupabaseClient()
-    .from("newsletter_subscribers")
-    .upsert({ email, subscribed: true }, { onConflict: "email" });
+  const supabase = getSupabaseClient();
+  const { error } = await supabase.from("newsletter_subscribers").insert({ email });
 
-  if (error) {
+  if (error && error.code === "23505") {
+    // Already have a row for this email — flip it back to subscribed
+    // (covers both "already subscribed" and "resubscribing after
+    // unsubscribe"). A plain UPDATE only needs the "public unsubscribe"
+    // policy's USING clause, not a SELECT policy.
+    const { error: updateError } = await supabase
+      .from("newsletter_subscribers")
+      .update({ subscribed: true })
+      .eq("email", email);
+    if (updateError) {
+      console.error("Failed to resubscribe newsletter subscriber:", updateError);
+      return new Response("Something went wrong subscribing you — please try again.", { status: 500 });
+    }
+  } else if (error) {
     console.error("Failed to save newsletter subscriber:", error);
     return new Response("Something went wrong subscribing you — please try again.", { status: 500 });
   }
