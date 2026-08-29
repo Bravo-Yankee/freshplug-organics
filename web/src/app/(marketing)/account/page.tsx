@@ -5,6 +5,7 @@ import { AccountClient } from "@/components/account/AccountClient";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { getProfile, getAddresses, getSubscriptions, getOrders } from "@/lib/data/account";
 import { getProducts } from "@/lib/data/products";
+import { isCurrentUserAdmin } from "@/lib/data/admin";
 
 // Session-scoped data, not content — ISR doesn't apply here.
 export const revalidate = 0;
@@ -21,12 +22,13 @@ export default async function AccountPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const [profile, addresses, subscriptions, orders, products] = await Promise.all([
+  const [profile, addresses, subscriptions, orders, products, isAdmin] = await Promise.all([
     getProfile(),
     getAddresses(),
     getSubscriptions(),
     getOrders(),
     getProducts(),
+    isCurrentUserAdmin(),
   ]);
 
   // handle_new_user (schema.sql) creates the profile row at signup time, so
@@ -49,6 +51,7 @@ export default async function AccountPage() {
         subscriptions={subscriptions}
         orders={orders}
         products={products}
+        isAdmin={isAdmin}
       />
     </>
   );

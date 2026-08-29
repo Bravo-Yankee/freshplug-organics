@@ -71,7 +71,13 @@ builds and serves `web/`, not it.
   10-45+ seconds end to end. The route sets `export const maxDuration = 90`
   to survive that on Vercel — if it ever starts 504ing in production,
   check the project's actual function timeout limit (depends on plan/Fluid
-  Compute settings) before assuming the code regressed.
+  Compute settings) before assuming the code regressed. `/admin` has no
+  link anywhere in the site's header nav (deliberately — `Header.tsx`
+  avoids an `is_admin` check there so marketing pages keep their
+  static/ISR rendering, see the `signedIn` comment in that file); the only
+  in-app way there is the "Admin Dashboard" link in `/account`'s sidebar
+  (`AccountClient.tsx`), shown only when `isCurrentUserAdmin()` is true —
+  otherwise it's a bookmark-the-URL situation.
 
 All of the above is deployed and confirmed working in production (see
 "Deployment" below for what that took) — shop browsing, cart, checkout,

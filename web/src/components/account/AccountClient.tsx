@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Product } from "@/content/products";
 import type { Address, Order, Profile, Subscription } from "@/lib/data/account";
@@ -27,6 +28,7 @@ interface AccountClientProps {
   subscriptions: Subscription[];
   orders: Order[];
   products: Product[];
+  isAdmin: boolean;
 }
 
 /**
@@ -37,7 +39,7 @@ interface AccountClientProps {
  * as ShopClient.handleCheckout); RLS (schema.sql) is the real trust
  * boundary, not which component issues the request.
  */
-export function AccountClient({ profile, addresses, subscriptions, orders, products }: AccountClientProps) {
+export function AccountClient({ profile, addresses, subscriptions, orders, products, isAdmin }: AccountClientProps) {
   const router = useRouter();
   const { toast, show, dismiss } = useToast();
   const [section, setSection] = useState<Section>("profile");
@@ -234,6 +236,11 @@ export function AccountClient({ profile, addresses, subscriptions, orders, produ
                 <i className={`fas ${item.icon}`} /> {item.label}
               </button>
             ))}
+            {isAdmin && (
+              <Link href="/admin" className="account-nav-link">
+                <i className="fas fa-user-shield" /> Admin Dashboard
+              </Link>
+            )}
             <button type="button" className="account-nav-link account-nav-logout" onClick={handleSignOut}>
               <i className="fas fa-sign-out-alt" /> Sign Out
             </button>
