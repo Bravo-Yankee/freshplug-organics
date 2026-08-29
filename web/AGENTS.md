@@ -78,6 +78,19 @@ builds and serves `web/`, not it.
   in-app way there is the "Admin Dashboard" link in `/account`'s sidebar
   (`AccountClient.tsx`), shown only when `isCurrentUserAdmin()` is true —
   otherwise it's a bookmark-the-URL situation.
+- **Phase 7** (done): any signed-in session (customer or admin — one
+  Supabase auth, no separate admin-only timeout) is auto-signed-out after
+  5 minutes of inactivity, via `InactivityLogout` (mounted once in the
+  root `src/app/layout.tsx`, not inside `Header`, so it covers both the
+  marketing and legal layouts without duplicating the logic per variant).
+  Last-activity timestamp lives in `localStorage`
+  (`freshplug_last_activity`) so activity in one tab keeps every open tab
+  signed in, rather than each tab tracking its own idle timer. Verified by
+  temporarily shrinking `INACTIVITY_TIMEOUT_MS`/`CHECK_INTERVAL_MS` in that
+  file, confirming sign-out fires and the session cookie actually clears
+  (checked from a second, unrelated tab) — restore those two constants to
+  their real values (5 min / 15s) before deploying if you ever do this
+  again for testing.
 
 All of the above is deployed and confirmed working in production (see
 "Deployment" below for what that took) — shop browsing, cart, checkout,

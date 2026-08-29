@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { siteConfig } from "@/lib/site-config";
+import { InactivityLogout } from "@/components/auth/InactivityLogout";
 import "@/styles/legacy.css";
 import "./globals.css";
 
@@ -48,7 +49,10 @@ export default function RootLayout({
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <InactivityLogout />
+      </body>
     </html>
   );
 }
