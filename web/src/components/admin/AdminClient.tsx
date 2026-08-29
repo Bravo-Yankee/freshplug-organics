@@ -742,7 +742,7 @@ export function AdminClient({ stats, orders, messages, customers, products, cate
                   </button>
                 </div>
 
-                <form className="admin-inline-form" onSubmit={handleSendNewsletter}>
+                <form className="admin-form" onSubmit={handleSendNewsletter}>
                   <div className="form-group">
                     <label>Subject</label>
                     <input
