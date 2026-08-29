@@ -52,7 +52,11 @@ export async function POST(req: Request) {
   if (!isValidPayload(body)) {
     return new Response("A subject and body are required.", { status: 400 });
   }
-  const { subject, body: messageBody } = body;
+  // Resend rejects a subject containing a literal newline (422
+  // validation_error) — collapse any that snuck in (e.g. a paste, or an
+  // AI-generated draft) rather than letting the whole send fail on it.
+  const subject = body.subject.trim().replace(/\s*\n+\s*/g, " ");
+  const { body: messageBody } = body;
 
   const supabase = await getSupabaseServerClient();
   const { data: subscribers, error: fetchError } = await supabase

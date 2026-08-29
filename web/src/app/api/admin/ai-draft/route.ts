@@ -71,14 +71,32 @@ export async function POST(req: Request) {
     const draft = await draftAndPolish(
       SYSTEM_PROMPT,
       `Draft a short email newsletter for our subscribers about: ${body.topic}\n\n` +
-        'Return it as exactly two parts separated by a line containing only "---": first a short subject ' +
-        "line (no leading label like 'Subject:'), then the email body as plain text, 2-4 short paragraphs, " +
-        "no markdown formatting.",
+        'The FIRST LINE of your response must be only the subject (no leading label like "Subject:", no ' +
+        'punctuation-free requirement, just the line itself). The second line must be exactly "---". ' +
+        "Everything after that is the email body as plain text, 2-4 short paragraphs, no markdown formatting.",
     );
 
-    const [subjectPart, ...bodyParts] = draft.split(/\n?---\n?/);
-    const subject = subjectPart.trim();
-    const messageBody = bodyParts.join("\n---\n").trim() || draft;
+    const separatorMatch = draft.match(/\n\s*---\s*\n/);
+    let subject: string;
+    let messageBody: string;
+    if (separatorMatch?.index !== undefined) {
+      subject = draft.slice(0, separatorMatch.index);
+      messageBody = draft.slice(separatorMatch.index + separatorMatch[0].length);
+    } else {
+      // The model sometimes omits the "---" separator despite the prompt —
+      // fall back to first-line-is-subject rather than letting the whole
+      // draft become the "subject" (which is what naively using the first
+      // split() chunk would do when there's no delimiter to split on).
+      const newlineIndex = draft.indexOf("\n");
+      subject = newlineIndex === -1 ? draft : draft.slice(0, newlineIndex);
+      messageBody = newlineIndex === -1 ? draft : draft.slice(newlineIndex + 1);
+    }
+
+    // Resend rejects a subject containing a literal newline (422
+    // validation_error) — collapse any that survived the split above
+    // (e.g. the model wrapped its "one line" subject across two anyway).
+    subject = subject.trim().replace(/\s*\n+\s*/g, " ");
+    messageBody = messageBody.trim() || draft.trim();
 
     return Response.json({ subject, body: messageBody });
   } catch (err) {
