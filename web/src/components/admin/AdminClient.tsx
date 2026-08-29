@@ -94,6 +94,9 @@ export function AdminClient({ stats, orders, messages, customers, products, cate
   const [campaignList, setCampaignList] = useState(campaigns);
   const [newsletterForm, setNewsletterForm] = useState(emptyNewsletterForm);
   const [sendingNewsletter, setSendingNewsletter] = useState(false);
+  const [newsletterTopic, setNewsletterTopic] = useState("");
+  const [draftingNewsletter, setDraftingNewsletter] = useState(false);
+  const [suggestingDescription, setSuggestingDescription] = useState(false);
   const activeSubscribers = subscribers.filter((subscriber) => subscriber.subscribed);
 
   async function handleStatusChange(orderId: number, newStatus: AdminOrder["status"]) {
@@ -214,6 +217,65 @@ export function AdminClient({ stats, orders, messages, customers, products, cate
     setProductList((current) => [...current, toProduct(data as ProductRow)]);
     setProductForm({ ...emptyProductForm, category: productForm.category });
     show(`"${name}" added.`, "success");
+  }
+
+  async function handleSuggestDescription() {
+    const name = productForm.name.trim();
+    if (!name) {
+      show("Enter a product name first.", "error");
+      return;
+    }
+
+    setSuggestingDescription(true);
+    try {
+      const response = await fetch("/api/admin/ai-draft", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          kind: "product-description",
+          name,
+          category: categoryList.find((c) => c.slug === productForm.category)?.label ?? productForm.category,
+          price: productForm.price,
+        }),
+      });
+      if (!response.ok) {
+        show("Couldn't generate a description — please try again.", "error");
+        return;
+      }
+      const { description } = await response.json();
+      setProductForm((current) => ({ ...current, description }));
+    } catch {
+      show("Couldn't generate a description — please try again.", "error");
+    } finally {
+      setSuggestingDescription(false);
+    }
+  }
+
+  async function handleDraftNewsletter() {
+    const topic = newsletterTopic.trim();
+    if (!topic) {
+      show("Describe what this newsletter should be about first.", "error");
+      return;
+    }
+
+    setDraftingNewsletter(true);
+    try {
+      const response = await fetch("/api/admin/ai-draft", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kind: "newsletter", topic }),
+      });
+      if (!response.ok) {
+        show("Couldn't generate a draft — please try again.", "error");
+        return;
+      }
+      const { subject, body } = await response.json();
+      setNewsletterForm({ subject, body });
+    } catch {
+      show("Couldn't generate a draft — please try again.", "error");
+    } finally {
+      setDraftingNewsletter(false);
+    }
   }
 
   async function handleSendNewsletter(event: FormEvent) {
@@ -600,11 +662,21 @@ export function AdminClient({ stats, orders, messages, customers, products, cate
                   </div>
                   <div className="form-group">
                     <label>Description</label>
-                    <textarea
-                      rows={3}
-                      value={productForm.description}
-                      onChange={(event) => setProductForm((current) => ({ ...current, description: event.target.value }))}
-                    />
+                    <div className="admin-ai-row">
+                      <textarea
+                        rows={3}
+                        value={productForm.description}
+                        onChange={(event) => setProductForm((current) => ({ ...current, description: event.target.value }))}
+                      />
+                      <button
+                        type="button"
+                        className="admin-ai-btn"
+                        onClick={handleSuggestDescription}
+                        disabled={suggestingDescription}
+                      >
+                        {suggestingDescription ? "Generating…" : "✨ AI Suggest"}
+                      </button>
+                    </div>
                   </div>
                   <p className="admin-hint">
                     New products start with a default rating and no size/weight options — set those up in Supabase
@@ -654,6 +726,22 @@ export function AdminClient({ stats, orders, messages, customers, products, cate
               <div className="admin-card">
                 <h2>Send a Newsletter</h2>
                 <p className="admin-hint">Sends immediately to every active subscriber by email — this can&apos;t be undone.</p>
+
+                <h3 className="admin-subheading" style={{ marginTop: 0 }}>
+                  AI Draft
+                </h3>
+                <div className="admin-ai-row admin-ai-row-wide">
+                  <input
+                    type="text"
+                    placeholder="What should this newsletter be about? e.g. new turkey stock for the holidays"
+                    value={newsletterTopic}
+                    onChange={(event) => setNewsletterTopic(event.target.value)}
+                  />
+                  <button type="button" className="admin-ai-btn" onClick={handleDraftNewsletter} disabled={draftingNewsletter}>
+                    {draftingNewsletter ? "Generating…" : "✨ Generate Draft"}
+                  </button>
+                </div>
+
                 <form className="admin-inline-form" onSubmit={handleSendNewsletter}>
                   <div className="form-group">
                     <label>Subject</label>

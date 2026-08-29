@@ -47,6 +47,31 @@ builds and serves `web/`, not it.
   admin UI for it yet.
 - The legacy root `customer-account.html`/`admin-dashboard.html` are now
   superseded by the above — don't extend them further, extend `web/`.
+- **Phase 6** (done): `/admin` gained an AI draft assistant, backed by
+  `POST /api/admin/ai-draft` (admin-gated via `isCurrentUserAdmin()`, same
+  pattern as `/api/newsletter/send`) and `src/lib/ai/bitdeer.ts`. It calls
+  two Bitdeer AI models that are promotional $0 right now
+  (`deepseek-ai/DeepSeek-V4-Flash` drafts, `Qwen/Qwen3.8-27B` reviews/
+  tightens the draft — see `draftAndPolish()`) over Bitdeer's
+  OpenAI-compatible REST endpoint. Two entry points: the Products tab's
+  "✨ AI Suggest" button (generates a description from name/category/price
+  already in the Add Product form) and the Newsletter tab's "✨ Generate
+  Draft" button (takes a one-line topic, fills subject + body). Needs
+  `BITDEER_API_KEY`; without it those two buttons show an error toast,
+  every other admin feature is unaffected. Since the free pricing is
+  promotional, keep an eye out for these buttons erroring if Bitdeer starts
+  billing for these models — `draftAndPolish()` is the only place model
+  names are pinned, so swapping models later is a one-line change per call.
+  Qwen3.8-27B is a reasoning model that burns hidden "thinking" tokens
+  before any visible output, with highly variable length — measured
+  directly against Bitdeer, the same review prompt came back with empty
+  content at `max_tokens: 600` (reasoning alone used all of it) but worked
+  at 3000. `MAX_TOKENS` in `bitdeer.ts` is deliberately generous (4000 for
+  Qwen) to avoid that truncation, which means one AI-draft click can take
+  10-45+ seconds end to end. The route sets `export const maxDuration = 90`
+  to survive that on Vercel — if it ever starts 504ing in production,
+  check the project's actual function timeout limit (depends on plan/Fluid
+  Compute settings) before assuming the code regressed.
 
 All of the above is deployed and confirmed working in production (see
 "Deployment" below for what that took) — shop browsing, cart, checkout,

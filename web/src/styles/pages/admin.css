@@ -218,6 +218,51 @@
     border-color: var(--clay);
 }
 
+.admin-ai-row {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+}
+.admin-ai-row textarea {
+    flex: 1;
+}
+.admin-ai-row-wide {
+    max-width: 640px;
+    margin-bottom: 1.5rem;
+}
+.admin-ai-row-wide input {
+    flex: 1;
+    padding: 0.7rem 1rem;
+    border: 2px solid var(--line);
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-family: 'Libre Franklin', sans-serif;
+}
+.admin-ai-row-wide input:focus {
+    outline: none;
+    border-color: var(--clay);
+}
+.admin-ai-btn {
+    border: 2px solid var(--clay);
+    background: white;
+    color: var(--clay);
+    padding: 0.6rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+.admin-ai-btn:hover:not(:disabled) {
+    background: var(--clay);
+    color: white;
+}
+.admin-ai-btn:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
 .admin-inline-form {
     display: flex;
     gap: 0.75rem;
