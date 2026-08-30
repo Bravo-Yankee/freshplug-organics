@@ -4,11 +4,13 @@ import { useState, type FormEvent } from "react";
 import type { AdminOrder, AdminStats, ContactMessage, Customer, NewsletterSubscriber, NewsletterCampaign } from "@/lib/data/admin";
 import type { Product, ProductBadge } from "@/content/products";
 import type { Category } from "@/content/categories";
+import type { BlogPost } from "@/content/blog";
 import { toProduct, type ProductRow } from "@/lib/data/products";
+import { toBlogPost, type BlogPostRow } from "@/lib/data/blog";
 import { getSupabaseClient } from "@/lib/supabase/client";
 import { useToast, ToastViewport } from "@/components/ui/Toast";
 
-type Section = "overview" | "orders" | "messages" | "customers" | "products" | "newsletter";
+type Section = "overview" | "orders" | "messages" | "customers" | "products" | "blog" | "newsletter";
 
 const SECTIONS: { key: Section; label: string; icon: string }[] = [
   { key: "overview", label: "Overview", icon: "fa-chart-bar" },
@@ -16,6 +18,7 @@ const SECTIONS: { key: Section; label: string; icon: string }[] = [
   { key: "messages", label: "Messages", icon: "fa-envelope" },
   { key: "customers", label: "Customers", icon: "fa-users" },
   { key: "products", label: "Products", icon: "fa-box" },
+  { key: "blog", label: "Blog", icon: "fa-newspaper" },
   { key: "newsletter", label: "Newsletter", icon: "fa-paper-plane" },
 ];
 
@@ -35,12 +38,34 @@ const PRODUCT_IMAGES = [
 
 const PRODUCT_BADGES: ProductBadge[] = ["organic", "fresh"];
 
+// Same reasoning as PRODUCT_IMAGES — real, working files in the repo,
+// unlike the legacy /assets/images/blog/<file> paths the seed posts still
+// carry (see the NOTE on BlogPost.image in content/blog.ts).
+const BLOG_IMAGES = [
+  "/assets/images/blog-placeholder.jpg",
+  "/assets/images/hero-farm.jpg",
+  "/assets/images/farm-facility.jpg",
+  "/assets/images/farm-landscape.jpg",
+  "/assets/images/organic-chicken.jpg",
+  "/assets/images/organic-feed.jpg",
+  "/assets/images/gallery/fresh-eggs-hand-collected.jpg",
+  "/assets/images/gallery/hens-huddle-overhead.jpg",
+];
+
 function slugify(label: string): string {
   return label
     .trim()
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
+}
+
+// No admin UI asks for read time directly (asking a non-technical
+// employee to estimate minutes-to-read isn't a reasonable ask) — derive
+// it from word count instead, same ~200wpm assumption most publishers use.
+function estimateReadTime(content: string): number {
+  const words = content.trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(words / 200));
 }
 
 const emptyProductForm = {
@@ -50,6 +75,16 @@ const emptyProductForm = {
   image: "",
   description: "",
   badge: "fresh" as ProductBadge,
+};
+
+const emptyPostForm = {
+  title: "",
+  category: "",
+  author: "",
+  excerpt: "",
+  content: "",
+  image: "",
+  tags: "",
 };
 
 function formatDate(value: string | null) {
@@ -68,6 +103,8 @@ interface AdminClientProps {
   categories: Category[];
   subscribers: NewsletterSubscriber[];
   campaigns: NewsletterCampaign[];
+  posts: BlogPost[];
+  blogCategories: Category[];
 }
 
 /**
@@ -80,13 +117,34 @@ interface AdminClientProps {
  * than a direct browser-side Supabase call — sending needs the
  * server-only RESEND_API_KEY.
  */
-export function AdminClient({ stats, orders, messages, customers, products, categories, subscribers, campaigns }: AdminClientProps) {
+export function AdminClient({
+  stats,
+  orders,
+  messages,
+  customers,
+  products,
+  categories,
+  subscribers,
+  campaigns,
+  posts,
+  blogCategories,
+}: AdminClientProps) {
   const { toast, show, dismiss } = useToast();
   const [section, setSection] = useState<Section>("overview");
   const [orderList, setOrderList] = useState(orders);
   const [productList, setProductList] = useState(products);
   const [categoryList, setCategoryList] = useState(categories);
   const [newCategoryLabel, setNewCategoryLabel] = useState("");
+  const [postList, setPostList] = useState(posts);
+  const [blogCategoryList, setBlogCategoryList] = useState(blogCategories);
+  const [newBlogCategoryLabel, setNewBlogCategoryLabel] = useState("");
+  const [postForm, setPostForm] = useState(() => ({
+    ...emptyPostForm,
+    category: blogCategories[0]?.slug ?? "",
+  }));
+  const [editingPostId, setEditingPostId] = useState<number | null>(null);
+  const [blogTopic, setBlogTopic] = useState("");
+  const [draftingBlogPost, setDraftingBlogPost] = useState(false);
   const [productForm, setProductForm] = useState(() => ({
     ...emptyProductForm,
     category: categories[0]?.slug ?? "",
@@ -149,6 +207,46 @@ export function AdminClient({ stats, orders, messages, customers, products, cate
     }
     setCategoryList((current) => current.map((c) => (c.slug === category.slug ? { ...c, active: nextActive } : c)));
     show(`"${category.label}" is now ${nextActive ? "visible" : "hidden"} in the shop.`, "success");
+  }
+
+  async function handleAddBlogCategory(event: FormEvent) {
+    event.preventDefault();
+    const label = newBlogCategoryLabel.trim();
+    if (!label) return;
+    const slug = slugify(label);
+    if (!slug) {
+      show("Category name needs at least one letter or number.", "error");
+      return;
+    }
+    const sortOrder = blogCategoryList.length > 0 ? Math.max(...blogCategoryList.map((c) => c.sortOrder)) + 1 : 1;
+
+    const { error } = await getSupabaseClient()
+      .from("blog_categories")
+      .insert({ slug, label, sort_order: sortOrder, active: true });
+
+    if (error) {
+      show(
+        error.code === "23505" ? `A category called "${label}" already exists.` : "Couldn't add category — please try again.",
+        "error",
+      );
+      return;
+    }
+
+    setBlogCategoryList((current) => [...current, { slug, label, sortOrder, active: true }]);
+    setNewBlogCategoryLabel("");
+    if (!postForm.category) setPostForm((current) => ({ ...current, category: slug }));
+    show(`"${label}" category added.`, "success");
+  }
+
+  async function handleToggleBlogCategoryActive(category: Category) {
+    const nextActive = !category.active;
+    const { error } = await getSupabaseClient().from("blog_categories").update({ active: nextActive }).eq("slug", category.slug);
+    if (error) {
+      show("Couldn't update category — please try again.", "error");
+      return;
+    }
+    setBlogCategoryList((current) => current.map((c) => (c.slug === category.slug ? { ...c, active: nextActive } : c)));
+    show(`"${category.label}" is now ${nextActive ? "visible" : "hidden"} on the blog.`, "success");
   }
 
   async function updateProduct(id: number, patch: Record<string, unknown>, mapped: Partial<Product>) {
@@ -248,6 +346,137 @@ export function AdminClient({ stats, orders, messages, customers, products, cate
       show("Couldn't generate a description — please try again.", "error");
     } finally {
       setSuggestingDescription(false);
+    }
+  }
+
+  async function updatePost(id: number, patch: Record<string, unknown>, mapped: Partial<BlogPost>) {
+    const { error } = await getSupabaseClient().from("blog_posts").update(patch).eq("id", id);
+    if (error) {
+      show("Couldn't update post — please try again.", "error");
+      return;
+    }
+    setPostList((current) => current.map((p) => (p.id === id ? { ...p, ...mapped } : p)));
+  }
+
+  function handleTogglePostPublished(post: BlogPost) {
+    updatePost(post.id, { is_published: !post.isPublished }, { isPublished: !post.isPublished });
+  }
+
+  function handleEditPost(post: BlogPost) {
+    setEditingPostId(post.id);
+    setPostForm({
+      title: post.title,
+      category: post.category,
+      author: post.author,
+      excerpt: post.excerpt,
+      content: post.content,
+      image: post.image,
+      tags: post.tags.join(", "),
+    });
+  }
+
+  function handleCancelEditPost() {
+    setEditingPostId(null);
+    setPostForm(emptyPostForm);
+  }
+
+  async function handleSubmitPost(event: FormEvent) {
+    event.preventDefault();
+    const title = postForm.title.trim();
+    const author = postForm.author.trim();
+    const excerpt = postForm.excerpt.trim();
+    const content = postForm.content.trim();
+    const image = postForm.image.trim();
+    const tags = postForm.tags
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter(Boolean);
+
+    if (!title || !author || !excerpt || !content || !image) {
+      show("Fill in title, author, excerpt, content, and image.", "error");
+      return;
+    }
+
+    const readTime = estimateReadTime(content);
+
+    if (editingPostId === null) {
+      const { data, error } = await getSupabaseClient()
+        .from("blog_posts")
+        .insert({
+          title,
+          excerpt,
+          content,
+          category: postForm.category,
+          author,
+          date: new Date().toISOString().slice(0, 10),
+          read_time: readTime,
+          views: 0,
+          comments: 0,
+          featured: false,
+          image,
+          tags,
+          is_published: true,
+        })
+        .select()
+        .single();
+
+      if (error) {
+        show("Couldn't add post — please try again.", "error");
+        return;
+      }
+
+      setPostList((current) => [toBlogPost(data as BlogPostRow), ...current]);
+      setPostForm(emptyPostForm);
+      show(`"${title}" published.`, "success");
+      return;
+    }
+
+    const { error } = await getSupabaseClient()
+      .from("blog_posts")
+      .update({ title, excerpt, content, category: postForm.category, author, read_time: readTime, image, tags })
+      .eq("id", editingPostId);
+
+    if (error) {
+      show("Couldn't save changes — please try again.", "error");
+      return;
+    }
+
+    setPostList((current) =>
+      current.map((p) =>
+        p.id === editingPostId
+          ? { ...p, title, excerpt, content, category: postForm.category, author, readTime, image, tags }
+          : p,
+      ),
+    );
+    show(`"${title}" updated.`, "success");
+    setEditingPostId(null);
+    setPostForm(emptyPostForm);
+  }
+
+  async function handleDraftBlogPost() {
+    const topic = blogTopic.trim();
+    if (!topic) {
+      show("Describe what this post should be about first.", "error");
+      return;
+    }
+
+    setDraftingBlogPost(true);
+    try {
+      const response = await fetch("/api/admin/ai-draft", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kind: "blog-post", topic }),
+      });
+      if (!response.ok) {
+        show("Couldn't generate a draft — please try again.", "error");
+        return;
+      }
+      const { title, excerpt, content } = await response.json();
+      setPostForm((current) => ({ ...current, title, excerpt, content }));
+    } catch {
+      show("Couldn't generate a draft — please try again.", "error");
+    } finally {
+      setDraftingBlogPost(false);
     }
   }
 
@@ -686,6 +915,198 @@ export function AdminClient({ stats, orders, messages, customers, products, cate
                     Add Product
                   </button>
                 </form>
+              </div>
+            </>
+          )}
+
+          {section === "blog" && (
+            <>
+              <div className="admin-card">
+                <h2>Blog Categories</h2>
+                <p className="admin-hint">
+                  Hide a category to pull it from the blog&apos;s filter tabs without deleting anything — existing
+                  posts in it keep their own Published/Hidden status independently.
+                </p>
+                <div className="category-manage-list">
+                  {blogCategoryList.map((category) => (
+                    <div className="category-manage-row" key={category.slug}>
+                      <span className="category-manage-label">{category.label}</span>
+                      <button
+                        type="button"
+                        className={`admin-toggle${category.active ? " on" : ""}`}
+                        onClick={() => handleToggleBlogCategoryActive(category)}
+                      >
+                        {category.active ? "Visible" : "Hidden"}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <form className="admin-inline-form" onSubmit={handleAddBlogCategory}>
+                  <input
+                    type="text"
+                    placeholder="New category, e.g. Equipment Reviews"
+                    value={newBlogCategoryLabel}
+                    onChange={(event) => setNewBlogCategoryLabel(event.target.value)}
+                  />
+                  <button type="submit" className="submit-btn">
+                    Add Category
+                  </button>
+                </form>
+              </div>
+
+              <div className="admin-card" style={{ marginTop: "2rem" }}>
+                <h2>Blog Posts</h2>
+              {postList.length === 0 ? (
+                <p className="admin-empty">No posts yet.</p>
+              ) : (
+                <div className="admin-table-wrapper">
+                  <table className="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Author</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {postList.map((post) => (
+                        <tr key={post.id}>
+                          <td>{post.title}</td>
+                          <td>{blogCategoryList.find((c) => c.slug === post.category)?.label ?? post.category}</td>
+                          <td>{post.author}</td>
+                          <td>{formatDate(post.date)}</td>
+                          <td>
+                            <button
+                              type="button"
+                              className={`admin-toggle${post.isPublished ? " on" : ""}`}
+                              onClick={() => handleTogglePostPublished(post)}
+                            >
+                              {post.isPublished ? "Published" : "Hidden"}
+                            </button>
+                          </td>
+                          <td>
+                            <button type="button" className="admin-toggle" onClick={() => handleEditPost(post)}>
+                              Edit
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              <h3 className="admin-subheading">{editingPostId === null ? "Add a post" : "Edit Post"}</h3>
+
+              <h4 className="admin-subheading" style={{ marginTop: 0, fontSize: "1rem" }}>
+                AI Draft
+              </h4>
+              <div className="admin-ai-row admin-ai-row-wide">
+                <input
+                  type="text"
+                  placeholder="What should this post be about? e.g. why free-range eggs taste better"
+                  value={blogTopic}
+                  onChange={(event) => setBlogTopic(event.target.value)}
+                />
+                <button type="button" className="admin-ai-btn" onClick={handleDraftBlogPost} disabled={draftingBlogPost}>
+                  {draftingBlogPost ? "Generating…" : "✨ Generate Draft"}
+                </button>
+              </div>
+
+              <form className="admin-form" onSubmit={handleSubmitPost}>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Title</label>
+                    <input
+                      type="text"
+                      value={postForm.title}
+                      onChange={(event) => setPostForm((current) => ({ ...current, title: event.target.value }))}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Category</label>
+                    <select
+                      value={postForm.category}
+                      onChange={(event) => setPostForm((current) => ({ ...current, category: event.target.value }))}
+                    >
+                      <option value="">Select a category…</option>
+                      {blogCategoryList.map((category) => (
+                        <option value={category.slug} key={category.slug}>
+                          {category.label}
+                          {category.active ? "" : " (hidden)"}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Author</label>
+                    <input
+                      type="text"
+                      value={postForm.author}
+                      onChange={(event) => setPostForm((current) => ({ ...current, author: event.target.value }))}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Tags (comma-separated)</label>
+                    <input
+                      type="text"
+                      placeholder="organic farming, free range"
+                      value={postForm.tags}
+                      onChange={(event) => setPostForm((current) => ({ ...current, tags: event.target.value }))}
+                    />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label>Image</label>
+                  <input
+                    list="admin-blog-images"
+                    type="text"
+                    placeholder="/assets/images/blog-placeholder.jpg"
+                    value={postForm.image}
+                    onChange={(event) => setPostForm((current) => ({ ...current, image: event.target.value }))}
+                  />
+                  <datalist id="admin-blog-images">
+                    {BLOG_IMAGES.map((src) => (
+                      <option value={src} key={src} />
+                    ))}
+                  </datalist>
+                </div>
+                <div className="form-group">
+                  <label>Excerpt</label>
+                  <textarea
+                    rows={2}
+                    value={postForm.excerpt}
+                    onChange={(event) => setPostForm((current) => ({ ...current, excerpt: event.target.value }))}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Content</label>
+                  <textarea
+                    rows={10}
+                    value={postForm.content}
+                    onChange={(event) => setPostForm((current) => ({ ...current, content: event.target.value }))}
+                  />
+                </div>
+                <p className="admin-hint">
+                  Read time is estimated automatically from the content length. New posts are published
+                  immediately — toggle a post to Hidden above to pull it without deleting it.
+                </p>
+                <div style={{ display: "flex", gap: "0.75rem" }}>
+                  <button type="submit" className="submit-btn">
+                    {editingPostId === null ? "Add Post" : "Save Changes"}
+                  </button>
+                  {editingPostId !== null && (
+                    <button type="button" className="admin-toggle" onClick={handleCancelEditPost}>
+                      Cancel
+                    </button>
+                  )}
+                </div>
+              </form>
               </div>
             </>
           )}

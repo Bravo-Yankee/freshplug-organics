@@ -91,6 +91,74 @@ builds and serves `web/`, not it.
   (checked from a second, unrelated tab) — restore those two constants to
   their real values (5 min / 15s) before deploying if you ever do this
   again for testing.
+- **Phase 8** (code done, **needs a manual migration before it works** —
+  see below): `/admin` gained a Blog tab. Mirrors the Products tab's
+  shape (list with an inline Published/Hidden toggle + an "Add a
+  post"/"Edit Post" form, `getAllBlogPosts()` in `lib/data/admin.ts`
+  alongside `toBlogPost()`/`BlogPostRow` now exported from
+  `lib/data/blog.ts` for reuse, same pattern as products), but goes
+  further than Products' add-only form: clicking "Edit" on an existing
+  post loads it into the same form (title/category/author/tags/
+  image/excerpt/content), and submitting updates that row instead of
+  inserting a new one. Read time is auto-estimated from content word
+  count (~200wpm) — not an admin-entered field. New posts are published
+  immediately; "Hidden" pulls a post from `/blog` without deleting it
+  (`is_published`, same posture as `products.is_active`). Also gained a
+  third `/api/admin/ai-draft` kind, `"blog-post"`, generating
+  title/excerpt/content together (asks the model for three parts
+  separated by `"---"` lines, with the same kind of loose-separator
+  fallback the newsletter kind needed) — `DeepSeek-V4-Flash`'s token
+  ceiling in `bitdeer.ts` was raised (1200 → 2000) since a full article
+  draft is longer than a newsletter or product description, and the
+  route's `maxDuration` raised again (90 → 120) to match.
+  **Before any of this works**, run the Phase 7 block in
+  `supabase/schema.sql` against Supabase manually (Studio SQL editor,
+  same as every other schema.sql phase — this repo has no DB credentials
+  to apply it automatically): it adds `blog_posts.is_published`, gives
+  the id column an identity sequence (admin-created posts don't have a
+  developer picking one, same fix Phase 4 needed for `products.id`), and
+  adds the admin insert/update RLS policies. Until that's run, the Blog
+  tab still renders (existing posts load fine) but every post shows as
+  "Hidden" (the column doesn't exist yet, so `isPublished` reads as
+  `undefined`) and Add/Edit fail with an RLS violation.
+- **Phase 9** (code done, **needs a manual migration before it works,
+  and this one is build-breaking — see below**): blog categories moved
+  from a fixed check-constraint enum on `blog_posts.category` to a real
+  `blog_categories` table, exactly the change Phase 4 made for
+  `products.category` → `categories` — deliberately a *separate* table
+  from products' `categories`, not shared, since shop product lines and
+  blog topics are different taxonomies. `/admin`'s Blog tab gained a
+  "Blog Categories" card (visible/hidden toggle + add-new-category
+  input) above the Blog Posts card, identical in shape to the Products
+  tab's Categories card — `getAllBlogCategories()` in `lib/data/admin.ts`
+  and `getBlogCategories()` in `lib/data/blog.ts` both reuse
+  `toCategory()`/`CategoryRow` from `lib/data/products.ts` rather than
+  duplicating an identical mapper. `/blog`'s filter tabs and sidebar
+  category list (`BlogClient.tsx`) now build from that table too instead
+  of a hardcoded list — as a side effect this fixed a real mislabeling
+  bug: the per-post category badge used to reconstruct a display label
+  by title-casing the slug (`formatCategoryName()`), which turned
+  `health` into "Health" instead of the real "Health & Nutrition" label;
+  it now looks up the actual label and only falls back to that
+  slug-guessing for a category that's been deleted out from under a post
+  (Studio-only — `/admin` only ever hides, never deletes).
+  `content/blog.ts`'s `BlogCategory` type changed from a fixed string
+  union to a plain `string` alias, same change `ProductCategory` went
+  through in Phase 4 — a category slug is now only as valid as the FK on
+  `blog_posts.category` enforces at the database level.
+  **Before any of this works**, run the Phase 8 block in
+  `supabase/schema.sql` against Supabase manually (Studio SQL editor):
+  it creates `blog_categories`, seeds it with the 6 existing category
+  values, and replaces `blog_posts`' check constraint with an FK to it.
+  Unlike every prior phase in this file, skipping this one doesn't just
+  degrade gracefully — confirmed locally that `npm run build` hard-fails
+  (`/blog` tries to prerender and errors "Could not find the table
+  'public.blog_categories'", exit code 1) until the migration is run.
+  Vercel won't take the live site down over this (a failed build just
+  doesn't get promoted, so whatever deployed last stays live), but it
+  does mean this phase's code must not be pushed — or if it already has
+  been, the migration must be run — before the next deploy, or that
+  deploy silently never goes out.
 
 All of the above is deployed and confirmed working in production (see
 "Deployment" below for what that took) — shop browsing, cart, checkout,

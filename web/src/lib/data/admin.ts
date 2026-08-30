@@ -2,7 +2,9 @@ import { getSupabaseServerClient } from "@/lib/supabase/server";
 import type { CartItem } from "@/lib/cart";
 import type { Product } from "@/content/products";
 import type { Category } from "@/content/categories";
+import type { BlogPost } from "@/content/blog";
 import { toProduct, toCategory, type ProductRow, type CategoryRow } from "@/lib/data/products";
+import { toBlogPost, type BlogPostRow } from "@/lib/data/blog";
 
 export interface AdminOrder {
   id: number;
@@ -143,6 +145,25 @@ export async function getAllProducts(): Promise<Product[]> {
 export async function getAllCategories(): Promise<Category[]> {
   const supabase = await getSupabaseServerClient();
   const { data, error } = await supabase.from("categories").select("*").order("sort_order");
+  if (error) throw error;
+  return (data as CategoryRow[]).map(toCategory);
+}
+
+// Same reasoning as getAllProducts(): the server client sees is_published
+// = false rows too (RLS's "... or is_admin()" clause), so /admin's Blog
+// tab can find and re-publish a hidden post.
+export async function getAllBlogPosts(): Promise<BlogPost[]> {
+  const supabase = await getSupabaseServerClient();
+  const { data, error } = await supabase.from("blog_posts").select("*").order("date", { ascending: false });
+  if (error) throw error;
+  return (data as BlogPostRow[]).map(toBlogPost);
+}
+
+// Same reasoning as getAllCategories(): the server client sees inactive
+// rows too, so /admin's Blog tab can find and re-activate a hidden category.
+export async function getAllBlogCategories(): Promise<Category[]> {
+  const supabase = await getSupabaseServerClient();
+  const { data, error } = await supabase.from("blog_categories").select("*").order("sort_order");
   if (error) throw error;
   return (data as CategoryRow[]).map(toCategory);
 }

@@ -1,10 +1,9 @@
-export type BlogCategory =
-  | "farming-tips"
-  | "recipes"
-  | "health"
-  | "farm-life"
-  | "sustainability"
-  | "news";
+// Was a fixed union of literals until Phase 8 (schema.sql) made categories
+// a real table (`blog_categories`, see content/blog-categories.ts) an
+// admin can add rows to — same change ProductCategory went through in
+// Phase 4. A category slug is only as valid as the FK on blog_posts.category
+// enforces at the database level now, not at the type level.
+export type BlogCategory = string;
 
 export interface BlogPost {
   id: number;
@@ -32,12 +31,18 @@ export interface BlogPost {
    */
   image: string;
   tags: string[];
+  // Soft hide, not a delete — mirrors products.isActive. Added in Phase 7
+  // (schema.sql) alongside admin write access to this table.
+  isPublished: boolean;
 }
 
 // Ported verbatim (metadata only) from the legacy assets/js/blog.js. As of
 // Phase 1, this is seed input for `scripts/seed.ts` only — runtime reads go
 // through `getBlogPosts()`/`getBlogPostById()` in `@/lib/data/blog`, which
-// query the `blog_posts` table. Edit posts in Supabase Studio, not here.
+// query the `blog_posts` table. As of Phase 7, new/edited posts also go
+// through `/admin`'s Blog tab (AdminClient.tsx) — Studio is still the only
+// way to touch existing seed posts' `views`/`comments`/`featured`, which
+// have no admin UI.
 export const blogPosts: BlogPost[] = [
   {
     id: 1,
@@ -52,6 +57,7 @@ export const blogPosts: BlogPost[] = [
     views: 1250,
     comments: 23,
     featured: true,
+    isPublished: true,
     image: "/assets/images/blog/chicken-care-tips.jpg",
     tags: ["chicken care", "free range", "poultry health"],
   },
@@ -68,6 +74,7 @@ export const blogPosts: BlogPost[] = [
     views: 890,
     comments: 15,
     featured: false,
+    isPublished: true,
     image: "/assets/images/blog/egg-recipes.jpg",
     tags: ["recipes", "fresh eggs", "breakfast", "nutrition"],
   },
@@ -84,6 +91,7 @@ export const blogPosts: BlogPost[] = [
     views: 2100,
     comments: 42,
     featured: true,
+    isPublished: true,
     image: "/assets/images/blog/organic-benefits.jpg",
     tags: ["organic farming", "health", "nutrition", "sustainable"],
   },
@@ -100,6 +108,7 @@ export const blogPosts: BlogPost[] = [
     views: 750,
     comments: 18,
     featured: false,
+    isPublished: true,
     image: "/assets/images/blog/farm-day.jpg",
     tags: ["farm life", "daily routine", "chicken care"],
   },
@@ -116,6 +125,7 @@ export const blogPosts: BlogPost[] = [
     views: 1680,
     comments: 31,
     featured: false,
+    isPublished: true,
     image: "/assets/images/blog/sustainability.jpg",
     tags: ["sustainability", "environment", "organic farming"],
   },
@@ -132,6 +142,7 @@ export const blogPosts: BlogPost[] = [
     views: 920,
     comments: 27,
     featured: false,
+    isPublished: true,
     image: "/assets/images/blog/winter-care.jpg",
     tags: ["winter care", "chicken care", "seasonal farming"],
   },
@@ -148,6 +159,7 @@ export const blogPosts: BlogPost[] = [
     views: 560,
     comments: 12,
     featured: false,
+    isPublished: true,
     image: "/assets/images/blog/farm-expansion.jpg",
     tags: ["farm news", "expansion", "growth"],
   },
@@ -164,6 +176,7 @@ export const blogPosts: BlogPost[] = [
     views: 3200,
     comments: 58,
     featured: true,
+    isPublished: true,
     image: "/assets/images/blog/egg-nutrition.jpg",
     tags: ["nutrition", "pasture raised", "health", "comparison"],
   },
@@ -180,6 +193,7 @@ export const blogPosts: BlogPost[] = [
     views: 680,
     comments: 14,
     featured: false,
+    isPublished: true,
     image: "/assets/images/blog/restaurant-partnership.jpg",
     tags: ["partnerships", "farm to table", "community"],
   },
@@ -196,6 +210,7 @@ export const blogPosts: BlogPost[] = [
     views: 1450,
     comments: 35,
     featured: false,
+    isPublished: true,
     image: "/assets/images/blog/chicken-feed.jpg",
     tags: ["chicken feed", "organic", "diy", "nutrition"],
   },

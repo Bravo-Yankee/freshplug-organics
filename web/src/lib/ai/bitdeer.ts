@@ -13,7 +13,10 @@ interface BitdeerMessage {
 // tokens but 163 characters of real output at 3000 (using 426 of them) —
 // the reasoning length varies run to run, so there's no safe low number.
 const MAX_TOKENS: Record<string, number> = {
-  "deepseek-ai/DeepSeek-V4-Flash": 1200,
+  // 2000 rather than the ~600-1200 a description/newsletter needs — a
+  // full blog post draft (4-8 paragraphs) is the longest content this
+  // gets used for.
+  "deepseek-ai/DeepSeek-V4-Flash": 2000,
   "Qwen/Qwen3.8-27B": 4000,
 };
 

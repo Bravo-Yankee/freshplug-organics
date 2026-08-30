@@ -4,19 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { BlogCategory, BlogPost } from "@/content/blog";
+import type { Category } from "@/content/categories";
 import { NewsletterForm } from "@/components/newsletter/NewsletterForm";
 
 const POSTS_PER_PAGE = 5;
-
-const categoryFilters: { key: BlogCategory | "all"; label: string }[] = [
-  { key: "all", label: "All Posts" },
-  { key: "farming-tips", label: "Farming Tips" },
-  { key: "recipes", label: "Recipes" },
-  { key: "farm-life", label: "Farm Life" },
-  { key: "sustainability", label: "Sustainability" },
-  { key: "health", label: "Health & Nutrition" },
-  { key: "news", label: "Farm News" },
-];
 
 const popularTags = [
   "organic farming",
@@ -39,6 +30,9 @@ function formatDate(dateString: string) {
   });
 }
 
+// Fallback only — a category that's been deleted from blog_categories out
+// from under an existing post (Studio-only; /admin only hides, never
+// deletes) would otherwise render with no label at all.
 function formatCategoryName(category: string) {
   return category
     .split("-")
@@ -46,7 +40,14 @@ function formatCategoryName(category: string) {
     .join(" ");
 }
 
-export function BlogClient({ posts: blogPosts }: { posts: BlogPost[] }) {
+export function BlogClient({ posts: blogPosts, categories }: { posts: BlogPost[]; categories: Category[] }) {
+  const categoryFilters: { key: BlogCategory | "all"; label: string }[] = [
+    { key: "all", label: "All Posts" },
+    ...categories.map((category) => ({ key: category.slug, label: category.label })),
+  ];
+  function categoryLabel(slug: string): string {
+    return categories.find((c) => c.slug === slug)?.label ?? formatCategoryName(slug);
+  }
   const [activeCategory, setActiveCategory] = useState<BlogCategory | "all">("all");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -139,7 +140,7 @@ export function BlogClient({ posts: blogPosts }: { posts: BlogPost[] }) {
             <article className="blog-post" key={post.id} data-category={post.category}>
               <div className="blog-post-image">
                 <Image src={post.image} alt={post.title} width={600} height={250} />
-                <div className="blog-category">{formatCategoryName(post.category)}</div>
+                <div className="blog-category">{categoryLabel(post.category)}</div>
                 <div className="blog-date">{formatDate(post.date)}</div>
               </div>
               <div className="blog-content">

@@ -23,6 +23,7 @@ if (typeof globalThis.WebSocket === "undefined") {
 import { products } from "../src/content/products";
 import { categories } from "../src/content/categories";
 import { blogPosts } from "../src/content/blog";
+import { blogCategories } from "../src/content/blog-categories";
 import { galleryPhotos } from "../src/content/gallery";
 import { faqs } from "../src/content/faqs";
 
@@ -80,6 +81,13 @@ async function seed() {
     active: c.active,
   }));
 
+  const blogCategoryRows = blogCategories.map((c) => ({
+    slug: c.slug,
+    label: c.label,
+    sort_order: c.sortOrder,
+    active: c.active,
+  }));
+
   const blogRows = blogPosts.map((post) => ({
     id: post.id,
     title: post.title,
@@ -94,12 +102,16 @@ async function seed() {
     featured: post.featured,
     image: post.image,
     tags: post.tags,
+    is_published: post.isPublished,
   }));
 
-  // categories conflicts on its slug primary key; everything else conflicts on id.
+  // categories/blog_categories conflict on their slug primary key;
+  // everything else conflicts on id. blog_categories must precede
+  // blog_posts — the latter has an FK to the former.
   const tables: { name: string; rows: Record<string, unknown>[]; onConflict: string }[] = [
     { name: "categories", rows: categoryRows, onConflict: "slug" },
     { name: "products", rows: productRows, onConflict: "id" },
+    { name: "blog_categories", rows: blogCategoryRows, onConflict: "slug" },
     { name: "blog_posts", rows: blogRows, onConflict: "id" },
     { name: "gallery_photos", rows: galleryPhotos as unknown as Record<string, unknown>[], onConflict: "id" },
     { name: "faqs", rows: faqs as unknown as Record<string, unknown>[], onConflict: "id" },
