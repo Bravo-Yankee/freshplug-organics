@@ -81,11 +81,16 @@ const emptyPostForm = {
   title: "",
   category: "",
   author: "",
+  date: "",
   excerpt: "",
   content: "",
   image: "",
   tags: "",
 };
+
+function todayIso(): string {
+  return new Date().toISOString().slice(0, 10);
+}
 
 function formatDate(value: string | null) {
   if (!value) return "—";
@@ -141,6 +146,7 @@ export function AdminClient({
   const [postForm, setPostForm] = useState(() => ({
     ...emptyPostForm,
     category: blogCategories[0]?.slug ?? "",
+    date: todayIso(),
   }));
   const [editingPostId, setEditingPostId] = useState<number | null>(null);
   const [blogTopic, setBlogTopic] = useState("");
@@ -368,6 +374,7 @@ export function AdminClient({
       title: post.title,
       category: post.category,
       author: post.author,
+      date: post.date,
       excerpt: post.excerpt,
       content: post.content,
       image: post.image,
@@ -377,13 +384,14 @@ export function AdminClient({
 
   function handleCancelEditPost() {
     setEditingPostId(null);
-    setPostForm(emptyPostForm);
+    setPostForm({ ...emptyPostForm, date: todayIso() });
   }
 
   async function handleSubmitPost(event: FormEvent) {
     event.preventDefault();
     const title = postForm.title.trim();
     const author = postForm.author.trim();
+    const date = postForm.date.trim();
     const excerpt = postForm.excerpt.trim();
     const content = postForm.content.trim();
     const image = postForm.image.trim();
@@ -392,8 +400,8 @@ export function AdminClient({
       .map((tag) => tag.trim())
       .filter(Boolean);
 
-    if (!title || !author || !excerpt || !content || !image) {
-      show("Fill in title, author, excerpt, content, and image.", "error");
+    if (!title || !author || !date || !excerpt || !content || !image) {
+      show("Fill in title, author, date, excerpt, content, and image.", "error");
       return;
     }
 
@@ -408,7 +416,7 @@ export function AdminClient({
           content,
           category: postForm.category,
           author,
-          date: new Date().toISOString().slice(0, 10),
+          date,
           read_time: readTime,
           views: 0,
           comments: 0,
@@ -426,14 +434,14 @@ export function AdminClient({
       }
 
       setPostList((current) => [toBlogPost(data as BlogPostRow), ...current]);
-      setPostForm(emptyPostForm);
+      setPostForm({ ...emptyPostForm, date: todayIso() });
       show(`"${title}" published.`, "success");
       return;
     }
 
     const { error } = await getSupabaseClient()
       .from("blog_posts")
-      .update({ title, excerpt, content, category: postForm.category, author, read_time: readTime, image, tags })
+      .update({ title, excerpt, content, category: postForm.category, author, date, read_time: readTime, image, tags })
       .eq("id", editingPostId);
 
     if (error) {
@@ -444,13 +452,13 @@ export function AdminClient({
     setPostList((current) =>
       current.map((p) =>
         p.id === editingPostId
-          ? { ...p, title, excerpt, content, category: postForm.category, author, readTime, image, tags }
+          ? { ...p, title, excerpt, content, category: postForm.category, author, date, readTime, image, tags }
           : p,
       ),
     );
     show(`"${title}" updated.`, "success");
     setEditingPostId(null);
-    setPostForm(emptyPostForm);
+    setPostForm({ ...emptyPostForm, date: todayIso() });
   }
 
   async function handleDraftBlogPost() {
@@ -1052,14 +1060,22 @@ export function AdminClient({
                     />
                   </div>
                   <div className="form-group">
-                    <label>Tags (comma-separated)</label>
+                    <label>Date</label>
                     <input
-                      type="text"
-                      placeholder="organic farming, free range"
-                      value={postForm.tags}
-                      onChange={(event) => setPostForm((current) => ({ ...current, tags: event.target.value }))}
+                      type="date"
+                      value={postForm.date}
+                      onChange={(event) => setPostForm((current) => ({ ...current, date: event.target.value }))}
                     />
                   </div>
+                </div>
+                <div className="form-group">
+                  <label>Tags (comma-separated)</label>
+                  <input
+                    type="text"
+                    placeholder="organic farming, free range"
+                    value={postForm.tags}
+                    onChange={(event) => setPostForm((current) => ({ ...current, tags: event.target.value }))}
+                  />
                 </div>
                 <div className="form-group">
                   <label>Image</label>
