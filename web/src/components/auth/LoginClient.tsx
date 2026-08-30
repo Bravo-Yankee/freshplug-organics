@@ -42,16 +42,24 @@ export function LoginClient() {
 
     setStatus("submitting");
 
-    const { error } = await getSupabaseClient().auth.signInWithOtp({ email });
+    try {
+      const { error } = await getSupabaseClient().auth.signInWithOtp({ email });
 
-    if (error) {
+      if (error) {
+        setErrorMessage("Something went wrong sending your code — please try again.");
+        setStatus("error");
+        return;
+      }
+
+      setStatus("idle");
+      setStep("code");
+    } catch {
+      // A thrown network/timeout error (rather than a returned {error})
+      // used to leave status stuck on "submitting" forever, with no way
+      // to recover short of a manual page reload.
       setErrorMessage("Something went wrong sending your code — please try again.");
       setStatus("error");
-      return;
     }
-
-    setStatus("idle");
-    setStep("code");
   }
 
   async function handleCodeSubmit(event: FormEvent<HTMLFormElement>) {
@@ -65,16 +73,23 @@ export function LoginClient() {
 
     setStatus("submitting");
 
-    const { error } = await getSupabaseClient().auth.verifyOtp({ email, token: code, type: "email" });
+    try {
+      const { error } = await getSupabaseClient().auth.verifyOtp({ email, token: code, type: "email" });
 
-    if (error) {
-      setErrorMessage("That code didn't work — check it and try again, or request a new one.");
+      if (error) {
+        setErrorMessage("That code didn't work — check it and try again, or request a new one.");
+        setStatus("error");
+        return;
+      }
+
+      router.push("/account");
+      router.refresh();
+    } catch {
+      // Same reasoning as handleEmailSubmit: a thrown error here used to
+      // leave the button stuck on "Verifying..." forever.
+      setErrorMessage("Something went wrong verifying your code — please try again.");
       setStatus("error");
-      return;
     }
-
-    router.push("/account");
-    router.refresh();
   }
 
   if (step === "code") {
