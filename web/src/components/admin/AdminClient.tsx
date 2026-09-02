@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import type { AdminOrder, AdminStats, ContactMessage, Customer, NewsletterSubscriber, NewsletterCampaign } from "@/lib/data/admin";
 import type { Product, ProductBadge } from "@/content/products";
 import type { Category } from "@/content/categories";
@@ -22,6 +22,11 @@ const SECTIONS: { key: Section; label: string; icon: string }[] = [
   { key: "blog", label: "Blog", icon: "fa-newspaper" },
   { key: "newsletter", label: "Newsletter", icon: "fa-paper-plane" },
 ];
+
+// Remembers the last section across navigations — this is a client component
+// remounted fresh every time /admin loads, so plain useState alone reset to
+// "overview" every time someone left the page and came back.
+const ADMIN_SECTION_KEY = "freshplug_admin_section";
 
 const ORDER_STATUSES: AdminOrder["status"][] = ["pending", "confirmed", "fulfilled", "cancelled"];
 
@@ -136,6 +141,24 @@ export function AdminClient({
 }: AdminClientProps) {
   const { toast, show, dismiss } = useToast();
   const [section, setSection] = useState<Section>("overview");
+
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(ADMIN_SECTION_KEY);
+      if (SECTIONS.some((item) => item.key === stored)) setSection(stored as Section);
+    } catch {
+      // Corrupt/blocked localStorage — fall back to the default section.
+    }
+  }, []);
+
+  function changeSection(next: Section) {
+    setSection(next);
+    try {
+      window.localStorage.setItem(ADMIN_SECTION_KEY, next);
+    } catch {
+      // Ignore quota/availability errors — in-memory state still updates.
+    }
+  }
   const [orderList, setOrderList] = useState(orders);
   const [productList, setProductList] = useState(products);
   const [categoryList, setCategoryList] = useState(categories);
@@ -612,7 +635,7 @@ export function AdminClient({
                 key={item.key}
                 type="button"
                 className={`admin-nav-link${section === item.key ? " active" : ""}`}
-                onClick={() => setSection(item.key)}
+                onClick={() => changeSection(item.key)}
               >
                 <i className={`fas ${item.icon}`} /> {item.label}
               </button>

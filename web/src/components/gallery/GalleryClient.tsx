@@ -6,6 +6,11 @@ import { galleryCategories, type GalleryCategory, type GalleryPhoto } from "@/co
 
 const IMAGES_PER_LOAD = 6;
 
+// Remembers the last filter across navigations — this is a client component
+// remounted fresh every time /gallery loads, so plain useState alone reset
+// to "all" every time someone left the page and came back.
+const GALLERY_FILTER_KEY = "freshplug_gallery_filter";
+
 const videos = [
   {
     id: "farm-tour",
@@ -38,6 +43,17 @@ export function GalleryClient({ photos: galleryPhotos }: { photos: GalleryPhoto[
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
 
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(GALLERY_FILTER_KEY);
+      if (galleryCategories.some((filter) => filter.key === stored)) {
+        setActiveFilter(stored as GalleryCategory | "all");
+      }
+    } catch {
+      // Corrupt/blocked localStorage — fall back to the default filter.
+    }
+  }, []);
+
   const filteredPhotos = useMemo(
     () =>
       activeFilter === "all"
@@ -52,6 +68,11 @@ export function GalleryClient({ photos: galleryPhotos }: { photos: GalleryPhoto[
   function handleFilterChange(category: GalleryCategory | "all") {
     setActiveFilter(category);
     setVisibleCount(IMAGES_PER_LOAD);
+    try {
+      window.localStorage.setItem(GALLERY_FILTER_KEY, category);
+    } catch {
+      // Ignore quota/availability errors — in-memory state still updates.
+    }
   }
 
   function openLightbox(photoId: number) {

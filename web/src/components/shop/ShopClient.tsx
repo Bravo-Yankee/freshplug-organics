@@ -11,6 +11,16 @@ import { getSupabaseClient } from "@/lib/supabase/client";
 import { useToast, ToastViewport } from "@/components/ui/Toast";
 
 type SortKey = "name" | "price-low" | "price-high" | "rating";
+const SORT_KEYS: SortKey[] = ["name", "price-low", "price-high", "rating"];
+
+// Remembers the last category/sort across navigations — this is a client
+// component remounted fresh every time /shop loads, so plain useState alone
+// reset to "All Products"/"Name" every time someone left the page and came
+// back. Search intentionally isn't persisted — stale typed-in text would
+// silently hide products on return, which reads as a bug rather than a
+// convenience.
+const SHOP_CATEGORY_KEY = "freshplug_shop_category";
+const SHOP_SORT_KEY = "freshplug_shop_sort";
 
 function generateStars(rating: number) {
   const fullStars = Math.floor(rating);
@@ -75,6 +85,40 @@ export function ShopClient({ products, categories }: { products: Product[]; cate
   const [activeCategory, setActiveCategory] = useState<ProductCategory | "all">("all");
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<SortKey>("name");
+
+  useEffect(() => {
+    try {
+      const storedCategory = window.localStorage.getItem(SHOP_CATEGORY_KEY);
+      if (categoryFilters.some((filter) => filter.key === storedCategory)) {
+        setActiveCategory(storedCategory as ProductCategory | "all");
+      }
+      const storedSort = window.localStorage.getItem(SHOP_SORT_KEY);
+      if (SORT_KEYS.includes(storedSort as SortKey)) setSortBy(storedSort as SortKey);
+    } catch {
+      // Corrupt/blocked localStorage — fall back to the defaults.
+    }
+    // Only ever needs to run once, on mount — categoryFilters is
+    // recomputed every render from the categories prop but doesn't change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function changeCategory(next: ProductCategory | "all") {
+    setActiveCategory(next);
+    try {
+      window.localStorage.setItem(SHOP_CATEGORY_KEY, next);
+    } catch {
+      // Ignore quota/availability errors — in-memory state still updates.
+    }
+  }
+
+  function changeSort(next: SortKey) {
+    setSortBy(next);
+    try {
+      window.localStorage.setItem(SHOP_SORT_KEY, next);
+    } catch {
+      // Ignore quota/availability errors — in-memory state still updates.
+    }
+  }
   // Stored as the raw typed string (not a number) so the field can go
   // through an empty/partial state while the customer is typing — e.g.
   // backspacing "1" to type "15" — without every keystroke snapping back
@@ -212,7 +256,7 @@ export function ShopClient({ products, categories }: { products: Product[]; cate
                   key={filter.key}
                   type="button"
                   className={`filter-tab${activeCategory === filter.key ? " active" : ""}`}
-                  onClick={() => setActiveCategory(filter.key)}
+                  onClick={() => changeCategory(filter.key)}
                 >
                   {filter.label}
                 </button>
@@ -231,7 +275,7 @@ export function ShopClient({ products, categories }: { products: Product[]; cate
               <select
                 className="sort-select"
                 value={sortBy}
-                onChange={(event) => setSortBy(event.target.value as SortKey)}
+                onChange={(event) => changeSort(event.target.value as SortKey)}
               >
                 <option value="name">Sort by Name</option>
                 <option value="price-low">Price: Low to High</option>

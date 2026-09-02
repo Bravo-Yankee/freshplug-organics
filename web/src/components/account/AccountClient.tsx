@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Product } from "@/content/products";
@@ -16,6 +16,11 @@ const SECTIONS: { key: Section; label: string; icon: string }[] = [
   { key: "subscriptions", label: "Subscriptions", icon: "fa-sync-alt" },
   { key: "addresses", label: "Addresses", icon: "fa-map-marker-alt" },
 ];
+
+// Remembers the last section across navigations — this is a client component
+// remounted fresh every time /account loads, so plain useState alone reset to
+// "profile" every time someone left the page and came back.
+const ACCOUNT_SECTION_KEY = "freshplug_account_section";
 
 function formatDate(value: string | null) {
   if (!value) return "—";
@@ -43,6 +48,24 @@ export function AccountClient({ profile, addresses, subscriptions, orders, produ
   const router = useRouter();
   const { toast, show, dismiss } = useToast();
   const [section, setSection] = useState<Section>("profile");
+
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(ACCOUNT_SECTION_KEY);
+      if (SECTIONS.some((item) => item.key === stored)) setSection(stored as Section);
+    } catch {
+      // Corrupt/blocked localStorage — fall back to the default section.
+    }
+  }, []);
+
+  function changeSection(next: Section) {
+    setSection(next);
+    try {
+      window.localStorage.setItem(ACCOUNT_SECTION_KEY, next);
+    } catch {
+      // Ignore quota/availability errors — in-memory state still updates.
+    }
+  }
 
   const [profileForm, setProfileForm] = useState({
     firstName: profile.firstName ?? "",
@@ -231,7 +254,7 @@ export function AccountClient({ profile, addresses, subscriptions, orders, produ
                 key={item.key}
                 type="button"
                 className={`account-nav-link${section === item.key ? " active" : ""}`}
-                onClick={() => setSection(item.key)}
+                onClick={() => changeSection(item.key)}
               >
                 <i className={`fas ${item.icon}`} /> {item.label}
               </button>

@@ -2,12 +2,18 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { BlogCategory, BlogPost } from "@/content/blog";
 import type { Category } from "@/content/categories";
 import { NewsletterForm } from "@/components/newsletter/NewsletterForm";
 
 const POSTS_PER_PAGE = 5;
+
+// Remembers the last category across navigations — this is a client
+// component remounted fresh every time /blog loads, so plain useState alone
+// reset to "All Posts" every time someone left the page and came back.
+// Search/page intentionally aren't persisted, same reasoning as ShopClient.
+const BLOG_CATEGORY_KEY = "freshplug_blog_category";
 
 const popularTags = [
   "organic farming",
@@ -52,6 +58,20 @@ export function BlogClient({ posts: blogPosts, categories }: { posts: BlogPost[]
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
 
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(BLOG_CATEGORY_KEY);
+      if (categoryFilters.some((filter) => filter.key === stored)) {
+        setActiveCategory(stored as BlogCategory | "all");
+      }
+    } catch {
+      // Corrupt/blocked localStorage — fall back to the default category.
+    }
+    // Only ever needs to run once, on mount — categoryFilters is
+    // recomputed every render from the categories prop but doesn't change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     for (const post of blogPosts) {
@@ -95,6 +115,11 @@ export function BlogClient({ posts: blogPosts, categories }: { posts: BlogPost[]
     setActiveCategory(category);
     setSearch("");
     setPage(1);
+    try {
+      window.localStorage.setItem(BLOG_CATEGORY_KEY, category);
+    } catch {
+      // Ignore quota/availability errors — in-memory state still updates.
+    }
   }
 
   function selectTag(tag: string) {
