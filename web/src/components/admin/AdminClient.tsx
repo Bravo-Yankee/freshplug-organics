@@ -80,6 +80,7 @@ const emptyProductForm = {
   image: "",
   description: "",
   badge: "fresh" as ProductBadge,
+  rating: "5",
 };
 
 const emptyPostForm = {
@@ -301,6 +302,12 @@ export function AdminClient({
     updateProduct(id, { price }, { price });
   }
 
+  function handleProductRatingCommit(id: number, rawValue: string) {
+    const rating = Number(rawValue);
+    if (!Number.isFinite(rating) || rating < 0 || rating > 5) return;
+    updateProduct(id, { rating }, { rating });
+  }
+
   function handleToggleProductStock(product: Product) {
     updateProduct(product.id, { in_stock: !product.inStock }, { inStock: !product.inStock });
   }
@@ -331,9 +338,20 @@ export function AdminClient({
     const image = productForm.image.trim();
     const description = productForm.description.trim();
     const price = Number(productForm.price);
+    const rating = productForm.rating.trim() === "" ? 5 : Number(productForm.rating);
 
-    if (!name || !productForm.category || !image || !description || !Number.isFinite(price) || price <= 0) {
-      show("Fill in name, category, a valid price, image, and description.", "error");
+    if (
+      !name ||
+      !productForm.category ||
+      !image ||
+      !description ||
+      !Number.isFinite(price) ||
+      price <= 0 ||
+      !Number.isFinite(rating) ||
+      rating < 0 ||
+      rating > 5
+    ) {
+      show("Fill in name, category, a valid price, a rating between 0 and 5, image, and description.", "error");
       return;
     }
 
@@ -345,7 +363,7 @@ export function AdminClient({
         price,
         image,
         description,
-        rating: 5,
+        rating,
         review_count: 0,
         badge: productForm.badge,
         options: {},
@@ -851,6 +869,7 @@ export function AdminClient({
                           <th>Name</th>
                           <th>Category</th>
                           <th>Price (KSH)</th>
+                          <th>Rating</th>
                           <th>Stock</th>
                           <th>Visibility</th>
                         </tr>
@@ -896,6 +915,18 @@ export function AdminClient({
                                 key={`${product.id}-${product.price}`}
                                 defaultValue={product.price}
                                 onBlur={(event) => handleProductPriceCommit(product.id, event.target.value)}
+                              />
+                            </td>
+                            <td>
+                              <input
+                                type="number"
+                                min="0"
+                                max="5"
+                                step="0.1"
+                                className="admin-rating-input"
+                                key={`${product.id}-${product.rating}`}
+                                defaultValue={product.rating}
+                                onBlur={(event) => handleProductRatingCommit(product.id, event.target.value)}
                               />
                             </td>
                             <td>
@@ -976,6 +1007,19 @@ export function AdminClient({
                       </select>
                     </div>
                   </div>
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label>Rating</label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="5"
+                        step="0.1"
+                        value={productForm.rating}
+                        onChange={(event) => setProductForm((current) => ({ ...current, rating: event.target.value }))}
+                      />
+                    </div>
+                  </div>
                   <div className="form-group">
                     <label>Image</label>
                     <div className="admin-image-row">
@@ -1029,8 +1073,8 @@ export function AdminClient({
                     </div>
                   </div>
                   <p className="admin-hint">
-                    New products start with a default rating and no size/weight options — set those up in Supabase
-                    Studio if this product needs them.
+                    New products start with no size/weight options and 0 reviews — set options up in Supabase Studio
+                    if this product needs them.
                   </p>
                   <button type="submit" className="submit-btn">
                     Add Product

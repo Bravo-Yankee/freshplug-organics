@@ -217,6 +217,19 @@
     outline: none;
     border-color: var(--clay);
 }
+.admin-rating-input {
+    width: 70px;
+    padding: 0.5rem 0.75rem;
+    border: 2px solid var(--line);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: 'Libre Franklin', sans-serif;
+    color: var(--charcoal);
+}
+.admin-rating-input:focus {
+    outline: none;
+    border-color: var(--clay);
+}
 
 .admin-ai-row {
     display: flex;
