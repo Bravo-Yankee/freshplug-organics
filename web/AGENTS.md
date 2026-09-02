@@ -160,6 +160,46 @@ builds and serves `web/`, not it.
   been, the migration must be run — before the next deploy, or that
   deploy silently never goes out.
 
+- **Phase 10** (code done, **needs a manual migration before it works** —
+  see below): both the Products and Blog tabs gained an "Upload Image"
+  button next to the existing image text field, plus a way to replace an
+  existing product's photo. Previously those fields only accepted a
+  path/URL someone already knew (a `<datalist>` of the repo's existing
+  stock photos, or a hand-typed path) — there was no way to actually
+  upload a photo, since no Storage bucket existed. The shared
+  `uploadImage(bucket, file)` helper (`src/lib/uploadImage.ts`) validates
+  the file (image MIME type, 5MB cap) and uploads it straight from the
+  browser to a public Supabase Storage bucket (anon key, same as every
+  other admin write in this app — no new API route), returning the
+  public URL to drop into the form. Two buckets, kept separate per
+  content type like `categories`/`blog_categories` (Phase 9):
+  `product-images` and `blog-images`. Both also cap
+  `file_size_limit`/`allowed_mime_types` at the bucket level as
+  defense-in-depth. Storage write policies reuse the existing
+  `is_admin()` function so the trust boundary matches every table above:
+  anyone can view these images, only an admin can add or replace one.
+  - **Products**: the Add Product form's Upload Image button
+    (`handleProductImageUpload()`) fills in the new-product image field
+    and shows a preview thumbnail. The products table also gained an
+    Image column — its thumbnail doubles as a "Change" control
+    (`handleReplaceProductImage()`) that uploads a new photo and updates
+    that row's `image` column immediately (via the shared `updateProduct()`
+    helper, which now takes an optional success-toast message), so
+    replacing an existing product's photo no longer requires Studio.
+  - **Blog**: the Add/Edit Post form's Upload Image button
+    (`handlePostImageUpload()`) works for both flows since Edit loads a
+    post into the same form state — uploading a new image while editing
+    and hitting Save Changes replaces that post's photo.
+  - **Gallery and FAQs** still have no admin UI at all (Studio-only, per
+    "Data layer" above) — Phase 10 didn't add upload there since there's
+    no existing form to attach it to.
+  **Before this works**, run the Phase 10 block in `supabase/schema.sql`
+  against Supabase manually (Studio SQL editor): it creates both buckets
+  and their `storage.objects` RLS policies. Until that's run, any Upload
+  Image / Change click fails (no such bucket) and shows a "Couldn't
+  upload image" toast — the rest of the Products/Blog tabs are
+  unaffected.
+
 All of the above is deployed and confirmed working in production (see
 "Deployment" below for what that took) — shop browsing, cart, checkout,
 the chatbot, login/account/admin, category/product management, and

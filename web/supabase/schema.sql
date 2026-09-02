@@ -433,3 +433,45 @@ alter table blog_categories enable row level security;
 create policy "public read active blog categories" on blog_categories for select using (active = true or is_admin());
 create policy "admin blog_categories insert" on blog_categories for insert with check (is_admin());
 create policy "admin blog_categories update" on blog_categories for update using (is_admin()) with check (is_admin());
+
+-- Phase 10 — image upload for products and blog posts
+--
+-- Not idempotent, like the rest of this file: run only this block against
+-- a project that already has the Phase 1-9 blocks applied.
+--
+-- Until now, `/admin`'s product and blog post Image fields only accepted
+-- a path/URL someone had to already know (see PRODUCT_IMAGES/BLOG_IMAGES
+-- in AdminClient.tsx) — there was no way to actually upload a photo. This
+-- adds two public Storage buckets — kept separate per content type, same
+-- reasoning as products.categories vs blog_categories staying separate
+-- tables (Phase 9) — that the Products tab's Add/replace-image controls
+-- and the Blog tab's Add/Edit Post form upload straight to from the
+-- browser via `uploadImage()` (src/lib/uploadImage.ts), using the anon
+-- key — no new API route needed, same way every other admin write in
+-- this app goes directly through the Supabase client. `is_admin()`
+-- (defined earlier in this file) is reused for the write policies so
+-- this follows the same trust boundary as every table above: anyone can
+-- view these images (they're public marketing assets), only an admin can
+-- add or replace one.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values
+  ('product-images', 'product-images', true, 5242880, array['image/jpeg','image/png','image/webp','image/gif']),
+  ('blog-images', 'blog-images', true, 5242880, array['image/jpeg','image/png','image/webp','image/gif']);
+
+create policy "public read product images" on storage.objects
+  for select using (bucket_id = 'product-images');
+create policy "admin insert product images" on storage.objects
+  for insert with check (bucket_id = 'product-images' and is_admin());
+create policy "admin update product images" on storage.objects
+  for update using (bucket_id = 'product-images' and is_admin()) with check (bucket_id = 'product-images' and is_admin());
+create policy "admin delete product images" on storage.objects
+  for delete using (bucket_id = 'product-images' and is_admin());
+
+create policy "public read blog images" on storage.objects
+  for select using (bucket_id = 'blog-images');
+create policy "admin insert blog images" on storage.objects
+  for insert with check (bucket_id = 'blog-images' and is_admin());
+create policy "admin update blog images" on storage.objects
+  for update using (bucket_id = 'blog-images' and is_admin()) with check (bucket_id = 'blog-images' and is_admin());
+create policy "admin delete blog images" on storage.objects
+  for delete using (bucket_id = 'blog-images' and is_admin());

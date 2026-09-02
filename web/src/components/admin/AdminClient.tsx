@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import type { AdminOrder, AdminStats, ContactMessage, Customer, NewsletterSubscriber, NewsletterCampaign } from "@/lib/data/admin";
 import type { Product, ProductBadge } from "@/content/products";
 import type { Category } from "@/content/categories";
@@ -8,6 +8,7 @@ import type { BlogPost } from "@/content/blog";
 import { toProduct, type ProductRow } from "@/lib/data/products";
 import { toBlogPost, type BlogPostRow } from "@/lib/data/blog";
 import { getSupabaseClient } from "@/lib/supabase/client";
+import { uploadImage } from "@/lib/uploadImage";
 import { useToast, ToastViewport } from "@/components/ui/Toast";
 
 type Section = "overview" | "orders" | "messages" | "customers" | "products" | "blog" | "newsletter";
@@ -24,10 +25,9 @@ const SECTIONS: { key: Section; label: string; icon: string }[] = [
 
 const ORDER_STATUSES: AdminOrder["status"][] = ["pending", "confirmed", "fulfilled", "cancelled"];
 
-// No image upload pipeline exists yet — these are the stock photos already
-// in the repo, offered as a picklist (via <datalist>, so a free-text path
-// still works) rather than asking a non-technical employee to know or type
-// an exact file path from scratch.
+// Kept alongside the Phase 10 upload button as a picklist (via <datalist>,
+// so free-text/pasted URLs still work) of stock photos already in the repo —
+// useful when a product should reuse one of these rather than a fresh upload.
 const PRODUCT_IMAGES = [
   "/assets/images/organic-chicken.jpg",
   "/assets/images/hero-farm.jpg",
@@ -161,6 +161,9 @@ export function AdminClient({
   const [newsletterTopic, setNewsletterTopic] = useState("");
   const [draftingNewsletter, setDraftingNewsletter] = useState(false);
   const [suggestingDescription, setSuggestingDescription] = useState(false);
+  const [uploadingProductImage, setUploadingProductImage] = useState(false);
+  const [uploadingProductId, setUploadingProductId] = useState<number | null>(null);
+  const [uploadingPostImage, setUploadingPostImage] = useState(false);
   const activeSubscribers = subscribers.filter((subscriber) => subscriber.subscribed);
 
   async function handleStatusChange(orderId: number, newStatus: AdminOrder["status"]) {
@@ -255,13 +258,14 @@ export function AdminClient({
     show(`"${category.label}" is now ${nextActive ? "visible" : "hidden"} on the blog.`, "success");
   }
 
-  async function updateProduct(id: number, patch: Record<string, unknown>, mapped: Partial<Product>) {
+  async function updateProduct(id: number, patch: Record<string, unknown>, mapped: Partial<Product>, successMessage?: string) {
     const { error } = await getSupabaseClient().from("products").update(patch).eq("id", id);
     if (error) {
       show("Couldn't update product — please try again.", "error");
       return;
     }
     setProductList((current) => current.map((p) => (p.id === id ? { ...p, ...mapped } : p)));
+    if (successMessage) show(successMessage, "success");
   }
 
   function handleProductCategoryChange(id: number, category: string) {
@@ -280,6 +284,22 @@ export function AdminClient({
 
   function handleToggleProductActive(product: Product) {
     updateProduct(product.id, { is_active: !product.isActive }, { isActive: !product.isActive });
+  }
+
+  async function handleReplaceProductImage(productId: number, event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = ""; // let the same file be re-picked later if the upload fails
+    if (!file) return;
+
+    setUploadingProductId(productId);
+    try {
+      const url = await uploadImage("product-images", file);
+      await updateProduct(productId, { image: url }, { image: url }, "Image updated.");
+    } catch (error) {
+      show(error instanceof Error ? error.message : "Couldn't upload image — please try again.", "error");
+    } finally {
+      setUploadingProductId(null);
+    }
   }
 
   async function handleAddProduct(event: FormEvent) {
@@ -321,6 +341,23 @@ export function AdminClient({
     setProductList((current) => [...current, toProduct(data as ProductRow)]);
     setProductForm({ ...emptyProductForm, category: productForm.category });
     show(`"${name}" added.`, "success");
+  }
+
+  async function handleProductImageUpload(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = ""; // let the same file be re-picked later if the upload fails
+    if (!file) return;
+
+    setUploadingProductImage(true);
+    try {
+      const url = await uploadImage("product-images", file);
+      setProductForm((current) => ({ ...current, image: url }));
+      show("Image uploaded.", "success");
+    } catch (error) {
+      show(error instanceof Error ? error.message : "Couldn't upload image — please try again.", "error");
+    } finally {
+      setUploadingProductImage(false);
+    }
   }
 
   async function handleSuggestDescription() {
@@ -385,6 +422,23 @@ export function AdminClient({
   function handleCancelEditPost() {
     setEditingPostId(null);
     setPostForm({ ...emptyPostForm, date: todayIso() });
+  }
+
+  async function handlePostImageUpload(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = ""; // let the same file be re-picked later if the upload fails
+    if (!file) return;
+
+    setUploadingPostImage(true);
+    try {
+      const url = await uploadImage("blog-images", file);
+      setPostForm((current) => ({ ...current, image: url }));
+      show("Image uploaded.", "success");
+    } catch (error) {
+      show(error instanceof Error ? error.message : "Couldn't upload image — please try again.", "error");
+    } finally {
+      setUploadingPostImage(false);
+    }
   }
 
   async function handleSubmitPost(event: FormEvent) {
@@ -770,6 +824,7 @@ export function AdminClient({
                     <table className="admin-table">
                       <thead>
                         <tr>
+                          <th>Image</th>
                           <th>Name</th>
                           <th>Category</th>
                           <th>Price (KSH)</th>
@@ -780,6 +835,22 @@ export function AdminClient({
                       <tbody>
                         {productList.map((product) => (
                           <tr key={product.id}>
+                            <td>
+                              <div className="admin-image-cell">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img src={product.image} alt="" className="admin-image-thumb" />
+                                <label className="admin-image-thumb-btn">
+                                  {uploadingProductId === product.id ? "…" : "Change"}
+                                  <input
+                                    type="file"
+                                    accept="image/*"
+                                    hidden
+                                    disabled={uploadingProductId === product.id}
+                                    onChange={(event) => handleReplaceProductImage(product.id, event)}
+                                  />
+                                </label>
+                              </div>
+                            </td>
                             <td>{product.name}</td>
                             <td>
                               <select
@@ -884,18 +955,37 @@ export function AdminClient({
                   </div>
                   <div className="form-group">
                     <label>Image</label>
-                    <input
-                      list="admin-product-images"
-                      type="text"
-                      placeholder="/assets/images/placeholder.jpg"
-                      value={productForm.image}
-                      onChange={(event) => setProductForm((current) => ({ ...current, image: event.target.value }))}
-                    />
+                    <div className="admin-image-row">
+                      <input
+                        list="admin-product-images"
+                        type="text"
+                        placeholder="/assets/images/placeholder.jpg"
+                        value={productForm.image}
+                        onChange={(event) => setProductForm((current) => ({ ...current, image: event.target.value }))}
+                      />
+                      <label className="admin-ai-btn admin-upload-btn">
+                        {uploadingProductImage ? "Uploading…" : "Upload Image"}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleProductImageUpload}
+                          disabled={uploadingProductImage}
+                          hidden
+                        />
+                      </label>
+                    </div>
                     <datalist id="admin-product-images">
                       {PRODUCT_IMAGES.map((src) => (
                         <option value={src} key={src} />
                       ))}
                     </datalist>
+                    {productForm.image && (
+                      // Preview thumbnail for an arbitrary uploaded/pasted URL — not a
+                      // fixed intrinsic box, so plain <img> is deliberate (same reasoning
+                      // as the gallery lightbox).
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={productForm.image} alt="Product preview" className="admin-image-preview" />
+                    )}
                   </div>
                   <div className="form-group">
                     <label>Description</label>
@@ -1079,18 +1169,34 @@ export function AdminClient({
                 </div>
                 <div className="form-group">
                   <label>Image</label>
-                  <input
-                    list="admin-blog-images"
-                    type="text"
-                    placeholder="/assets/images/blog-placeholder.jpg"
-                    value={postForm.image}
-                    onChange={(event) => setPostForm((current) => ({ ...current, image: event.target.value }))}
-                  />
+                  <div className="admin-image-row">
+                    <input
+                      list="admin-blog-images"
+                      type="text"
+                      placeholder="/assets/images/blog-placeholder.jpg"
+                      value={postForm.image}
+                      onChange={(event) => setPostForm((current) => ({ ...current, image: event.target.value }))}
+                    />
+                    <label className="admin-ai-btn admin-upload-btn">
+                      {uploadingPostImage ? "Uploading…" : "Upload Image"}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handlePostImageUpload}
+                        disabled={uploadingPostImage}
+                        hidden
+                      />
+                    </label>
+                  </div>
                   <datalist id="admin-blog-images">
                     {BLOG_IMAGES.map((src) => (
                       <option value={src} key={src} />
                     ))}
                   </datalist>
+                  {postForm.image && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={postForm.image} alt="Post preview" className="admin-image-preview" />
+                  )}
                 </div>
                 <div className="form-group">
                   <label>Excerpt</label>
