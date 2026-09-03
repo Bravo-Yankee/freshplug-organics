@@ -181,10 +181,38 @@
     background: var(--paper);
     border-radius: 10px;
     padding: 0.6rem 1rem;
+    border: 2px solid transparent;
+    transition: border-color 0.2s ease;
+}
+.category-manage-row.selected {
+    border-color: var(--clay);
 }
 .category-manage-label {
+    font: inherit;
     font-weight: 500;
     color: var(--charcoal);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+.category-manage-label:hover {
+    color: var(--clay);
+    text-decoration: underline;
+}
+.category-manage-row.selected .category-manage-label {
+    color: var(--clay);
+}
+
+.admin-link-btn {
+    font: inherit;
+    color: var(--clay);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    text-decoration: underline;
+    font-weight: 600;
 }
 
 .admin-toggle {

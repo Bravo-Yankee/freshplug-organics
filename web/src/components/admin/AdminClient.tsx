@@ -167,6 +167,7 @@ export function AdminClient({
   const [postList, setPostList] = useState(posts);
   const [blogCategoryList, setBlogCategoryList] = useState(blogCategories);
   const [newBlogCategoryLabel, setNewBlogCategoryLabel] = useState("");
+  const [blogCategoryFilter, setBlogCategoryFilter] = useState<string | null>(null);
   const [postForm, setPostForm] = useState(() => ({
     ...emptyPostForm,
     category: blogCategories[0]?.slug ?? "",
@@ -280,6 +281,10 @@ export function AdminClient({
     }
     setBlogCategoryList((current) => current.map((c) => (c.slug === category.slug ? { ...c, active: nextActive } : c)));
     show(`"${category.label}" is now ${nextActive ? "visible" : "hidden"} on the blog.`, "success");
+  }
+
+  function handleFilterByBlogCategory(slug: string) {
+    setBlogCategoryFilter((current) => (current === slug ? null : slug));
   }
 
   async function updateProduct(id: number, patch: Record<string, unknown>, mapped: Partial<Product>, successMessage?: string) {
@@ -642,6 +647,11 @@ export function AdminClient({
       setSendingNewsletter(false);
     }
   }
+
+  const filteredPostList = blogCategoryFilter ? postList.filter((post) => post.category === blogCategoryFilter) : postList;
+  const blogCategoryFilterLabel = blogCategoryFilter
+    ? (blogCategoryList.find((c) => c.slug === blogCategoryFilter)?.label ?? blogCategoryFilter)
+    : null;
 
   return (
     <section className="admin-section-wrapper">
@@ -1090,12 +1100,22 @@ export function AdminClient({
                 <h2>Blog Categories</h2>
                 <p className="admin-hint">
                   Hide a category to pull it from the blog&apos;s filter tabs without deleting anything — existing
-                  posts in it keep their own Published/Hidden status independently.
+                  posts in it keep their own Published/Hidden status independently. Click a category name to jump to
+                  its posts below.
                 </p>
                 <div className="category-manage-list">
                   {blogCategoryList.map((category) => (
-                    <div className="category-manage-row" key={category.slug}>
-                      <span className="category-manage-label">{category.label}</span>
+                    <div
+                      className={`category-manage-row${blogCategoryFilter === category.slug ? " selected" : ""}`}
+                      key={category.slug}
+                    >
+                      <button
+                        type="button"
+                        className="category-manage-label"
+                        onClick={() => handleFilterByBlogCategory(category.slug)}
+                      >
+                        {category.label}
+                      </button>
                       <button
                         type="button"
                         className={`admin-toggle${category.active ? " on" : ""}`}
@@ -1121,8 +1141,17 @@ export function AdminClient({
 
               <div className="admin-card" style={{ marginTop: "2rem" }}>
                 <h2>Blog Posts</h2>
-              {postList.length === 0 ? (
-                <p className="admin-empty">No posts yet.</p>
+                {blogCategoryFilterLabel && (
+                  <p className="admin-hint">
+                    Showing {filteredPostList.length} post{filteredPostList.length === 1 ? "" : "s"} in &quot;
+                    {blogCategoryFilterLabel}&quot;.{" "}
+                    <button type="button" className="admin-link-btn" onClick={() => setBlogCategoryFilter(null)}>
+                      Clear filter
+                    </button>
+                  </p>
+                )}
+              {filteredPostList.length === 0 ? (
+                <p className="admin-empty">{blogCategoryFilterLabel ? "No posts in this category yet." : "No posts yet."}</p>
               ) : (
                 <div className="admin-table-wrapper">
                   <table className="admin-table">
@@ -1137,7 +1166,7 @@ export function AdminClient({
                       </tr>
                     </thead>
                     <tbody>
-                      {postList.map((post) => (
+                      {filteredPostList.map((post) => (
                         <tr key={post.id}>
                           <td>{post.title}</td>
                           <td>{blogCategoryList.find((c) => c.slug === post.category)?.label ?? post.category}</td>
