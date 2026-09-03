@@ -34,7 +34,7 @@ export function Footer({ variant }: FooterProps) {
             <div className="footer-section">
               <div className={variant === "legal" ? "footer-brand" : "footer-logo"}>
                 <Image
-                  src="/assets/images/freshplug-logo-small.svg"
+                  src="/assets/images/freshplug-logo-icon.png"
                   alt="Freshplug Organics Poultry Farm"
                   width={40}
                   height={40}

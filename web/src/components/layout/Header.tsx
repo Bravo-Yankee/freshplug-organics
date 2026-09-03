@@ -95,7 +95,7 @@ export function Header({ variant }: HeaderProps) {
           <div className="nav-container">
             <Link href="/" className="nav-logo">
               <Image
-                src="/assets/images/freshplug-logo.svg"
+                src="/assets/images/freshplug-logo-icon.png"
                 alt="Freshplug Organics Poultry Farm"
                 className="logo"
                 width={40}
@@ -145,7 +145,7 @@ export function Header({ variant }: HeaderProps) {
       <div className="nav-container">
         <div className="nav-logo">
           <Image
-            src="/assets/images/freshplug-logo.svg"
+            src="/assets/images/freshplug-logo-icon.png"
             alt="Freshplug Organics Poultry Farm"
             className="logo"
             width={40}
