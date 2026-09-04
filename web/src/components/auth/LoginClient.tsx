@@ -1,7 +1,6 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
 import { getSupabaseClient } from "@/lib/supabase/client";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -24,7 +23,6 @@ type Status = "idle" | "submitting" | "error";
  * transparently on first sign-in, so there's no separate signup form.
  */
 export function LoginClient() {
-  const router = useRouter();
   const [step, setStep] = useState<Step>("email");
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState("");
@@ -82,8 +80,15 @@ export function LoginClient() {
         return;
       }
 
-      router.push("/account");
-      router.refresh();
+      // A hard navigation, not router.push()+refresh(): the just-set
+      // session cookie from verifyOtp() is written via document.cookie as
+      // part of the awaited call above, but a soft client-side navigation
+      // fires its RSC request(s) fast enough to sometimes race that write
+      // — the server-side auth check on /account would then see no
+      // session yet and bounce back to /login. A full navigation only
+      // dispatches its request after this synchronous code finishes,
+      // guaranteeing the cookie is already committed by then.
+      window.location.href = "/account";
     } catch {
       // Same reasoning as handleEmailSubmit: a thrown error here used to
       // leave the button stuck on "Verifying..." forever.
