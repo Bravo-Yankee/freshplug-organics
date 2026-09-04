@@ -71,6 +71,23 @@ export function Header({ variant }: HeaderProps) {
     setMenuOpen(false);
   }, [pathname]);
 
+  // Lets a signed-in visitor sign out from anywhere on the site, not just
+  // from within /account's sidebar (AccountClient.tsx has its own copy of
+  // this same call — see CLAUDE.md on intentional duplication in this
+  // no-module setup) — useful since InactivityLogout's 5-minute timeout
+  // otherwise means waiting it out is the only other way to end a session
+  // on a shared/public device. Hard navigation, not router.push()+refresh(),
+  // for the same reason LoginClient.tsx's sign-in redirect was switched:
+  // it guarantees the cookie clear has committed before the next page
+  // reads auth state, rather than racing a soft client-side navigation.
+  function handleSignOut() {
+    getSupabaseClient()
+      .auth.signOut()
+      .then(() => {
+        window.location.href = "/";
+      });
+  }
+
   const links = NAV_ITEMS.map((item) => ({
     label: item.label,
     href: item.href,
@@ -123,6 +140,13 @@ export function Header({ variant }: HeaderProps) {
                   <i className="fas fa-user" /> {signedIn ? "My Account" : "Login"}
                 </Link>
               </li>
+              {signedIn && (
+                <li>
+                  <button type="button" className="nav-link nav-signout-btn" onClick={handleSignOut}>
+                    <i className="fas fa-sign-out-alt" /> Sign Out
+                  </button>
+                </li>
+              )}
             </ul>
             <button
               type="button"
@@ -174,6 +198,13 @@ export function Header({ variant }: HeaderProps) {
               <i className="fas fa-user" /> {signedIn ? "My Account" : "Login"}
             </Link>
           </li>
+          {signedIn && (
+            <li className="nav-item">
+              <button type="button" className="nav-link nav-signout-btn" onClick={handleSignOut}>
+                <i className="fas fa-sign-out-alt" /> Sign Out
+              </button>
+            </li>
+          )}
         </ul>
         <button
           type="button"

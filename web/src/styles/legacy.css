@@ -119,6 +119,18 @@ body {
     width: 100%;
 }
 
+/* .nav-link is normally applied to an <a> — the Sign Out control is a
+   <button> (it performs an action, not a navigation), so it needs the
+   usual UA button chrome (border/background/font) reset to actually look
+   like the other nav-links instead of a browser-default button. */
+.nav-signout-btn {
+    background: none;
+    border: none;
+    font: inherit;
+    cursor: pointer;
+    padding: 0;
+}
+
 .shop-btn {
     background: var(--clay);
     color: white !important;
