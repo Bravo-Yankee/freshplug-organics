@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
-import type { AdminOrder, AdminStats, ContactMessage, Customer, NewsletterSubscriber, NewsletterCampaign } from "@/lib/data/admin";
+import type { AdminOrder, AdminStats, ContactMessage, Customer, NewsletterSubscriber, NewsletterCampaign, AdminBlogComment } from "@/lib/data/admin";
 import type { Product, ProductBadge } from "@/content/products";
 import type { Category } from "@/content/categories";
 import type { BlogPost } from "@/content/blog";
@@ -116,6 +116,7 @@ interface AdminClientProps {
   campaigns: NewsletterCampaign[];
   posts: BlogPost[];
   blogCategories: Category[];
+  blogComments: AdminBlogComment[];
 }
 
 /**
@@ -139,6 +140,7 @@ export function AdminClient({
   campaigns,
   posts,
   blogCategories,
+  blogComments,
 }: AdminClientProps) {
   const { toast, show, dismiss } = useToast();
   const [section, setSection] = useState<Section>("overview");
@@ -168,6 +170,7 @@ export function AdminClient({
   const [blogCategoryList, setBlogCategoryList] = useState(blogCategories);
   const [newBlogCategoryLabel, setNewBlogCategoryLabel] = useState("");
   const [blogCategoryFilter, setBlogCategoryFilter] = useState<string | null>(null);
+  const [commentList, setCommentList] = useState(blogComments);
   const [postForm, setPostForm] = useState(() => ({
     ...emptyPostForm,
     category: blogCategories[0]?.slug ?? "",
@@ -449,6 +452,30 @@ export function AdminClient({
 
   function handleTogglePostPublished(post: BlogPost) {
     updatePost(post.id, { is_published: !post.isPublished }, { isPublished: !post.isPublished });
+  }
+
+  async function handleToggleCommentApproved(comment: AdminBlogComment) {
+    const isApproved = !comment.isApproved;
+    const { error } = await getSupabaseClient().from("blog_comments").update({ is_approved: isApproved }).eq("id", comment.id);
+    if (error) {
+      show("Couldn't update comment — please try again.", "error");
+      return;
+    }
+    setCommentList((current) => current.map((c) => (c.id === comment.id ? { ...c, isApproved } : c)));
+  }
+
+  // The only hard-delete control anywhere in /admin (everything else is a
+  // soft Hidden/Active toggle) — a guest comment has no other moderation
+  // path once it's spam or abusive.
+  async function handleDeleteComment(comment: AdminBlogComment) {
+    if (!window.confirm(`Delete this comment from ${comment.name}? This can't be undone.`)) return;
+    const { error } = await getSupabaseClient().from("blog_comments").delete().eq("id", comment.id);
+    if (error) {
+      show("Couldn't delete comment — please try again.", "error");
+      return;
+    }
+    setCommentList((current) => current.filter((c) => c.id !== comment.id));
+    show("Comment deleted.", "success");
   }
 
   function handleEditPost(post: BlogPost) {
@@ -1192,7 +1219,59 @@ export function AdminClient({
                   </table>
                 </div>
               )}
+              </div>
 
+              <div className="admin-card" style={{ marginTop: "2rem" }}>
+                <h2>Post Comments</h2>
+                {commentList.length === 0 ? (
+                  <p className="admin-empty">No comments yet.</p>
+                ) : (
+                  <div className="admin-table-wrapper">
+                    <table className="admin-table">
+                      <thead>
+                        <tr>
+                          <th>Date</th>
+                          <th>Post</th>
+                          <th>From</th>
+                          <th>Comment</th>
+                          <th>Status</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {commentList.map((comment) => (
+                          <tr key={comment.id}>
+                            <td>{formatDate(comment.createdAt)}</td>
+                            <td>{comment.postTitle}</td>
+                            <td>
+                              {comment.name}
+                              <br />
+                              {comment.email}
+                            </td>
+                            <td>{comment.comment}</td>
+                            <td>
+                              <button
+                                type="button"
+                                className={`admin-toggle${comment.isApproved ? " on" : ""}`}
+                                onClick={() => handleToggleCommentApproved(comment)}
+                              >
+                                {comment.isApproved ? "Approved" : "Hidden"}
+                              </button>
+                            </td>
+                            <td>
+                              <button type="button" className="admin-toggle" onClick={() => handleDeleteComment(comment)}>
+                                Delete
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+
+              <div className="admin-card" style={{ marginTop: "2rem" }}>
               <h3 className="admin-subheading">{editingPostId === null ? "Add a post" : "Edit Post"}</h3>
 
               <h4 className="admin-subheading" style={{ marginTop: 0, fontSize: "1rem" }}>

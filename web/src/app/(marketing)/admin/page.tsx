@@ -15,6 +15,7 @@ import {
   getAllCampaigns,
   getAllBlogPosts,
   getAllBlogCategories,
+  getAllBlogComments,
 } from "@/lib/data/admin";
 
 // Session-scoped data, not content — ISR doesn't apply here.
@@ -35,7 +36,7 @@ export default async function AdminPage() {
   const isAdmin = await isCurrentUserAdmin();
   if (!isAdmin) redirect("/");
 
-  const [stats, orders, messages, customers, products, categories, subscribers, campaigns, posts, blogCategories] =
+  const [stats, orders, messages, customers, products, categories, subscribers, campaigns, posts, blogCategories, blogComments] =
     await Promise.all([
       getAdminStats(),
       getAllOrders(),
@@ -47,6 +48,7 @@ export default async function AdminPage() {
       getAllCampaigns(),
       getAllBlogPosts(),
       getAllBlogCategories(),
+      getAllBlogComments(),
     ]);
 
   return (
@@ -69,6 +71,7 @@ export default async function AdminPage() {
         campaigns={campaigns}
         posts={posts}
         blogCategories={blogCategories}
+        blogComments={blogComments}
       />
     </>
   );

@@ -475,3 +475,52 @@ create policy "admin update blog images" on storage.objects
   for update using (bucket_id = 'blog-images' and is_admin()) with check (bucket_id = 'blog-images' and is_admin());
 create policy "admin delete blog images" on storage.objects
   for delete using (bucket_id = 'blog-images' and is_admin());
+
+-- Phase 11 — guest comments on blog posts
+--
+-- Not idempotent, like the rest of this file: run only this block against
+-- a project that already has the Phase 1-10 blocks applied.
+--
+-- Comments use the same guest identity pattern as contact_messages
+-- (Phase 1): a name + email, no Supabase Auth required. is_approved
+-- defaults to true so a comment appears immediately, matching the
+-- low-friction posture of every other form on this site — an admin can
+-- hide (or delete) a comment after the fact from /admin's Blog tab
+-- instead of pre-moderating everything before it's visible.
+create table blog_comments (
+  id bigint generated always as identity primary key,
+  post_id bigint not null references blog_posts(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  name text not null,
+  email text not null,
+  comment text not null,
+  is_approved boolean not null default true
+);
+
+alter table blog_comments enable row level security;
+
+create policy "public read approved blog comments" on blog_comments for select using (is_approved = true or is_admin());
+create policy "public insert blog comments" on blog_comments for insert with check (true);
+create policy "admin blog_comments update" on blog_comments for update using (is_admin()) with check (is_admin());
+create policy "admin blog_comments delete" on blog_comments for delete using (is_admin());
+
+-- blog_posts.comments existed since Phase 1 but nothing ever populated
+-- it. Rather than compute a count() on every read (the post detail page
+-- and the blog list cards both display it), a trigger keeps it in sync
+-- with the approved comment count whenever a comment is inserted,
+-- deleted, or hidden/unhidden by an admin.
+create function update_blog_post_comment_count() returns trigger as $$
+begin
+  update blog_posts
+  set comments = (
+    select count(*) from blog_comments
+    where post_id = coalesce(new.post_id, old.post_id) and is_approved = true
+  )
+  where id = coalesce(new.post_id, old.post_id);
+  return null;
+end;
+$$ language plpgsql security definer set search_path = public;
+
+create trigger blog_comments_update_count
+  after insert or update of is_approved or delete on blog_comments
+  for each row execute function update_blog_post_comment_count();

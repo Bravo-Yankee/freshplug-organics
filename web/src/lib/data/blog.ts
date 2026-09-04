@@ -57,6 +57,58 @@ export async function getBlogPostById(id: number): Promise<BlogPost | null> {
   return data ? toBlogPost(data as BlogPostRow) : null;
 }
 
+export interface BlogComment {
+  id: number;
+  postId: number;
+  createdAt: string;
+  name: string;
+  comment: string;
+}
+
+interface BlogCommentRow {
+  id: number;
+  post_id: number;
+  created_at: string;
+  name: string;
+  comment: string;
+}
+
+function toBlogComment(row: BlogCommentRow): BlogComment {
+  return {
+    id: row.id,
+    postId: row.post_id,
+    createdAt: row.created_at,
+    name: row.name,
+    comment: row.comment,
+  };
+}
+
+// RLS restricts anon reads to is_approved = true (same shape as
+// getBlogPosts()'s is_published filter) — email is deliberately not
+// selected here, this is the public-facing read used by /blog/[id].
+//
+// Unlike blog_categories (Phase 9), blog_comments isn't structurally
+// load-bearing for this page — a post renders fine with zero comments.
+// So, unlike every other lib/data/*.ts read, a missing table (the Phase
+// 11 migration hasn't been run yet — see AGENTS.md) degrades to "no
+// comments" instead of throwing and hard-failing every /blog/[id]
+// prerender the way Phase 9's blog_categories FK dependency did.
+export async function getBlogComments(postId: number): Promise<BlogComment[]> {
+  const { data, error } = await getSupabaseClient()
+    .from("blog_comments")
+    .select("id, post_id, created_at, name, comment")
+    .eq("post_id", postId)
+    .order("created_at", { ascending: true });
+  if (error) {
+    if (error.code === "PGRST205") {
+      console.warn("blog_comments table not found — has the Phase 11 migration been run? Returning no comments.");
+      return [];
+    }
+    throw error;
+  }
+  return (data as BlogCommentRow[]).map(toBlogComment);
+}
+
 // Reuses lib/data/products.ts's toCategory()/CategoryRow — blog_categories
 // is a separate table from products' categories, but the row shape
 // (slug/label/sort_order/active) is identical, so there's no need for a

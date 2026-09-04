@@ -2,7 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getBlogPostById, getBlogPosts } from "@/lib/data/blog";
+import { getBlogPostById, getBlogPosts, getBlogComments } from "@/lib/data/blog";
+import { BlogComments } from "@/components/blog/BlogComments";
 
 export const revalidate = 60;
 
@@ -26,6 +27,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 export default async function BlogPostPage({ params }: { params: { id: string } }) {
   const post = await getBlogPostById(Number(params.id));
   if (!post) notFound();
+  const comments = await getBlogComments(post.id);
 
   return (
     // This page renders under the marketing layout, whose nav is
@@ -71,6 +73,8 @@ export default async function BlogPostPage({ params }: { params: { id: string } 
           <h2>Tags</h2>
           <p>{post.tags.join(", ")}</p>
         </section>
+
+        <BlogComments postId={post.id} initialComments={comments} />
       </div>
 
       <p>

@@ -200,11 +200,57 @@ builds and serves `web/`, not it.
   upload image" toast — the rest of the Products/Blog tabs are
   unaffected.
 
-All of the above is deployed and confirmed working in production (see
-"Deployment" below for what that took) — shop browsing, cart, checkout,
-the chatbot, login/account/admin, category/product management, and
-per-tier weight/age pricing have all been manually smoke-tested
-end-to-end. There's no remaining planned phase; this is steady-state.
+- **Phase 11** (code done, **needs a manual migration before it works** —
+  see below): blog posts gained guest comments — the first slice of a
+  planned Facebook-style engagement feature (reactions and view counts
+  are explicitly deferred, not built here). Comments use the same guest
+  identity pattern as the Contact form: a name + email, no Supabase Auth
+  required — a deliberate choice over gating comments behind login, to
+  keep the barrier to commenting as low as submitting the contact form.
+  `blog_comments` (new table) has `is_approved` defaulting to `true`, so
+  a comment appears immediately rather than sitting in a moderation
+  queue — matches this site's low-friction posture everywhere else
+  (orders, contact messages, newsletter signups all post straight
+  through too). A Postgres trigger (`update_blog_post_comment_count()`)
+  keeps `blog_posts.comments` (present since Phase 1, never previously
+  populated) in sync with the approved-comment count on insert/delete/
+  approval-toggle, rather than computing `count()` on every read of a
+  column that's displayed in more than one place (post detail, blog list
+  cards).
+  - **Public side**: `/blog/[id]` renders `BlogComments`
+    (`src/components/blog/BlogComments.tsx`, mirrors `ContactForm.tsx`'s
+    shape) below the post body — a list of existing approved comments
+    plus a name/email/comment submit form. Submission goes through
+    `POST /api/blog/[id]/comments` (same per-IP rate limit pattern as
+    `/api/contact`, separate `Map` so a comment burst doesn't eat into
+    the contact form's budget or vice versa) rather than a direct
+    browser Supabase insert, so server-side validation/rate-limiting is
+    consistent with every other public write on this site. On success
+    the new comment is appended to the list optimistically — the page
+    itself still has `revalidate = 60` and isn't re-fetched.
+  - **Admin side**: `/admin`'s Blog tab gained a "Post Comments" card
+    below Blog Posts, listing every comment (including hidden ones, via
+    `getAllBlogComments()` in `lib/data/admin.ts` joining `blog_posts`
+    for the post title) with an approve/hide toggle
+    (`admin-toggle`, same control as the Blog Posts Published/Hidden
+    toggle) and a Delete button — the first hard-delete control anywhere
+    in `/admin` (everything else is soft-hide only), since a guest
+    comment has no other moderation path once it's abusive/spam.
+  **Before this works**, run the Phase 11 block in `supabase/schema.sql`
+  against Supabase manually (Studio SQL editor): it creates
+  `blog_comments`, its RLS policies, and the comment-count trigger.
+  Until that's run, `/blog/[id]` still renders (the comments section
+  just shows none/fails to submit) and `/admin`'s new Comments card
+  shows empty.
+
+All of the above (Phases 1-10) is deployed and confirmed working in
+production (see "Deployment" below for what that took) — shop browsing,
+cart, checkout, the chatbot, login/account/admin, category/product
+management, and per-tier weight/age pricing have all been manually
+smoke-tested end-to-end. Phase 11 is code-complete but not yet migrated/
+smoke-tested in production. Reactions and view counts remain unbuilt —
+raise the same design questions noted for comments (reaction type, view
+dedupe strategy) before starting either.
 
 ## Data layer
 

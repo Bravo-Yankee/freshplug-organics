@@ -168,6 +168,60 @@ export async function getAllBlogCategories(): Promise<Category[]> {
   return (data as CategoryRow[]).map(toCategory);
 }
 
+export interface AdminBlogComment {
+  id: number;
+  postId: number;
+  postTitle: string;
+  createdAt: string;
+  name: string;
+  email: string;
+  comment: string;
+  isApproved: boolean;
+}
+
+// Same reasoning as getAllBlogPosts(): the server client's RLS clause
+// ("... or is_admin()") surfaces hidden (is_approved = false) rows too,
+// so /admin's Blog tab can find and re-approve or delete one. Joins
+// blog_posts for the title since the comments table only stores post_id.
+//
+// Same graceful-degrade reasoning as getBlogComments() in lib/data/blog.ts:
+// before the Phase 11 migration is run, this returns an empty list (the
+// Post Comments card just shows "No comments yet") instead of crashing
+// the whole /admin page over one missing table.
+export async function getAllBlogComments(): Promise<AdminBlogComment[]> {
+  const supabase = await getSupabaseServerClient();
+  const { data, error } = await supabase
+    .from("blog_comments")
+    .select("id, post_id, created_at, name, email, comment, is_approved, blog_posts(title)")
+    .order("created_at", { ascending: false });
+  if (error) {
+    if (error.code === "PGRST205") return [];
+    throw error;
+  }
+
+  return (
+    data as unknown as {
+      id: number;
+      post_id: number;
+      created_at: string;
+      name: string;
+      email: string;
+      comment: string;
+      is_approved: boolean;
+      blog_posts: { title: string } | null;
+    }[]
+  ).map((row) => ({
+    id: row.id,
+    postId: row.post_id,
+    postTitle: row.blog_posts?.title ?? "—",
+    createdAt: row.created_at,
+    name: row.name,
+    email: row.email,
+    comment: row.comment,
+    isApproved: row.is_approved,
+  }));
+}
+
 export async function getAllCustomers(): Promise<Customer[]> {
   const supabase = await getSupabaseServerClient();
   const { data, error } = await supabase
