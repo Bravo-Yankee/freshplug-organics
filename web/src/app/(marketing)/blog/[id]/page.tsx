@@ -4,6 +4,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getBlogPostById, getBlogPosts, getBlogComments } from "@/lib/data/blog";
 import { BlogComments } from "@/components/blog/BlogComments";
+// Only imported here for BlogComments' .contact-form/.form-group/.form-row/
+// .submit-btn classes — this page had no page-specific stylesheet of its
+// own before Phase 11, unlike every other content page (see blog/page.tsx
+// importing blog.css, contact/page.tsx importing this same file).
+import "@/styles/pages/contact.css";
 
 export const revalidate = 60;
 
