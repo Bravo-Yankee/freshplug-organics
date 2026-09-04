@@ -778,19 +778,20 @@ body {
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+/* The signed-in nav shows one more item (My Account + a Sign Out icon)
+   than signed-out (just Login) — enough that the full desktop item set
+   (6 links + Shop Now + those) no longer fits above 768px at common
+   laptop widths (roughly 1000-1200px), and instead of dropping to the
+   mobile menu, individual item labels wrapped onto a second line. Kept
+   as its own breakpoint rather than folding into the 768px block below,
+   since that block also carries unrelated mobile-only styles (hero
+   stacking, footer stacking, the bottom tab bar) that shouldn't kick in
+   this early just because the nav needed more room. */
+@media (max-width: 1300px) {
     .hamburger {
         display: flex;
     }
-    
-    .nav-container {
-        padding: 0 15px;
-    }
-    
-    .nav-logo h2 {
-        font-size: 1.5rem;
-    }
-    
+
     .nav-menu {
         position: fixed;
         left: -100%;
@@ -803,9 +804,19 @@ body {
         box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
         padding: 2rem 0;
     }
-    
+
     .nav-menu.active {
         left: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-container {
+        padding: 0 15px;
+    }
+
+    .nav-logo h2 {
+        font-size: 1.5rem;
     }
 
     .bottom-tabbar {

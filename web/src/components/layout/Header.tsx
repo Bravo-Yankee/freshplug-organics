@@ -142,8 +142,14 @@ export function Header({ variant }: HeaderProps) {
               </li>
               {signedIn && (
                 <li>
-                  <button type="button" className="nav-link nav-signout-btn" onClick={handleSignOut}>
-                    <i className="fas fa-sign-out-alt" /> Sign Out
+                  <button
+                    type="button"
+                    className="nav-link nav-signout-btn"
+                    onClick={handleSignOut}
+                    aria-label="Sign Out"
+                    title="Sign Out"
+                  >
+                    <i className="fas fa-sign-out-alt" />
                   </button>
                 </li>
               )}
@@ -200,8 +206,14 @@ export function Header({ variant }: HeaderProps) {
           </li>
           {signedIn && (
             <li className="nav-item">
-              <button type="button" className="nav-link nav-signout-btn" onClick={handleSignOut}>
-                <i className="fas fa-sign-out-alt" /> Sign Out
+              <button
+                type="button"
+                className="nav-link nav-signout-btn"
+                onClick={handleSignOut}
+                aria-label="Sign Out"
+                title="Sign Out"
+              >
+                <i className="fas fa-sign-out-alt" />
               </button>
             </li>
           )}
