@@ -1,25 +1,47 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { Fragment, FormEvent, useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Product } from "@/content/products";
-import type { Address, Order, Profile, Subscription } from "@/lib/data/account";
+import type {
+  Address,
+  NotificationPrefs,
+  Order,
+  Profile,
+  Subscription,
+  WishlistItem,
+} from "@/lib/data/account";
+import { useCart } from "@/lib/cart";
 import { getSupabaseClient } from "@/lib/supabase/client";
 import { useToast, ToastViewport } from "@/components/ui/Toast";
+import { OrderTimeline } from "./OrderTimeline";
 
-type Section = "profile" | "orders" | "subscriptions" | "addresses";
+type Section =
+  | "overview"
+  | "profile"
+  | "orders"
+  | "wishlist"
+  | "subscriptions"
+  | "addresses"
+  | "security"
+  | "notifications";
 
 const SECTIONS: { key: Section; label: string; icon: string }[] = [
+  { key: "overview", label: "Overview", icon: "fa-th-large" },
   { key: "profile", label: "Profile", icon: "fa-user" },
   { key: "orders", label: "Orders", icon: "fa-shopping-bag" },
+  { key: "wishlist", label: "Wishlist", icon: "fa-heart" },
   { key: "subscriptions", label: "Subscriptions", icon: "fa-sync-alt" },
   { key: "addresses", label: "Addresses", icon: "fa-map-marker-alt" },
+  { key: "security", label: "Login & Security", icon: "fa-shield-alt" },
+  { key: "notifications", label: "Notifications", icon: "fa-bell" },
 ];
 
 // Remembers the last section across navigations — this is a client component
 // remounted fresh every time /account loads, so plain useState alone reset to
-// "profile" every time someone left the page and came back.
+// "overview" every time someone left the page and came back.
 const ACCOUNT_SECTION_KEY = "freshplug_account_section";
 
 function formatDate(value: string | null) {
@@ -34,6 +56,10 @@ interface AccountClientProps {
   orders: Order[];
   products: Product[];
   isAdmin: boolean;
+  wishlist: WishlistItem[];
+  notificationPrefs: NotificationPrefs;
+  memberSince: string;
+  lastSignInAt: string | null;
 }
 
 /**
@@ -44,10 +70,22 @@ interface AccountClientProps {
  * as ShopClient.handleCheckout); RLS (schema.sql) is the real trust
  * boundary, not which component issues the request.
  */
-export function AccountClient({ profile, addresses, subscriptions, orders, products, isAdmin }: AccountClientProps) {
+export function AccountClient({
+  profile,
+  addresses,
+  subscriptions,
+  orders,
+  products,
+  isAdmin,
+  wishlist,
+  notificationPrefs,
+  memberSince,
+  lastSignInAt,
+}: AccountClientProps) {
   const router = useRouter();
+  const cart = useCart();
   const { toast, show, dismiss } = useToast();
-  const [section, setSection] = useState<Section>("profile");
+  const [section, setSection] = useState<Section>("overview");
 
   useEffect(() => {
     try {
@@ -86,6 +124,21 @@ export function AccountClient({ profile, addresses, subscriptions, orders, produ
     quantity: 1,
   });
   const [savingSubscription, setSavingSubscription] = useState(false);
+
+  const [wishlistList, setWishlistList] = useState(wishlist);
+  const [expandedOrderId, setExpandedOrderId] = useState<number | null>(null);
+
+  const [newEmail, setNewEmail] = useState("");
+  const [savingEmail, setSavingEmail] = useState(false);
+
+  const [prefs, setPrefs] = useState(notificationPrefs);
+
+  const activeSubscriptionCount = subscriptionList.filter((sub) => sub.status === "active").length;
+  const nextDelivery =
+    subscriptionList
+      .filter((sub) => sub.status === "active" && sub.nextDelivery)
+      .map((sub) => sub.nextDelivery as string)
+      .sort()[0] ?? null;
 
   async function handleProfileSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -238,6 +291,97 @@ export function AccountClient({ profile, addresses, subscriptions, orders, produ
     show(`Subscription ${nextStatus === "active" ? "resumed" : "paused"}.`, "success");
   }
 
+  function handleReorder(order: Order) {
+    order.items.forEach((item) => {
+      cart.addItem(
+        { id: item.id, name: item.name, price: item.price, image: item.image },
+        item.quantity,
+        item.options,
+      );
+    });
+    show(`Added ${order.items.length} item${order.items.length === 1 ? "" : "s"} to your cart.`, "success");
+  }
+
+  async function handleRemoveWishlistItem(item: WishlistItem) {
+    const { error } = await getSupabaseClient().from("wishlist_items").delete().eq("id", item.id);
+    if (error) {
+      show("Couldn't remove that item — please try again.", "error");
+      return;
+    }
+    setWishlistList((current) => current.filter((i) => i.id !== item.id));
+    show("Removed from wishlist.", "success");
+  }
+
+  function handleAddWishlistItemToCart(item: WishlistItem) {
+    cart.addItem({ id: item.productId, name: item.name, price: item.price, image: item.image }, 1, {});
+    show(`${item.name} added to cart!`, "success");
+  }
+
+  async function handleChangeEmail(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!newEmail) return;
+    setSavingEmail(true);
+
+    const { error } = await getSupabaseClient().auth.updateUser({ email: newEmail });
+
+    setSavingEmail(false);
+
+    if (error) {
+      show("Couldn't start that email change — please try again.", "error");
+      return;
+    }
+    show("Confirmation email sent — check your inbox to finish the change.", "success");
+    setNewEmail("");
+  }
+
+  async function handleTogglePref(key: "notifyOrderUpdates" | "notifyPromotions", value: boolean) {
+    setPrefs((current) => ({ ...current, [key]: value }));
+    const column = key === "notifyOrderUpdates" ? "notify_order_updates" : "notify_promotions";
+
+    const { error } = await getSupabaseClient()
+      .from("profiles")
+      .update({ [column]: value })
+      .eq("id", profile.id);
+
+    if (error) {
+      setPrefs((current) => ({ ...current, [key]: !value }));
+      show("Couldn't save that preference — please try again.", "error");
+      return;
+    }
+    show("Preference saved.", "success");
+  }
+
+  async function handleToggleNewsletter(value: boolean) {
+    setPrefs((current) => ({ ...current, newsletterSubscribed: value }));
+    const supabase = getSupabaseClient();
+
+    // Deliberately insert-then-catch-conflict rather than .upsert() —
+    // newsletter_subscribers has no public select policy, so upsert can't
+    // detect a conflict it isn't allowed to read (see project memory on
+    // this exact gotcha).
+    const { error: insertError } = await supabase
+      .from("newsletter_subscribers")
+      .insert({ email: profile.email, subscribed: value });
+
+    if (insertError && insertError.code === "23505") {
+      const { error: updateError } = await supabase
+        .from("newsletter_subscribers")
+        .update({ subscribed: value })
+        .eq("email", profile.email);
+      if (updateError) {
+        setPrefs((current) => ({ ...current, newsletterSubscribed: !value }));
+        show("Couldn't update your newsletter subscription — please try again.", "error");
+        return;
+      }
+    } else if (insertError) {
+      setPrefs((current) => ({ ...current, newsletterSubscribed: !value }));
+      show("Couldn't update your newsletter subscription — please try again.", "error");
+      return;
+    }
+
+    show("Preference saved.", "success");
+  }
+
   async function handleSignOut() {
     await getSupabaseClient().auth.signOut();
     router.push("/");
@@ -271,6 +415,56 @@ export function AccountClient({ profile, addresses, subscriptions, orders, produ
         </aside>
 
         <div className="account-content">
+          {section === "overview" && (
+            <div className="account-card">
+              <h2>Overview</h2>
+              <div className="account-overview-grid">
+                <div className="account-stat-card">
+                  <div className="account-stat-value">{orders.length}</div>
+                  <div className="account-stat-label">Orders</div>
+                </div>
+                <div className="account-stat-card">
+                  <div className="account-stat-value">{activeSubscriptionCount}</div>
+                  <div className="account-stat-label">Active Subscriptions</div>
+                </div>
+                <div className="account-stat-card">
+                  <div className="account-stat-value">{addressList.length}</div>
+                  <div className="account-stat-label">Saved Addresses</div>
+                </div>
+                <div className="account-stat-card">
+                  <div className="account-stat-value">{wishlistList.length}</div>
+                  <div className="account-stat-label">Wishlist Items</div>
+                </div>
+              </div>
+
+              {nextDelivery && (
+                <p className="account-overview-next-delivery">
+                  <i className="fas fa-truck" /> Next delivery: <strong>{formatDate(nextDelivery)}</strong>
+                </p>
+              )}
+
+              <h3 style={{ marginTop: "2rem" }}>Recent Orders</h3>
+              {orders.length === 0 ? (
+                <p className="account-empty">You haven&apos;t placed any orders yet.</p>
+              ) : (
+                <div className="account-overview-recent">
+                  {orders.slice(0, 3).map((order) => (
+                    <div className="account-overview-recent-row" key={order.id}>
+                      <span>
+                        #{order.id} · {formatDate(order.createdAt)}
+                      </span>
+                      <span className={`order-status status-${order.status}`}>{order.status}</span>
+                      <span>KSH {order.totalKsh.toLocaleString()}</span>
+                    </div>
+                  ))}
+                  <button type="button" className="btn-small btn-outline" onClick={() => changeSection("orders")}>
+                    View All Orders
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
           {section === "profile" && (
             <div className="account-card">
               <h2>Profile</h2>
@@ -340,22 +534,110 @@ export function AccountClient({ profile, addresses, subscriptions, orders, produ
                       <th>Items</th>
                       <th>Total</th>
                       <th>Status</th>
+                      <th />
                     </tr>
                   </thead>
                   <tbody>
-                    {orders.map((order) => (
-                      <tr key={order.id}>
-                        <td>#{order.id}</td>
-                        <td>{formatDate(order.createdAt)}</td>
-                        <td>{order.items.length} items</td>
-                        <td>KSH {order.totalKsh.toLocaleString()}</td>
-                        <td>
-                          <span className={`order-status status-${order.status}`}>{order.status}</span>
-                        </td>
-                      </tr>
-                    ))}
+                    {orders.map((order) => {
+                      const expanded = expandedOrderId === order.id;
+                      return (
+                        <Fragment key={order.id}>
+                          <tr
+                            className="order-row"
+                            onClick={() => setExpandedOrderId(expanded ? null : order.id)}
+                          >
+                            <td>#{order.id}</td>
+                            <td>{formatDate(order.createdAt)}</td>
+                            <td>{order.items.length} items</td>
+                            <td>KSH {order.totalKsh.toLocaleString()}</td>
+                            <td>
+                              <span className={`order-status status-${order.status}`}>{order.status}</span>
+                            </td>
+                            <td>
+                              <i className={`fas fa-chevron-${expanded ? "up" : "down"}`} />
+                            </td>
+                          </tr>
+                          {expanded && (
+                            <tr className="order-detail-row">
+                              <td colSpan={6}>
+                                <div className="order-detail-panel">
+                                  <OrderTimeline status={order.status} />
+                                  <ul className="order-detail-items">
+                                    {order.items.map((item, index) => (
+                                      <li key={`${item.id}-${index}`}>
+                                        <span>
+                                          {item.name}
+                                          {Object.keys(item.options).length > 0 && (
+                                            <span className="order-detail-item-options">
+                                              {" "}
+                                              (
+                                              {Object.entries(item.options)
+                                                .map(([key, value]) => `${key}: ${value}`)
+                                                .join(", ")}
+                                              )
+                                            </span>
+                                          )}
+                                        </span>
+                                        <span>Qty {item.quantity}</span>
+                                        <span>KSH {(item.price * item.quantity).toLocaleString()}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                  <button
+                                    type="button"
+                                    className="btn-small btn-primary"
+                                    onClick={() => handleReorder(order)}
+                                  >
+                                    Reorder
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                        </Fragment>
+                      );
+                    })}
                   </tbody>
                 </table>
+              )}
+            </div>
+          )}
+
+          {section === "wishlist" && (
+            <div className="account-card">
+              <h2>Wishlist</h2>
+              {wishlistList.length === 0 ? (
+                <p className="account-empty">
+                  No saved items yet. Tap the heart icon on any product in the shop to save it here.
+                </p>
+              ) : (
+                <div className="wishlist-grid">
+                  {wishlistList.map((item) => (
+                    <div className="wishlist-card" key={item.id}>
+                      <div className="wishlist-card-image">
+                        <Image src={item.image} alt={item.name} width={220} height={160} />
+                      </div>
+                      <h4>{item.name}</h4>
+                      <p className="wishlist-card-price">KSH {item.price.toLocaleString()}</p>
+                      <div className="wishlist-card-actions">
+                        <button
+                          type="button"
+                          className="btn-small btn-primary"
+                          onClick={() => handleAddWishlistItemToCart(item)}
+                        >
+                          Add to Cart
+                        </button>
+                        <button
+                          type="button"
+                          className="btn-small btn-danger"
+                          onClick={() => handleRemoveWishlistItem(item)}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           )}
@@ -518,6 +800,96 @@ export function AccountClient({ profile, addresses, subscriptions, orders, produ
                   {savingAddress ? "Saving..." : "Add Address"}
                 </button>
               </form>
+            </div>
+          )}
+
+          {section === "security" && (
+            <div className="account-card">
+              <h2>Login &amp; Security</h2>
+              <div className="form-group">
+                <label htmlFor="current-email">Current Email</label>
+                <input type="email" id="current-email" value={profile.email} disabled />
+              </div>
+              <form onSubmit={handleChangeEmail}>
+                <div className="form-group">
+                  <label htmlFor="new-email">Change Email</label>
+                  <input
+                    type="email"
+                    id="new-email"
+                    placeholder="new@email.com"
+                    value={newEmail}
+                    onChange={(event) => setNewEmail(event.target.value)}
+                  />
+                </div>
+                <button type="submit" className="submit-btn" disabled={savingEmail || !newEmail}>
+                  {savingEmail ? "Sending..." : "Send Confirmation"}
+                </button>
+              </form>
+
+              <div className="account-security-info">
+                <p>
+                  <strong>Member since:</strong> {formatDate(memberSince)}
+                </p>
+                <p>
+                  <strong>Last signed in:</strong> {formatDate(lastSignInAt)}
+                </p>
+                <p className="account-security-note">
+                  This app is passwordless — you sign in with a one-time code emailed to you, and you&apos;re
+                  automatically signed out after 5 minutes of inactivity.
+                </p>
+              </div>
+
+              <button type="button" className="btn-small btn-outline" style={{ marginTop: "1rem" }} onClick={handleSignOut}>
+                Sign Out
+              </button>
+            </div>
+          )}
+
+          {section === "notifications" && (
+            <div className="account-card">
+              <h2>Notifications</h2>
+              <div className="notification-row">
+                <div>
+                  <h4>Order Updates</h4>
+                  <p>Emails when your order status changes.</p>
+                </div>
+                <label className="toggle-switch">
+                  <input
+                    type="checkbox"
+                    checked={prefs.notifyOrderUpdates}
+                    onChange={(event) => handleTogglePref("notifyOrderUpdates", event.target.checked)}
+                  />
+                  <span className="toggle-slider" />
+                </label>
+              </div>
+              <div className="notification-row">
+                <div>
+                  <h4>Promotions &amp; Offers</h4>
+                  <p>Occasional deals on eggs, chicken, and more.</p>
+                </div>
+                <label className="toggle-switch">
+                  <input
+                    type="checkbox"
+                    checked={prefs.notifyPromotions}
+                    onChange={(event) => handleTogglePref("notifyPromotions", event.target.checked)}
+                  />
+                  <span className="toggle-slider" />
+                </label>
+              </div>
+              <div className="notification-row">
+                <div>
+                  <h4>Newsletter</h4>
+                  <p>Farm updates and seasonal news.</p>
+                </div>
+                <label className="toggle-switch">
+                  <input
+                    type="checkbox"
+                    checked={prefs.newsletterSubscribed}
+                    onChange={(event) => handleToggleNewsletter(event.target.checked)}
+                  />
+                  <span className="toggle-slider" />
+                </label>
+              </div>
             </div>
           )}
         </div>

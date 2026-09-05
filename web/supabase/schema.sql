@@ -524,3 +524,63 @@ $$ language plpgsql security definer set search_path = public;
 create trigger blog_comments_update_count
   after insert or update of is_approved or delete on blog_comments
   for each row execute function update_blog_post_comment_count();
+
+-- Phase 12 — account dashboard: wishlist + notification preferences
+--
+-- Not idempotent, like the rest of this file: run only this block against
+-- a project that already has the Phase 1-11 blocks applied.
+--
+-- Wishlist mirrors the addresses/subscriptions ownership pattern (Phase 2):
+-- one row per saved product, RLS-scoped to the owning profile via
+-- auth.uid(), no admin visibility needed since this is purely a customer
+-- convenience feature. The unique constraint makes "save" idempotent from
+-- the client (an insert of an already-saved product just conflicts rather
+-- than duplicating a heart icon's worth of state).
+create table wishlist_items (
+  id bigint generated always as identity primary key,
+  profile_id uuid not null references profiles(id) on delete cascade,
+  product_id bigint not null references products(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  unique (profile_id, product_id)
+);
+
+alter table wishlist_items enable row level security;
+
+create policy "own wishlist select" on wishlist_items for select using (auth.uid() = profile_id);
+create policy "own wishlist insert" on wishlist_items for insert with check (auth.uid() = profile_id);
+create policy "own wishlist delete" on wishlist_items for delete using (auth.uid() = profile_id);
+
+-- Order-update/promotional email opt-in, columns on profiles rather than a
+-- separate table since these are 1:1 with the account and there's nothing
+-- else to normalize (unlike newsletter_subscribers, which predates auth
+-- and has to stay guest/email-keyed for the unauthenticated signup form).
+alter table profiles add column notify_order_updates boolean not null default true;
+alter table profiles add column notify_promotions boolean not null default false;
+
+-- newsletter_subscribers (Phase 6) only ever had an admin-select policy
+-- (it's a guest-facing table, written by the public newsletter form with
+-- no read-back). The account Notifications tab needs a signed-in customer
+-- to read their own row to show current subscription state — scoped by
+-- email match against the JWT rather than a profile_id FK, since this
+-- table intentionally has no such column.
+create policy "own newsletter select" on newsletter_subscribers for select using (email = (auth.jwt() ->> 'email'));
+
+-- Phase 13 — self-healing profile creation
+--
+-- Not idempotent, like the rest of this file: run only this block against
+-- a project that already has the Phase 1-12 blocks applied.
+--
+-- Found live: an account created 2026-08-08 (auth.users row present) had
+-- no matching profiles row, because handle_new_user() (Phase 2) only
+-- creates that row for signups from when the trigger was added onward —
+-- it never backfilled accounts that already existed. Since profiles had
+-- no insert policy for a normal user (only the security-definer trigger
+-- could insert), getProfile() had no way to create the missing row and
+-- returned null, which /account's page.tsx then treated as "not signed
+-- in" and bounced a genuinely authenticated user back to /login with no
+-- indication of the real problem. This policy lets a signed-in user
+-- insert their OWN profile row (id must equal their own auth.uid()) so
+-- getProfile() (lib/data/account.ts) can create it lazily on first visit
+-- instead of failing — this is the same self-heal a repeat of Phase 2's
+-- trigger-installation gap would otherwise need again.
+create policy "own profile insert" on profiles for insert with check (auth.uid() = id);

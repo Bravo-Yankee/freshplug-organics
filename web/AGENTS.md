@@ -243,14 +243,87 @@ builds and serves `web/`, not it.
   just shows none/fails to submit) and `/admin`'s new Comments card
   shows empty.
 
+- **Phase 12** (done, migration applied): `/account` gained an Amazon-style overhaul — an Overview tab
+  (stat cards + recent orders + next delivery, computed client-side from
+  data the page already fetches, no new queries), expandable Orders rows
+  with an itemized breakdown, an `OrderTimeline` status visual
+  (`src/components/account/OrderTimeline.tsx`), and a "Reorder" button that
+  replays an order's items back into `useCart()`; a Wishlist tab backed by
+  a new `wishlist_items` table (heart-toggle also wired up on `/shop`'s
+  product cards via a new `useWishlist()` hook, `src/lib/wishlist.ts`,
+  Supabase-backed the way `useCart()` is localStorage-backed); a Security
+  tab (change email via `supabase.auth.updateUser()`, member-since/
+  last-signed-in, sign out) — no password field, since this app is
+  passwordless email-OTP only (see Phase 2); and a Notifications tab
+  (`profiles.notify_order_updates`/`notify_promotions` toggles, plus a
+  newsletter toggle that reads/writes `newsletter_subscribers` by email
+  using an insert-then-catch-23505-fallback-to-update, not `.upsert()` —
+  this table has no public select policy, and an upsert can't detect a
+  conflict it isn't allowed to read).
+  The Phase 12 block in `supabase/schema.sql` (creates `wishlist_items` and
+  its RLS policies, adds the two `profiles` columns, and adds a
+  customer-scoped select policy on `newsletter_subscribers`) has been run
+  against Supabase. Smoke-testing this surfaced two unrelated, pre-existing
+  bugs — see Phase 13 and "Concurrent `getSupabaseServerClient()` calls per
+  request" below — that blocked reaching `/account` at all; both are fixed.
+
+- **Phase 13** (code done, **needs a manual migration before it works** —
+  see below): fixes a real production bug found while smoke-testing Phase
+  12 — a genuinely signed-in customer (account created 2026-08-08,
+  confirmed via `auth.users`) got bounced from `/account` straight back to
+  `/login`, with the header still showing them as signed in. Root cause:
+  `handle_new_user()` (Phase 2) only creates a `profiles` row for signups
+  from when that trigger was installed onward — it never backfilled
+  accounts that already existed, and `profiles` had no insert policy for a
+  normal user (only the trigger, running as security definer, could
+  insert). `getProfile()` (`lib/data/account.ts`) found no row, returned
+  `null`, and `/account`'s page.tsx treated that identically to "not
+  signed in". Fixed by making `getProfile()` self-heal: on a cache miss it
+  now inserts a bare `{ id: user.id }` row and returns that instead of
+  `null`. **Before this works**, run the Phase 13 block in
+  `supabase/schema.sql` (adds the `"own profile insert"` RLS policy that
+  makes the self-heal insert possible for a non-admin user) against
+  Supabase manually (Studio SQL editor). Until that's run, an account
+  missing its profile row still hits this exact bug — the self-heal insert
+  fails on the missing policy and falls back to the same `/login` bounce.
+
+- **Concurrent `getSupabaseServerClient()` calls per request** (fixed, no
+  migration needed): while chasing the Phase 13 symptom, also found and
+  fixed a separate latent issue — `getSupabaseServerClient()`
+  (`lib/supabase/server.ts`) constructed a brand-new `createServerClient`
+  (and therefore a brand-new, independent GoTrueClient) on every call, and
+  `/account`'s single render was calling it ~8 times
+  (`getProfile`/`getAddresses`/`getSubscriptions`/`getOrders`/
+  `getWishlist`/`getNotificationPrefs`/`getProducts`/`isCurrentUserAdmin`,
+  plus `/admin`'s equivalent fan-out in `lib/data/admin.ts`). Every
+  Postgrest query — not just an explicit `auth.getUser()` — internally
+  calls `auth.getSession()`, which refreshes the access token once it's
+  within Supabase's ~90s expiry margin; N independent GoTrueClient
+  instances have no shared state, so they can race to refresh with the
+  same single-use refresh token. Only one wins, and since Server
+  Components can't write the rotated cookie back to the browser (see the
+  `setAll` comment in `lib/supabase/server.ts`), the browser is left
+  holding an already-consumed refresh token — breaking sign-in on that
+  device until a fresh login. `getSupabaseServerClient()` is now wrapped
+  in React's `cache()` so every call within one request/render returns the
+  same instance, which already de-dupes concurrent refreshes internally.
+  This did not turn out to be the cause of the specific bug reported
+  during Phase 12 testing (that was Phase 13's missing-profile-row issue),
+  but it's a real latent bug fixed along the way — worth knowing about if
+  a similar signed-in-but-bounced-to-/login report ever recurs with a
+  fresh (non-legacy) account.
+
 All of the above (Phases 1-10) is deployed and confirmed working in
 production (see "Deployment" below for what that took) — shop browsing,
 cart, checkout, the chatbot, login/account/admin, category/product
 management, and per-tier weight/age pricing have all been manually
 smoke-tested end-to-end. Phase 11 is code-complete but not yet migrated/
-smoke-tested in production. Reactions and view counts remain unbuilt —
-raise the same design questions noted for comments (reaction type, view
-dedupe strategy) before starting either.
+smoke-tested in production. Phase 12's migration has been run; Phase 13's
+has not yet (see above) — until it is, don't treat Phase 12 as fully
+verified in production, since the missing-profile-row bug it uncovered can
+still block `/account` for any similarly affected legacy account. Reactions
+and view counts remain unbuilt — raise the same design questions noted for
+comments (reaction type, view dedupe strategy) before starting either.
 
 ## Data layer
 

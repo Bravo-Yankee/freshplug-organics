@@ -264,6 +264,10 @@
     background: var(--clay);
     color: white;
 }
+.wishlist-btn.active {
+    background: var(--clay);
+    color: white;
+}
 .cart-sidebar {
     position: fixed;
     right: -400px;

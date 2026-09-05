@@ -38,9 +38,24 @@ export interface Order {
   status: "pending" | "confirmed" | "fulfilled" | "cancelled";
 }
 
+export interface WishlistItem {
+  id: number;
+  productId: number;
+  name: string;
+  image: string;
+  price: number;
+  category: string;
+}
+
+export interface NotificationPrefs {
+  notifyOrderUpdates: boolean;
+  notifyPromotions: boolean;
+  newsletterSubscribed: boolean;
+}
+
 /**
- * All four functions assume a session already exists — the only caller is
- * the /account Server Component, which redirects to /login first if
+ * Every function below assumes a session already exists — the only caller
+ * is the /account Server Component, which redirects to /login first if
  * auth.getUser() comes back empty. They're not meant to be reused from an
  * unauthenticated context.
  */
@@ -57,15 +72,34 @@ export async function getProfile(): Promise<Profile | null> {
     .eq("id", user.id)
     .maybeSingle();
   if (error) throw error;
-  if (!data) return null;
+
+  // Self-heal: handle_new_user() (Phase 2) only creates this row going
+  // forward from when that trigger was added — any account that signed up
+  // before then (confirmed live: a real account created 2026-08-08 has no
+  // matching profiles row) has nothing here. Previously this silently
+  // returned null, which the /account page then treated as "not signed
+  // in" and bounced a genuinely authenticated user back to /login with no
+  // indication anything was wrong. Phase 13's "own profile insert" RLS
+  // policy is what makes this insert possible for a non-admin user.
+  const row =
+    data ??
+    (await (async () => {
+      const { data: created, error: insertError } = await supabase
+        .from("profiles")
+        .insert({ id: user.id })
+        .select("id, first_name, last_name, phone, birth_date")
+        .single();
+      if (insertError) throw insertError;
+      return created;
+    })());
 
   return {
-    id: data.id,
+    id: row.id,
     email: user.email ?? "",
-    firstName: data.first_name,
-    lastName: data.last_name,
-    phone: data.phone,
-    birthDate: data.birth_date,
+    firstName: row.first_name,
+    lastName: row.last_name,
+    phone: row.phone,
+    birthDate: row.birth_date,
   };
 }
 
@@ -122,4 +156,73 @@ export async function getOrders(): Promise<Order[]> {
     totalKsh: row.total_ksh,
     status: row.status,
   }));
+}
+
+// Phase 12 — until that migration is run, wishlist_items doesn't exist yet;
+// PGRST205 ("table not found") degrades to an empty list rather than a
+// thrown 500, same posture as getAllBlogComments() in lib/data/admin.ts.
+export async function getWishlist(): Promise<WishlistItem[]> {
+  const supabase = await getSupabaseServerClient();
+  const { data, error } = await supabase
+    .from("wishlist_items")
+    .select("id, product_id, products(id, name, image, price, category)")
+    .order("created_at", { ascending: false });
+  if (error) {
+    if (error.code === "PGRST205") return [];
+    throw error;
+  }
+
+  return data
+    .map((row) => {
+      const product = row.products as unknown as { id: number; name: string; image: string; price: number; category: string } | null;
+      if (!product) return null;
+      return {
+        id: row.id,
+        productId: row.product_id,
+        name: product.name,
+        image: product.image,
+        price: product.price,
+        category: product.category,
+      };
+    })
+    .filter((item): item is WishlistItem => item !== null);
+}
+
+// Phase 12 — profiles.notify_order_updates/notify_promotions and the
+// customer-scoped newsletter_subscribers select policy don't exist until
+// that migration is run; each query below degrades to a sensible default
+// (undefined/23503-style column errors surface as PGRST204, missing-table
+// as PGRST205) rather than breaking the whole /account page.
+export async function getNotificationPrefs(): Promise<NotificationPrefs> {
+  const supabase = await getSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const defaults: NotificationPrefs = {
+    notifyOrderUpdates: true,
+    notifyPromotions: false,
+    newsletterSubscribed: false,
+  };
+  if (!user) return defaults;
+
+  const { data: profileRow, error: profileError } = await supabase
+    .from("profiles")
+    .select("notify_order_updates, notify_promotions")
+    .eq("id", user.id)
+    .maybeSingle();
+  if (profileError && profileError.code !== "PGRST204") throw profileError;
+
+  const { data: subscriberRow, error: subscriberError } = await supabase
+    .from("newsletter_subscribers")
+    .select("subscribed")
+    .eq("email", user.email ?? "")
+    .maybeSingle();
+  if (subscriberError && subscriberError.code !== "PGRST205") throw subscriberError;
+
+  return {
+    notifyOrderUpdates: profileRow?.notify_order_updates ?? defaults.notifyOrderUpdates,
+    notifyPromotions: profileRow?.notify_promotions ?? defaults.notifyPromotions,
+    newsletterSubscribed: subscriberRow?.subscribed ?? defaults.newsletterSubscribed,
+  };
 }

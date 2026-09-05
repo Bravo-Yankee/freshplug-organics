@@ -3,7 +3,14 @@ import { redirect } from "next/navigation";
 import "@/styles/pages/account.css";
 import { AccountClient } from "@/components/account/AccountClient";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
-import { getProfile, getAddresses, getSubscriptions, getOrders } from "@/lib/data/account";
+import {
+  getProfile,
+  getAddresses,
+  getSubscriptions,
+  getOrders,
+  getWishlist,
+  getNotificationPrefs,
+} from "@/lib/data/account";
 import { getProducts } from "@/lib/data/products";
 import { isCurrentUserAdmin } from "@/lib/data/admin";
 
@@ -22,18 +29,22 @@ export default async function AccountPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const [profile, addresses, subscriptions, orders, products, isAdmin] = await Promise.all([
-    getProfile(),
-    getAddresses(),
-    getSubscriptions(),
-    getOrders(),
-    getProducts(),
-    isCurrentUserAdmin(),
-  ]);
+  const [profile, addresses, subscriptions, orders, products, isAdmin, wishlist, notificationPrefs] =
+    await Promise.all([
+      getProfile(),
+      getAddresses(),
+      getSubscriptions(),
+      getOrders(),
+      getProducts(),
+      isCurrentUserAdmin(),
+      getWishlist(),
+      getNotificationPrefs(),
+    ]);
 
-  // handle_new_user (schema.sql) creates the profile row at signup time, so
-  // this should be unreachable in practice — treated as a signed-out state
-  // rather than a 500 if it ever happens.
+  // getProfile() self-heals a missing profiles row (Phase 13) for
+  // accounts that predate the handle_new_user() trigger, so this should
+  // be unreachable in practice — treated as a signed-out state rather
+  // than a 500 if the self-heal insert itself somehow fails.
   if (!profile) redirect("/login");
 
   return (
@@ -52,6 +63,10 @@ export default async function AccountPage() {
         orders={orders}
         products={products}
         isAdmin={isAdmin}
+        wishlist={wishlist}
+        notificationPrefs={notificationPrefs}
+        memberSince={user.created_at}
+        lastSignInAt={user.last_sign_in_at ?? null}
       />
     </>
   );

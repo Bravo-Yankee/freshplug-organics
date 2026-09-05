@@ -289,6 +289,238 @@
     color: white;
 }
 
+.account-overview-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+.account-stat-card {
+    background: var(--paper);
+    border-radius: 14px;
+    padding: 1.5rem;
+    text-align: center;
+}
+.account-stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--clay);
+}
+.account-stat-label {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+}
+.account-overview-next-delivery {
+    background: var(--paper);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    color: var(--charcoal);
+}
+.account-overview-recent {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: flex-start;
+}
+.account-overview-recent-row {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    width: 100%;
+    padding: 0.9rem 1rem;
+    background: var(--paper);
+    border-radius: 10px;
+    color: var(--text-light);
+}
+
+.order-row {
+    cursor: pointer;
+}
+.order-row:hover td {
+    background: var(--paper);
+}
+.order-detail-row td {
+    padding: 0;
+    border-bottom: 1px solid var(--line);
+}
+.order-detail-panel {
+    padding: 1.5rem;
+    background: var(--paper);
+}
+.order-detail-items {
+    list-style: none;
+    margin: 1.25rem 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+.order-detail-items li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    color: var(--charcoal);
+    font-size: 0.9rem;
+}
+.order-detail-item-options {
+    color: var(--text-light);
+}
+
+.order-timeline {
+    display: flex;
+    align-items: center;
+}
+.order-timeline-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    flex: 1;
+    position: relative;
+    font-size: 0.8rem;
+    color: var(--text-light);
+}
+.order-timeline-step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 6px;
+    left: 55%;
+    width: 90%;
+    height: 2px;
+    background: var(--line);
+}
+.order-timeline-step.completed:not(:last-child)::after,
+.order-timeline-step.current:not(:last-child)::after {
+    background: var(--clay);
+}
+.order-timeline-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--line);
+    z-index: 1;
+}
+.order-timeline-step.completed .order-timeline-dot,
+.order-timeline-step.current .order-timeline-dot {
+    background: var(--clay);
+}
+.order-timeline-step.completed .order-timeline-label,
+.order-timeline-step.current .order-timeline-label {
+    color: var(--charcoal);
+    font-weight: 600;
+}
+.order-timeline-cancelled .order-timeline-step.cancelled {
+    color: #721c24;
+    font-weight: 600;
+}
+
+.wishlist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.25rem;
+}
+.wishlist-card {
+    background: var(--paper);
+    border-radius: 14px;
+    padding: 1rem;
+    text-align: center;
+}
+.wishlist-card-image {
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+}
+.wishlist-card-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+.wishlist-card h4 {
+    color: var(--charcoal);
+    margin-bottom: 0.3rem;
+}
+.wishlist-card-price {
+    color: var(--clay);
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+.wishlist-card-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.account-security-info {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+    color: var(--text-light);
+}
+.account-security-info p {
+    margin-bottom: 0.5rem;
+}
+.account-security-note {
+    font-size: 0.85rem;
+}
+
+.notification-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--line);
+}
+.notification-row:last-child {
+    border-bottom: none;
+}
+.notification-row h4 {
+    color: var(--charcoal);
+    margin-bottom: 0.2rem;
+}
+.notification-row p {
+    color: var(--text-light);
+    font-size: 0.85rem;
+}
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 46px;
+    height: 26px;
+    flex-shrink: 0;
+}
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.toggle-slider {
+    position: absolute;
+    inset: 0;
+    background: var(--line);
+    border-radius: 26px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+.toggle-slider::before {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    left: 3px;
+    bottom: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.2s ease;
+}
+.toggle-switch input:checked + .toggle-slider {
+    background: var(--clay);
+}
+.toggle-switch input:checked + .toggle-slider::before {
+    transform: translateX(20px);
+}
+
 @media (max-width: 900px) {
     .account-layout {
         grid-template-columns: 1fr;
@@ -304,5 +536,12 @@
 @media (max-width: 600px) {
     .form-row {
         grid-template-columns: 1fr;
+    }
+    .account-overview-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .account-overview-recent-row {
+        flex-wrap: wrap;
+        gap: 0.5rem;
     }
 }

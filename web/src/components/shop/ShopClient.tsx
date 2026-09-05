@@ -7,6 +7,7 @@ import type { Product, ProductCategory } from "@/content/products";
 import type { Category } from "@/content/categories";
 import { siteConfig } from "@/lib/site-config";
 import { useCart } from "@/lib/cart";
+import { useWishlist } from "@/lib/wishlist";
 import { getSupabaseClient } from "@/lib/supabase/client";
 import { useToast, ToastViewport } from "@/components/ui/Toast";
 
@@ -78,6 +79,7 @@ function CartAutoOpen({ onOpen }: { onOpen: () => void }) {
 }
 
 export function ShopClient({ products, categories }: { products: Product[]; categories: Category[] }) {
+  const router = useRouter();
   const categoryFilters: { key: ProductCategory | "all"; label: string }[] = [
     { key: "all", label: "All Products" },
     ...categories.map((category) => ({ key: category.slug, label: category.label })),
@@ -135,6 +137,7 @@ export function ShopClient({ products, categories }: { products: Product[]; cate
   const cartToggleRef = useRef<HTMLButtonElement>(null);
 
   const cart = useCart();
+  const wishlist = useWishlist();
   const { toast, show, dismiss } = useToast();
 
   const filteredProducts = useMemo(() => {
@@ -199,6 +202,21 @@ export function ShopClient({ products, categories }: { products: Product[]; cate
   function handleRemoveFromCart(index: number) {
     cart.removeItem(index);
     show("Item removed from cart", "success");
+  }
+
+  async function handleToggleWishlist(product: Product) {
+    if (!wishlist.isSignedIn) {
+      show("Sign in to save items to your wishlist — redirecting...", "info");
+      setTimeout(() => router.push("/login"), 1200);
+      return;
+    }
+    const wasSaved = wishlist.ids.has(product.id);
+    try {
+      await wishlist.toggle(product);
+      show(wasSaved ? "Removed from wishlist" : "Saved to wishlist", "success");
+    } catch {
+      show("Couldn't update your wishlist — please try again.", "error");
+    }
   }
 
   async function handleCheckout() {
@@ -385,10 +403,11 @@ export function ShopClient({ products, categories }: { products: Product[]; cate
                     </button>
                     <button
                       type="button"
-                      className="wishlist-btn"
-                      onClick={() => show("Wishlist feature coming soon!", "info")}
+                      className={`wishlist-btn${wishlist.ids.has(product.id) ? " active" : ""}`}
+                      aria-pressed={wishlist.ids.has(product.id)}
+                      onClick={() => handleToggleWishlist(product)}
                     >
-                      <i className="fas fa-heart" />
+                      <i className={wishlist.ids.has(product.id) ? "fas fa-heart" : "far fa-heart"} />
                     </button>
                   </div>
                 </div>
