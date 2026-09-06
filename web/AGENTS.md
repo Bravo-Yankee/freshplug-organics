@@ -313,17 +313,43 @@ builds and serves `web/`, not it.
   a similar signed-in-but-bounced-to-/login report ever recurs with a
   fresh (non-legacy) account.
 
+- **Uncached browser `getSupabaseClient()` + a click-vs-mount auth race**
+  (fixed, no migration needed): the browser counterpart to the bug above.
+  `getSupabaseClient()` (`lib/supabase/client.ts`) also constructed a
+  brand-new `createBrowserClient` on every call, and ~15 client components
+  (`Header`, `BottomTabBar`, `InactivityLogout`, `LoginClient`,
+  `ShopClient`, `AccountClient`, `wishlist.ts`, ...) call it independently,
+  several mounted simultaneously on one page — same independent-GoTrueClient
+  risk as the server side. Now a module-level singleton. Separately (and
+  this was the actual cause of a live repro: clicking `/shop`'s wishlist
+  heart icon within ~1s of the page loading bounced a signed-in user to
+  `/login`), `ShopClient`'s heart-click handler gated on
+  `useWishlist()`'s `isSignedIn`, a snapshot from that hook's mount-time
+  `auth.getUser()` call — a network round trip that hadn't resolved yet at
+  click time, so a fast click read the still-`false` initial value and
+  concluded "signed out". Fixed by having `useWishlist().toggle()`
+  re-verify `auth.getUser()` at call time instead of trusting the
+  mount-time snapshot, throwing a `WishlistNotSignedInError` the caller
+  can catch specifically (rather than pre-checking a value that might
+  still be loading). Confirmed fixed live: heart-click immediately after
+  a fresh `/shop` load now saves correctly and shows up in `/account`'s
+  Wishlist tab.
+
 All of the above (Phases 1-10) is deployed and confirmed working in
 production (see "Deployment" below for what that took) — shop browsing,
 cart, checkout, the chatbot, login/account/admin, category/product
 management, and per-tier weight/age pricing have all been manually
 smoke-tested end-to-end. Phase 11 is code-complete but not yet migrated/
-smoke-tested in production. Phase 12's migration has been run; Phase 13's
-has not yet (see above) — until it is, don't treat Phase 12 as fully
-verified in production, since the missing-profile-row bug it uncovered can
-still block `/account` for any similarly affected legacy account. Reactions
-and view counts remain unbuilt — raise the same design questions noted for
-comments (reaction type, view dedupe strategy) before starting either.
+smoke-tested in production. Phase 12 and Phase 13's migrations have both
+been run and the combined fix (self-healing profile + the two
+client-instance races above) has been smoke-tested end-to-end locally
+against production data: sign-in, `/account`'s Overview/Orders/Wishlist/
+Notifications tabs, and the `/shop` heart-toggle all confirmed working.
+Not yet re-verified against the deployed Vercel production build itself
+(only against local `next dev` pointed at the same Supabase project) —
+worth a quick pass there after the next deploy. Reactions and view counts
+remain unbuilt — raise the same design questions noted for comments
+(reaction type, view dedupe strategy) before starting either.
 
 ## Data layer
 

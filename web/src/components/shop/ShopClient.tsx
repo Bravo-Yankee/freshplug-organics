@@ -7,7 +7,7 @@ import type { Product, ProductCategory } from "@/content/products";
 import type { Category } from "@/content/categories";
 import { siteConfig } from "@/lib/site-config";
 import { useCart } from "@/lib/cart";
-import { useWishlist } from "@/lib/wishlist";
+import { useWishlist, WishlistNotSignedInError } from "@/lib/wishlist";
 import { getSupabaseClient } from "@/lib/supabase/client";
 import { useToast, ToastViewport } from "@/components/ui/Toast";
 
@@ -205,16 +205,16 @@ export function ShopClient({ products, categories }: { products: Product[]; cate
   }
 
   async function handleToggleWishlist(product: Product) {
-    if (!wishlist.isSignedIn) {
-      show("Sign in to save items to your wishlist — redirecting...", "info");
-      setTimeout(() => router.push("/login"), 1200);
-      return;
-    }
     const wasSaved = wishlist.ids.has(product.id);
     try {
       await wishlist.toggle(product);
       show(wasSaved ? "Removed from wishlist" : "Saved to wishlist", "success");
-    } catch {
+    } catch (error) {
+      if (error instanceof WishlistNotSignedInError) {
+        show("Sign in to save items to your wishlist — redirecting...", "info");
+        setTimeout(() => router.push("/login"), 1200);
+        return;
+      }
       show("Couldn't update your wishlist — please try again.", "error");
     }
   }
